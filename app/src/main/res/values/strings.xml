@@ -1,0 +1,17 @@
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="app_name">Skill Manager</string>
+    <string name="seach_skill_edittext">Type name or skill</string>
+    <string name="skill_name_hint">Skill Name</string>
+    <string name="skill_description_hint">Skill Description</string>
+    <string name="learn_more">Learn more</string>
+    <string name="skill_learn_more_hint">Learn more (web url)</string>
+    <string name="menu_delete">Delete</string>
+    <string name="menu_save">Save</string>
+    <string name="image_picker_text">Select Image</string>
+    <string name="error_image_upload">Error while uploading image.</string>
+    <string name="new_skill">New Skill</string>
+    <string name="skill_image_content_description">An image of the skill.</string>
+    <string name="camera_image_description">A little image of a camera.</string>
+
+    <!-- <xliff:g id="name">%s</xliff:g> -->
+</resources>
