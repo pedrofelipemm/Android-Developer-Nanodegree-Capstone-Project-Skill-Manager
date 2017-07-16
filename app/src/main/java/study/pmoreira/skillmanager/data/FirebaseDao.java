@@ -50,6 +50,10 @@ class FirebaseDao {
         dbRef.setValue(model);
     }
 
+    static void delete() {
+        //TODO
+    }
+
     static void uploadImage(final Uri data, final String refPath, final OperationListener<String> listener) {
         FirebaseStorage.getInstance().getReference(refPath)
                 .child(String.valueOf(new Date().getTime()))
@@ -68,6 +72,11 @@ class FirebaseDao {
                         listener.onError(new BusinessException(e.getMessage(), e));
                     }
                 });
+
+    }
+
+    static void deleteImage(String url) {
+        FirebaseStorage.getInstance().getReferenceFromUrl(url).delete();
     }
 
 }

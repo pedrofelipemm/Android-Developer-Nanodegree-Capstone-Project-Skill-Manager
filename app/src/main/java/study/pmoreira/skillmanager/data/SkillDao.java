@@ -18,4 +18,8 @@ public class SkillDao {
         FirebaseDao.uploadImage(data, SKILL_IMAGES_PATH, listener);
     }
 
+    public void deleteImage(String url) {
+        FirebaseDao.deleteImage(url);
+    }
+
 }

@@ -85,10 +85,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/default_margin2x"
-                android:ellipsize="end"
-                android:hint="@string/skill_learn_more_hint"
-                android:maxLines="1"
-                android:scrollHorizontally="true"/>
+                android:hint="@string/skill_learn_more_hint"/>
 
         </android.support.design.widget.TextInputLayout>
 

@@ -1,5 +1,6 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">Skill Manager</string>
+
     <string name="seach_skill_edittext">Type name or skill</string>
     <string name="skill_name_hint">Skill Name</string>
     <string name="skill_description_hint">Skill Description</string>
@@ -12,6 +13,12 @@
     <string name="new_skill">New Skill</string>
     <string name="skill_image_content_description">An image of the skill.</string>
     <string name="camera_image_description">A little image of a camera.</string>
+
+    <string name="name_cannot_be_empty">Name cannot be empty.</string>
+    <string name="description_cannot_be_empty">Description cannot be empty.</string>
+    <string name="learn_more_cannot_be_empty">Learn more cannot be empty.</string>
+    <string name="picture_cannot_be_empty">Picture cannot be empty.</string>
+    <string name="skill_successfully_saved">Skill successfully saved!</string>
 
     <!-- <xliff:g id="name">%s</xliff:g> -->
 </resources>
