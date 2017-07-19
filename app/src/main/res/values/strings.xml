@@ -1,7 +1,7 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">Skill Manager</string>
 
-    <string name="seach_skill_edittext">Type name or skill</string>
+    <string name="seach_skill_edittext">Type a name or skill</string>
     <string name="skill_name_hint">Skill Name</string>
     <string name="skill_description_hint">Skill Description</string>
     <string name="learn_more">Learn more</string>
@@ -18,7 +18,11 @@
     <string name="description_cannot_be_empty">Description cannot be empty.</string>
     <string name="learn_more_cannot_be_empty">Learn more cannot be empty.</string>
     <string name="picture_cannot_be_empty">Picture cannot be empty.</string>
-    <string name="skill_successfully_saved">Skill successfully saved!</string>
 
-    <!-- <xliff:g id="name">%s</xliff:g> -->
+    <string name="skill_successfully_saved">Skill successfully saved!</string>
+    <string name="main_pager_invalid_position">Invalid fragment position: <xliff:g id="position">%d</xliff:g></string>
+    <string name="no_skills_available">No skills available</string>
+    <string name="main_pager_title_skills">Skills</string>
+    <string name="main_pager_title_collaborators">Collaborators</string>
+
 </resources>
