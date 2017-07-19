@@ -1,8 +1,13 @@
 package study.pmoreira.skillmanager.infrastructure;
 
-public interface OperationListener<T> {
+import study.pmoreira.skillmanager.infrastructure.exception.BusinessException;
+import study.pmoreira.skillmanager.infrastructure.exception.ValidateException;
 
-    void onSuccess(T result);
+public class OperationListener<T> {
 
-    void onError(BusinessException e);
+    public void onSuccess(T result) {}
+
+    public  void onValidationError(ValidateException e) {}
+
+    public  void onError(BusinessException e) {}
 }

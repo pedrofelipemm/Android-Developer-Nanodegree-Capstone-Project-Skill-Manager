@@ -11,6 +11,9 @@ import study.pmoreira.skillmanager.ui.BaseActivity;
 
 public class SkillActivity extends BaseActivity {
 
+    public static final String STATE_SKILL = "STATE_SKILL";
+    public static final String EXTRA_SKILL = "EXTRA_SKILL";
+
 //    @BindView(R.id.skill_learn_more)
 //    TextView mLearnMoreTextView;
 
@@ -27,6 +30,7 @@ public class SkillActivity extends BaseActivity {
 
     public static void startActivity(Context context, Skill skill) {
         Intent intent = new Intent(context, SkillActivity.class);
+        intent.putExtra(EXTRA_SKILL, skill);
 
         context.startActivity(intent);
     }

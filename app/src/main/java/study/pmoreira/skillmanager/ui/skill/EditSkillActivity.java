@@ -1,5 +1,6 @@
 package study.pmoreira.skillmanager.ui.skill;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputFilter;
@@ -13,25 +14,32 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import study.pmoreira.skillmanager.R;
 import study.pmoreira.skillmanager.business.SkillBusiness;
-import study.pmoreira.skillmanager.infrastructure.BusinessException;
 import study.pmoreira.skillmanager.infrastructure.OperationListener;
+import study.pmoreira.skillmanager.infrastructure.exception.BusinessException;
+import study.pmoreira.skillmanager.infrastructure.exception.ValidateException;
 import study.pmoreira.skillmanager.model.Skill;
 import study.pmoreira.skillmanager.ui.BaseActivity;
+
+import static study.pmoreira.skillmanager.ui.skill.SkillActivity.EXTRA_SKILL;
+import static study.pmoreira.skillmanager.ui.skill.SkillActivity.STATE_SKILL;
 
 public class EditSkillActivity extends BaseActivity {
 
     private static final String TAG = EditSkillActivity.class.getName();
 
     private static final int PICK_IMAGE_REQUEST = 1;
-    private static final String STATE_SKILL = "STATE_SKILL";
 
-    public static final String EXTRA_SKILL = "EXTRA_SKILL";
+    private static final String STATE_IS_EDITING = "STATE_IS_EDITING";
 
     private SkillBusiness mSkillBusiness;
 
@@ -50,6 +58,8 @@ public class EditSkillActivity extends BaseActivity {
     @BindView(R.id.progressbar)
     ProgressBar mProgressBar;
 
+    private boolean mIsEditing;
+
     String mPhotoUrl;
 
     @Override
@@ -58,15 +68,34 @@ public class EditSkillActivity extends BaseActivity {
         setContentView(R.layout.activity_edit_skill);
 
         ButterKnife.bind(this);
-        mSkillBusiness = new SkillBusiness(this);
+        mSkillBusiness = new SkillBusiness();
 
         setTitle(getString(R.string.new_skill));
 
         setupViews();
 
         if (getIntent().hasExtra(EXTRA_SKILL)) {
-            fillFields((Skill) getIntent().getParcelableExtra(EXTRA_SKILL));
+            Skill skill = getIntent().getParcelableExtra(EXTRA_SKILL);
+
+            setTitle(skill.getName());
+            fillFields(skill);
+            mIsEditing = true;
         }
+
+        FirebaseDatabase.getInstance().getReference("skills").orderByChild("name").equalTo("test")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            Skill skill = snapshot.getValue(Skill.class);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
     }
 
     private void setupViews() {
@@ -92,12 +121,14 @@ public class EditSkillActivity extends BaseActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(STATE_SKILL, newSkill());
+        outState.putBoolean(STATE_IS_EDITING, mIsEditing);
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         fillFields((Skill) savedInstanceState.getParcelable(STATE_SKILL));
+        mIsEditing = savedInstanceState.getBoolean(STATE_IS_EDITING);
     }
 
     private void fillFields(Skill skill) {
@@ -125,6 +156,14 @@ public class EditSkillActivity extends BaseActivity {
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        if (!mIsEditing) {
+            menu.findItem(R.id.menu_delete).setVisible(false);
+        }
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_save:
@@ -138,12 +177,19 @@ public class EditSkillActivity extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    public static void startActivity(Context context, Skill skill) {
+        Intent intent = new Intent(context, EditSkillActivity.class);
+        intent.putExtra(EXTRA_SKILL, skill);
+
+        context.startActivity(intent);
+    }
+
     private void save() {
         mSkillBusiness.save(newSkill(), new OnSkillSave());
     }
 
     private void delete() {
-        //TODO: delete from database and storage
+        mSkillBusiness.delete(newSkill());
     }
 
     private Skill newSkill() {
@@ -156,13 +202,16 @@ public class EditSkillActivity extends BaseActivity {
 
     @SuppressWarnings("ConstantConditions")
     void loadSkillPicture() {
+        if (TextUtils.isEmpty(mPhotoUrl)) return;
         Picasso.with(EditSkillActivity.this)
                 .load(mPhotoUrl)
                 .error(getDrawable(R.drawable.skill_placeholder))
                 .into((ImageView) findViewById(R.id.skill_imageview));
     }
 
-    private class OnPictureUpload implements OperationListener<String> {
+    //TODO: progressbar
+
+    private class OnPictureUpload extends OperationListener<String> {
 
         @Override
         public void onSuccess(String result) {
@@ -183,7 +232,7 @@ public class EditSkillActivity extends BaseActivity {
         }
     }
 
-    private class OnSkillSave implements OperationListener<Skill> {
+    private class OnSkillSave extends OperationListener<Skill> {
         @Override
         public void onSuccess(Skill skill) {
             displayMessage(getString(R.string.skill_successfully_saved));
@@ -192,18 +241,18 @@ public class EditSkillActivity extends BaseActivity {
         }
 
         @Override
-        public void onError(BusinessException e) {
+        public void onValidationError(ValidateException e) {
             if (SkillBusiness.INVALID_SKILL_NAME == e.getCode()) {
-                mNameEdiText.setError(e.getMessage());
+                mNameEdiText.setError(getString(e.getResId()));
             }
             if (SkillBusiness.INVALID_SKILL_DESCRIPTION == e.getCode()) {
-                mDescriptionEdiText.setError(e.getMessage());
+                mDescriptionEdiText.setError(getString(e.getResId()));
             }
             if (SkillBusiness.INVALID_SKILL_LEARN_MORE_URL == e.getCode()) {
-                mLearnMoreEditText.setError(e.getMessage());
+                mLearnMoreEditText.setError(getString(e.getResId()));
             }
             if (SkillBusiness.INVALID_SKILL_PICTURE_URL == e.getCode()) {
-                displayMessage(e.getMessage());
+                displayMessage(getString(e.getResId()));
             }
         }
     }

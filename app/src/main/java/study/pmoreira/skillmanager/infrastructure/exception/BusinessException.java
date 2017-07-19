@@ -1,4 +1,4 @@
-package study.pmoreira.skillmanager.infrastructure;
+package study.pmoreira.skillmanager.infrastructure.exception;
 
 public class BusinessException extends Exception {
 
@@ -6,9 +6,8 @@ public class BusinessException extends Exception {
 
     private final int code;
 
-    public BusinessException(String message) {
-        super(message);
-        code = INVALOD_CODE;
+    BusinessException(int code) {
+        this.code = code;
     }
 
     public BusinessException(String message, Exception e) {

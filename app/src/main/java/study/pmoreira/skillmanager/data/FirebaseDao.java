@@ -2,6 +2,7 @@ package study.pmoreira.skillmanager.data;
 
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -13,10 +14,12 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.UploadTask.TaskSnapshot;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
-import study.pmoreira.skillmanager.infrastructure.BusinessException;
 import study.pmoreira.skillmanager.infrastructure.OperationListener;
+import study.pmoreira.skillmanager.infrastructure.exception.BusinessException;
 
 class FirebaseDao {
 
@@ -25,12 +28,48 @@ class FirebaseDao {
     private FirebaseDao() {
     }
 
-    private static FirebaseDatabase getDatabase() {
+    static FirebaseDatabase getDatabase() {
         if (database == null) {
             database = FirebaseDatabase.getInstance();
             database.setPersistenceEnabled(true);
         }
         return database;
+    }
+
+    static <T> void findAll(final Class<T> clazz, final String refPath, final OperationListener<List<T>> listener) {
+        getDatabase().getReference(refPath)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        List<T> results = new ArrayList<>();
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            results.add(snapshot.getValue(clazz));
+                        }
+                        listener.onSuccess(results);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {}
+                });
+    }
+
+    static <T> void findAllListener(final Class<T> clazz, final String refPath, final OperationListener<List<T>>
+            listener) {
+        getDatabase().getReference(refPath)
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        List<T> results = new ArrayList<>();
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            results.add(snapshot.getValue(clazz));
+                        }
+                        Log.d("PEDRO", String.valueOf(results.size()));
+                        listener.onSuccess(results);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {}
+                });
     }
 
     static <T> void save(final T model, final String refPath, final OperationListener<T> listener) {
@@ -72,7 +111,6 @@ class FirebaseDao {
                         listener.onError(new BusinessException(e.getMessage(), e));
                     }
                 });
-
     }
 
     static void deleteImage(String url) {
