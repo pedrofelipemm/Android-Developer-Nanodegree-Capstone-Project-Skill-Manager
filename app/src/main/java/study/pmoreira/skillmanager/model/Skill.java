@@ -57,8 +57,7 @@ public class Skill implements Parcelable {
         dest.writeString(pictureUrl);
     }
 
-    @SuppressWarnings("unused")
-    private static final Parcelable.Creator<Skill> CREATOR = new Parcelable.Creator<Skill>() {
+    static final Parcelable.Creator<Skill> CREATOR = new Parcelable.Creator<Skill>() {
 
         public Skill createFromParcel(Parcel in) {
             return new Skill(in);

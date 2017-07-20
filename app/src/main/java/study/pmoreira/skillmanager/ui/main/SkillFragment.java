@@ -18,6 +18,8 @@ import study.pmoreira.skillmanager.R;
 import study.pmoreira.skillmanager.business.SkillBusiness;
 import study.pmoreira.skillmanager.infrastructure.OperationListener;
 import study.pmoreira.skillmanager.model.Skill;
+import study.pmoreira.skillmanager.ui.main.SkillAdapter.ItemClickListener;
+import study.pmoreira.skillmanager.ui.skill.SkillActivity;
 
 public class SkillFragment extends Fragment {
 
@@ -53,14 +55,19 @@ public class SkillFragment extends Fragment {
     //TODO: keep recycler position on device rotation
     //TODO: don't fetch on device roation
 
-    private class OnSkillLoad extends OperationListener<List<Skill>> {
+    private class OnSkillLoad extends OperationListener<List<Skill>> implements ItemClickListener {
         @Override
         public void onSuccess(List<Skill> skills) {
             int spanCount = mContext.getResources().getInteger(R.integer.main_skill_recycler_span_count);
 
-            mSkillRecyclerView.setAdapter(new SkillAdapter(mContext, skills, emptyView));
+            mSkillRecyclerView.setAdapter(new SkillAdapter(mContext, this, skills, emptyView));
             mSkillRecyclerView.setLayoutManager(
                     new StaggeredGridLayoutManager(spanCount, StaggeredGridLayoutManager.VERTICAL));
+        }
+
+        @Override
+        public void onItemClick(Skill skill) {
+            SkillActivity.startActivity(mContext, skill);
         }
     }
 }

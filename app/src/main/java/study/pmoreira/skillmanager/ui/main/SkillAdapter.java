@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -26,9 +27,17 @@ class SkillAdapter extends RecyclerView.Adapter<SkillAdapter.ViewHolder> {
     private Context mContext;
     private LayoutInflater mInflater;
 
+    private ItemClickListener mItemClickListener;
+
     private List<Skill> mSkills;
 
+    interface ItemClickListener {
+        void onItemClick(Skill skill);
+    }
+
     class ViewHolder extends RecyclerView.ViewHolder {
+
+        View root;
 
         @BindView(R.id.skill_pic_imageview)
         ImageView mSkillPicImageView;
@@ -39,11 +48,13 @@ class SkillAdapter extends RecyclerView.Adapter<SkillAdapter.ViewHolder> {
         ViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
+            root = view;
         }
     }
 
-    SkillAdapter(Context context, List<Skill> skills, View emptyView) {
+    SkillAdapter(Context context, ItemClickListener clickListener, List<Skill> skills, View emptyView) {
         mContext = context;
+        mItemClickListener = clickListener;
         mInflater = LayoutInflater.from(mContext);
 
         mSkills = skills;
@@ -58,13 +69,20 @@ class SkillAdapter extends RecyclerView.Adapter<SkillAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Skill skill = mSkills.get(position);
+        final Skill skill = mSkills.get(position);
 
         holder.mSkillNameTextView.setText(skill.getName());
         Picasso.with(mContext)
                 .load(TextUtils.isEmpty(skill.getPictureUrl()) ? INVALID_IMAGE : skill.getPictureUrl())
                 .error(R.drawable.skill_placeholder)
                 .into(holder.mSkillPicImageView);
+
+        holder.root.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mItemClickListener.onItemClick(skill);
+            }
+        });
     }
 
     @Override

@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <bool name="insert_fake_data">true</bool>
+    <bool name="insert_fake_data">false</bool>
 </resources>

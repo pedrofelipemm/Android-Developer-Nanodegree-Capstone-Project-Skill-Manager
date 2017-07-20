@@ -14,4 +14,10 @@
 
     <dimen name="cardviewSkillPicHeight">200dp</dimen>
 
+    <dimen name="appbarEleation">4dp</dimen>
+    <dimen name="collapsingToolbarTitleMarginStart">32dp</dimen>
+    <dimen name="collapsingToolbarTitleMarginEnd">64dp</dimen>
+
+    <dimen name="searchBarPadding">24dp</dimen>
+
 </resources>
