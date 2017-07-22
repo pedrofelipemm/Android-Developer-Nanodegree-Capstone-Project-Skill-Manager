@@ -5,12 +5,14 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
 import android.widget.EditText;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import study.pmoreira.skillmanager.R;
 import study.pmoreira.skillmanager.data.DataFaker;
+import study.pmoreira.skillmanager.ui.skill.EditSkillActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -47,5 +49,9 @@ public class MainActivity extends AppCompatActivity {
 
         mvViewPager.setAdapter(new PageAdapter(this, getSupportFragmentManager()));
         mTabLayout.setupWithViewPager(mvViewPager);
+    }
+
+    public void onClickFab(View view) {
+        EditSkillActivity.startActivity(this);
     }
 }

@@ -3,16 +3,17 @@ package study.pmoreira.skillmanager.ui.skill;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.text.InputFilter;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -42,9 +43,6 @@ public class EditSkillActivity extends BaseActivity {
     private static final String STATE_IS_EDITING = "STATE_IS_EDITING";
 
     private SkillBusiness mSkillBusiness;
-
-    @BindView(R.id.skill_imageview)
-    ImageView mImageView;
 
     @BindView(R.id.skill_name_edittext)
     EditText mNameEdiText;
@@ -106,15 +104,12 @@ public class EditSkillActivity extends BaseActivity {
 
         int skillNameMaxLength = getInteger(R.integer.skill_description_max_length);
         mNameEdiText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(skillNameMaxLength)});
+    }
 
-        mImageView.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivityForResult(
-                        new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI),
-                        PICK_IMAGE_REQUEST);
-            }
-        });
+    public void onClickChangeView(View view) {
+        startActivityForResult(
+                new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI),
+                PICK_IMAGE_REQUEST);
     }
 
     @Override
@@ -177,9 +172,23 @@ public class EditSkillActivity extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        //TODO: mPhotoUrl != null delete
+        //TODO: mPhotoUrl == null cancel
+    }
+
+    public static void startActivity(Context context) {
+        startActivity(context, null);
+    }
+
     public static void startActivity(Context context, Skill skill) {
         Intent intent = new Intent(context, EditSkillActivity.class);
-        intent.putExtra(EXTRA_SKILL, skill);
+
+        if (skill != null) {
+            intent.putExtra(EXTRA_SKILL, skill);
+        }
 
         context.startActivity(intent);
     }
