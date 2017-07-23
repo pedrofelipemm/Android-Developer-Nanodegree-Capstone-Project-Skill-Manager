@@ -3,7 +3,6 @@ package study.pmoreira.skillmanager.ui.main;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.EditText;
@@ -12,9 +11,11 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import study.pmoreira.skillmanager.R;
 import study.pmoreira.skillmanager.data.DataFaker;
+import study.pmoreira.skillmanager.ui.BaseActivity;
+import study.pmoreira.skillmanager.ui.OnTextChanged;
 import study.pmoreira.skillmanager.ui.skill.EditSkillActivity;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
@@ -28,12 +29,16 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.search_edittext)
     EditText mSearchEditText;
 
+    private PagerAdapter mPagerAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         ButterKnife.bind(this);
+
+        mPagerAdapter = new PagerAdapter(this, getSupportFragmentManager());
 
         setupViews();
 
@@ -42,12 +47,31 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        //TODO:
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        //TODO
+    }
+
     private void setupViews() {
         findViewById(R.id.parent).requestFocus();
 
         setSupportActionBar(mToolbar);
 
-        mvViewPager.setAdapter(new PageAdapter(this, getSupportFragmentManager()));
+        mSearchEditText.addTextChangedListener(new OnTextChanged() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                mPagerAdapter.filter(s);
+            }
+        });
+
+        mvViewPager.setAdapter(mPagerAdapter);
         mTabLayout.setupWithViewPager(mvViewPager);
     }
 

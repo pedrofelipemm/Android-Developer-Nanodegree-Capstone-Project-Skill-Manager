@@ -7,6 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -18,14 +20,16 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import study.pmoreira.skillmanager.R;
 import study.pmoreira.skillmanager.model.Skill;
+import study.pmoreira.skillmanager.ui.AdapterFilter.OnFilter;
 
-
-class SkillAdapter extends RecyclerView.Adapter<SkillAdapter.ViewHolder> {
+class SkillAdapter extends RecyclerView.Adapter<SkillAdapter.ViewHolder> implements Filterable {
 
     private static final String INVALID_IMAGE = "-1";
 
     private Context mContext;
     private LayoutInflater mInflater;
+
+    private SkillAdapterFilter mSkillFilter;
 
     private ItemClickListener mItemClickListener;
 
@@ -90,4 +94,21 @@ class SkillAdapter extends RecyclerView.Adapter<SkillAdapter.ViewHolder> {
         return mSkills.size();
     }
 
+    @Override
+    public Filter getFilter() {
+        if (mSkillFilter == null) {
+            mSkillFilter = new SkillAdapterFilter(mSkills, new OnFilter<Skill>() {
+                @Override
+                public void publishResults(List<Skill> results) {
+                    mSkills = results;
+                    notifyDataSetChanged();
+                }
+            });
+        }
+        return mSkillFilter;
+    }
+
+    void filter(CharSequence constraint) {
+        getFilter().filter(constraint);
+    }
 }

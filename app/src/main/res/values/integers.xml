@@ -2,6 +2,8 @@
 <resources>
     <integer name="skill_description_max_length">200</integer>
     <integer name="skill_name_max_length">50</integer>
+
     <integer name="main_pager_adapter_count">2</integer>
+
     <integer name="main_skill_recycler_span_count">2</integer>
 </resources>

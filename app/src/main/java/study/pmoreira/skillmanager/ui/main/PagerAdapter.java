@@ -5,14 +5,18 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.view.ViewGroup;
 
 import study.pmoreira.skillmanager.R;
+import study.pmoreira.skillmanager.ui.SearchFilter;
 
-class PageAdapter extends FragmentPagerAdapter {
+class PagerAdapter extends FragmentPagerAdapter {
 
     private Context mContext;
 
-    PageAdapter(Context context, FragmentManager fm) {
+    private SearchFilter mSearchFilter;
+
+    PagerAdapter(Context context, FragmentManager fm) {
         super(fm);
         mContext = context;
     }
@@ -53,4 +57,18 @@ class PageAdapter extends FragmentPagerAdapter {
                 throw new IllegalArgumentException(mContext.getString(R.string.main_pager_invalid_position, position));
         }
     }
+
+    @Override
+    public void setPrimaryItem(ViewGroup container, int position, Object object) {
+        super.setPrimaryItem(container, position, object);
+        if (object instanceof  SearchFilter) {
+            mSearchFilter = (SearchFilter) object;
+        }
+    }
+
+    void filter(CharSequence constraint) {
+        if (mSearchFilter == null) return;
+        mSearchFilter.filter(constraint);
+    }
+
 }
