@@ -1,8 +1,8 @@
 package study.pmoreira.skillmanager.ui;
 
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -14,18 +14,20 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     public void displayMessage(String message) {
+        if (TextUtils.isEmpty(message)) return;
+
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
     public void displayProgressbar(ProgressBar progressBar) {
         progressBar.setVisibility(View.VISIBLE);
-        getWindow().setFlags(
-                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
     }
 
     public void hideProgressbar(ProgressBar progressBar) {
         progressBar.setVisibility(View.INVISIBLE);
-        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+    }
+
+    public boolean isLoading(ProgressBar progressBar) {
+        return progressBar.isShown();
     }
 }

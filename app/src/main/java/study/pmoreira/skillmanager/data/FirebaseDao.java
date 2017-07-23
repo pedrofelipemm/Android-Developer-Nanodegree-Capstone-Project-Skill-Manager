@@ -12,6 +12,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.google.firebase.storage.UploadTask.TaskSnapshot;
 
 import java.util.ArrayList;
@@ -23,10 +26,13 @@ import study.pmoreira.skillmanager.infrastructure.exception.BusinessException;
 
 class FirebaseDao {
 
+    private static final String TAG = FirebaseDao.class.getName();
+
+    private static final int OPERATION_CANCELLED = -1;
+
     private static FirebaseDatabase database;
 
-    private FirebaseDao() {
-    }
+    private FirebaseDao() {}
 
     static FirebaseDatabase getDatabase() {
         if (database == null) {
@@ -53,8 +59,8 @@ class FirebaseDao {
                 });
     }
 
-    static <T> void findAllListener(final Class<T> clazz, final String refPath, final OperationListener<List<T>>
-            listener) {
+    static <T> void findAllListener(final Class<T> clazz, final String refPath,
+                                    final OperationListener<List<T>> listener) {
         getDatabase().getReference(refPath)
                 .addValueEventListener(new ValueEventListener() {
                     @Override
@@ -93,24 +99,44 @@ class FirebaseDao {
         //TODO
     }
 
-    static void uploadImage(final Uri data, final String refPath, final OperationListener<String> listener) {
-        FirebaseStorage.getInstance().getReference(refPath)
-                .child(String.valueOf(new Date().getTime()))
-                .putFile(data)
-                .addOnSuccessListener(new OnSuccessListener<TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(TaskSnapshot taskSnapshot) {
-                        if (taskSnapshot.getDownloadUrl() != null) {
-                            listener.onSuccess(taskSnapshot.getDownloadUrl().toString());
-                        }
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        listener.onError(new BusinessException(e.getMessage(), e));
-                    }
-                });
+    static String uploadImage(Uri data, String refPath, OperationListener<String> listener) {
+        StorageReference ref = FirebaseStorage.getInstance()
+                .getReference(refPath)
+                .child(String.valueOf(new Date().getTime()));
+
+        addUploadListeners(ref.putFile(data), listener);
+
+        return ref.toString();
+    }
+
+    private static void addUploadListeners(final UploadTask task, final OperationListener<String> listener) {
+        task.addOnSuccessListener(new OnSuccessListener<TaskSnapshot>() {
+            @Override
+            public void onSuccess(TaskSnapshot taskSnapshot) {
+                Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                if (downloadUrl != null) {
+                    Log.d(TAG, downloadUrl.toString());
+                    listener.onSuccess(downloadUrl.toString());
+                }
+            }
+        }).addOnProgressListener(new OnProgressListener<TaskSnapshot>() {
+            @Override
+            public void onProgress(TaskSnapshot task) {
+                int progress = (int) ((100.0 * task.getBytesTransferred()) / task.getTotalByteCount());
+                Log.d(TAG, "Uploading.. " + progress + "%");
+                listener.onProgress(progress);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                if (task.isCanceled()) {
+                    listener.onError(new BusinessException(null, OPERATION_CANCELLED));
+                } else {
+                    Log.e(TAG, "onFailure: ", e);
+                    listener.onError(new BusinessException(e.getMessage(), e));
+                }
+            }
+        });
     }
 
     static void deleteImage(String url) {

@@ -24,7 +24,10 @@
     <string name="no_skills_available">No skills available</string>
     <string name="main_pager_title_skills">Skills</string>
     <string name="main_pager_title_collaborators">Collaborators</string>
+
     <string name="change">Change</string>
     <string name="skill_pic_optimal_size">Optimal size:\n 800 x 600</string>
+
+    <string name="wait_img_upload">Image being uploaded.\nWait a few seconds please.</string>
 
 </resources>

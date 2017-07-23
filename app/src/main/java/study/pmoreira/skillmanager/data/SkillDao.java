@@ -20,8 +20,8 @@ public class SkillDao {
         FirebaseDao.save(skill, SKILLS_PATH, listener);
     }
 
-    public void uploadImage(Uri data, final OperationListener<String> listener) {
-        FirebaseDao.uploadImage(data, SKILL_IMAGES_PATH, listener);
+    public String uploadImage(Uri data, final OperationListener<String> listener) {
+        return FirebaseDao.uploadImage(data, SKILL_IMAGES_PATH, listener);
     }
 
     public void deleteImage(String url) {

@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.text.InputFilter;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,10 +14,9 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
@@ -36,11 +34,10 @@ import static study.pmoreira.skillmanager.ui.skill.SkillActivity.STATE_SKILL;
 
 public class EditSkillActivity extends BaseActivity {
 
-    private static final String TAG = EditSkillActivity.class.getName();
-
     private static final int PICK_IMAGE_REQUEST = 1;
 
     private static final String STATE_IS_EDITING = "STATE_IS_EDITING";
+    private static final String STATE_IMG_REF = "STATE_IMG_REF";
 
     private SkillBusiness mSkillBusiness;
 
@@ -55,6 +52,8 @@ public class EditSkillActivity extends BaseActivity {
 
     @BindView(R.id.progressbar)
     ProgressBar mProgressBar;
+
+    private String mImgRef;
 
     private boolean mIsEditing;
 
@@ -79,21 +78,6 @@ public class EditSkillActivity extends BaseActivity {
             fillFields(skill);
             mIsEditing = true;
         }
-
-        FirebaseDatabase.getInstance().getReference("skills").orderByChild("name").equalTo("test")
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                            Skill skill = snapshot.getValue(Skill.class);
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
     }
 
     private void setupViews() {
@@ -102,11 +86,12 @@ public class EditSkillActivity extends BaseActivity {
         int skillDescriptionMaxLength = getInteger(R.integer.skill_description_max_length);
         mDescriptionEdiText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(skillDescriptionMaxLength)});
 
-        int skillNameMaxLength = getInteger(R.integer.skill_description_max_length);
+        int skillNameMaxLength = getInteger(R.integer.skill_name_max_length);
         mNameEdiText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(skillNameMaxLength)});
     }
 
     public void onClickChangeView(View view) {
+        if (isLoading(mProgressBar)) return;
         startActivityForResult(
                 new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI),
                 PICK_IMAGE_REQUEST);
@@ -117,6 +102,10 @@ public class EditSkillActivity extends BaseActivity {
         super.onSaveInstanceState(outState);
         outState.putParcelable(STATE_SKILL, newSkill());
         outState.putBoolean(STATE_IS_EDITING, mIsEditing);
+
+        if (mImgRef != null) {
+            cancelUpload();
+        }
     }
 
     @Override
@@ -124,6 +113,7 @@ public class EditSkillActivity extends BaseActivity {
         super.onRestoreInstanceState(savedInstanceState);
         fillFields((Skill) savedInstanceState.getParcelable(STATE_SKILL));
         mIsEditing = savedInstanceState.getBoolean(STATE_IS_EDITING);
+        mImgRef = savedInstanceState.getString(STATE_IMG_REF);
     }
 
     private void fillFields(Skill skill) {
@@ -140,7 +130,7 @@ public class EditSkillActivity extends BaseActivity {
 
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
             displayProgressbar(mProgressBar);
-            mSkillBusiness.uploadImage(data.getData(), new OnPictureUpload());
+            mImgRef = mSkillBusiness.uploadImage(data.getData(), new OnPictureUpload());
         }
     }
 
@@ -161,6 +151,10 @@ public class EditSkillActivity extends BaseActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case android.R.id.home:
+                cancelUpload();
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
             case R.id.menu_save:
                 save();
                 return true;
@@ -175,8 +169,16 @@ public class EditSkillActivity extends BaseActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        //TODO: mPhotoUrl != null delete
-        //TODO: mPhotoUrl == null cancel
+        cancelUpload();
+    }
+
+    private void cancelUpload() {
+        if (TextUtils.isEmpty(mImgRef)) return;
+
+        StorageReference imgRef = FirebaseStorage.getInstance().getReferenceFromUrl(mImgRef);
+        for (UploadTask task : imgRef.getActiveUploadTasks()) {
+            task.cancel();
+        }
     }
 
     public static void startActivity(Context context) {
@@ -194,6 +196,10 @@ public class EditSkillActivity extends BaseActivity {
     }
 
     private void save() {
+        if (isLoading(mProgressBar)) {
+            Toast.makeText(this, getString(R.string.wait_img_upload), Toast.LENGTH_SHORT).show();
+            return;
+        }
         mSkillBusiness.save(newSkill(), new OnSkillSave());
     }
 
@@ -235,8 +241,7 @@ public class EditSkillActivity extends BaseActivity {
 
         @Override
         public void onError(BusinessException e) {
-            Log.e(TAG, "onError: ", e);
-            displayMessage(getString(R.string.error_image_upload));
+            displayMessage(e.getMessage());
             hideProgressbar(mProgressBar);
         }
     }
