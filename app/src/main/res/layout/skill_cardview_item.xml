@@ -34,9 +34,6 @@
             android:layout_height="@dimen/cardviewSkillPicHeight"
             android:contentDescription="@string/skill_image_content_description"
             android:scaleType="centerCrop"
-            tools:background="@color/colorAccent"
-            tools:layout_height="200dp"
-            tools:layout_width="match_parent"
             tools:src="@color/colorPrimary"/>
 
     </LinearLayout>

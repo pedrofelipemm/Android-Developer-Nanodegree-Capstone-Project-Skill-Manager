@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        tools:listitem="@layout/main_skill_cardview_item"/>
+        tools:listitem="@layout/skill_cardview_item"/>
 
     <TextView
         android:id="@+id/emptyview"

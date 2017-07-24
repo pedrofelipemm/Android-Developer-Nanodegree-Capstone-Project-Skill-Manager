@@ -22,7 +22,7 @@
             <ImageView
                 android:id="@+id/skill_imageview"
                 android:layout_width="0dp"
-                android:layout_height="200dp"
+                android:layout_height="@dimen/skillEditImageHeight"
                 android:layout_margin="@dimen/default_margin"
                 android:layout_weight="1"
                 android:contentDescription="@string/skill_image_content_description"

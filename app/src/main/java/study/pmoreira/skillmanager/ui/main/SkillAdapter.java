@@ -68,7 +68,7 @@ class SkillAdapter extends RecyclerView.Adapter<SkillAdapter.ViewHolder> impleme
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new ViewHolder(mInflater.inflate(R.layout.main_skill_cardview_item, parent, false));
+        return new ViewHolder(mInflater.inflate(R.layout.skill_cardview_item, parent, false));
     }
 
     @Override
