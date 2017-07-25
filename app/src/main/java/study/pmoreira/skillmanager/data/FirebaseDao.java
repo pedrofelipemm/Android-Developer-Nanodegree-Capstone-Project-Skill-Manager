@@ -23,6 +23,7 @@ import java.util.List;
 
 import study.pmoreira.skillmanager.infrastructure.OperationListener;
 import study.pmoreira.skillmanager.infrastructure.exception.BusinessException;
+import study.pmoreira.skillmanager.model.Model;
 
 class FirebaseDao {
 
@@ -62,24 +63,36 @@ class FirebaseDao {
     static <T> void findAllListener(final Class<T> clazz, final String refPath,
                                     final OperationListener<List<T>> listener) {
         getDatabase().getReference(refPath)
-                .addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        List<T> results = new ArrayList<>();
-                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                            results.add(snapshot.getValue(clazz));
-                        }
-                        Log.d("PEDRO", String.valueOf(results.size()));
-                        listener.onSuccess(results);
-                    }
+                .addValueEventListener(
+                        //todo OnDataChange Class
+                        new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                List<T> results = new ArrayList<>();
+                                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                    results.add(snapshot.getValue(clazz));
+                                }
+                                listener.onSuccess(results);
+                            }
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {}
-                });
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {}
+                        });
     }
 
-    static <T> void save(final T model, final String refPath, final OperationListener<T> listener) {
-        DatabaseReference dbRef = getDatabase().getReference(refPath).push();
+    static <T> void save(final Model model, final String refPath, final OperationListener<T> listener) {
+        DatabaseReference dbRef;
+
+        //TODO saveOrUpdate
+        if (model.isNew()) {
+            dbRef = getDatabase().getReference(refPath).push();
+            model.setId(dbRef.getKey());
+            dbRef.setValue(model);
+        } else {
+            dbRef = getDatabase().getReference(refPath).child(model.getId());
+            dbRef.setValue(model);
+        }
+
         dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -91,12 +104,33 @@ class FirebaseDao {
                 listener.onError(new BusinessException(error.getMessage(), error.getCode()));
             }
         });
-
-        dbRef.setValue(model);
     }
 
-    static void delete() {
+    static <T> void update(final Model model, final String refPath, final OperationListener<T> listener) {
+
+//        dbRef.removeValue(
+//                new CompletionListener() {
+//                    @Override
+//                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+//                        Log.d(TAG, "onComplete: ");
+//
+//                    }
+//                }
+//        );
+
+
+    }
+
+    static void delete(final String refPath, OperationListener listener) {
         //TODO
+//        getDatabase().getReference(refPath).child(model.getId()).removeValue(
+//                new CompletionListener() {
+//                    @Override
+//                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+//                        Log.d(TAG, "onComplete: ");
+//                    }
+//                }
+//        );
     }
 
     static String uploadImage(Uri data, String refPath, OperationListener<String> listener) {
@@ -105,6 +139,16 @@ class FirebaseDao {
                 .child(String.valueOf(new Date().getTime()));
 
         addUploadListeners(ref.putFile(data), listener);
+
+        return ref.toString();
+    }
+
+    static String uploadImage(byte[] data, String refPath, OperationListener<String> listener) {
+        StorageReference ref = FirebaseStorage.getInstance()
+                .getReference(refPath)
+                .child(String.valueOf(new Date().getTime()));
+
+        addUploadListeners(ref.putBytes(data), listener);
 
         return ref.toString();
     }
@@ -138,6 +182,17 @@ class FirebaseDao {
             }
         });
     }
+
+//    static void addUploadListeners(String uploadRef, final OperationListener<String> listener) {
+//        List<UploadTask> tasks = FirebaseStorage.getInstance()
+//                .getReferenceFromUrl(uploadRef)
+//                .getActiveUploadTasks();
+//
+//        if (tasks.size() > 0) {
+//            addUploadListeners(tasks.get(0), listener);
+//        }
+//
+//    }
 
     static void deleteImage(String url) {
         FirebaseStorage.getInstance().getReferenceFromUrl(url).delete();

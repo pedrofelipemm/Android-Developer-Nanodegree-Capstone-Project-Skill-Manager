@@ -196,23 +196,37 @@ public class EditSkillActivity extends BaseActivity {
     }
 
     private void save() {
+        //TODO: edit / update
         if (isLoading(mProgressBar)) {
             Toast.makeText(this, getString(R.string.wait_img_upload), Toast.LENGTH_SHORT).show();
             return;
         }
+
+//        if (mIsEditing) {
+//            String name = ((Skill) getIntent().getParcelableExtra(EXTRA_SKILL)).getName();
+//            mSkillBusiness.update(name, newSkill(), new OnSkillSave());
+//        } else {
         mSkillBusiness.save(newSkill(), new OnSkillSave());
+//        }
     }
 
     private void delete() {
+        //TODO: dialog on discard changes
         mSkillBusiness.delete(newSkill());
     }
 
     private Skill newSkill() {
-        return new Skill(
+        Skill skill = new Skill(
                 mNameEdiText.getText().toString(),
                 mDescriptionEdiText.getText().toString(),
                 mLearnMoreEditText.getText().toString(),
                 mPhotoUrl);
+
+        if (getIntent().hasExtra(EXTRA_SKILL)) {
+            skill.setId(((Skill) getIntent().getParcelableExtra(EXTRA_SKILL)).getId());
+        }
+
+        return skill;
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -250,7 +264,11 @@ public class EditSkillActivity extends BaseActivity {
         @Override
         public void onSuccess(Skill skill) {
             displayMessage(getString(R.string.skill_successfully_saved));
-            SkillActivity.startActivity(EditSkillActivity.this, skill);
+//            if (mIsEditing) {
+                SkillActivity.startActivity(EditSkillActivity.this, skill, Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//            } else {
+//                SkillActivity.startActivity(EditSkillActivity.this, skill);
+//            }
             finish();
         }
 

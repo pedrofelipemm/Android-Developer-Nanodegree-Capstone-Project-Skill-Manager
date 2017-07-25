@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.CardView;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
@@ -20,6 +21,8 @@ import study.pmoreira.skillmanager.model.Skill;
 import study.pmoreira.skillmanager.ui.BaseActivity;
 
 public class SkillActivity extends BaseActivity {
+
+    private static final String TAG = SkillActivity.class.getName();
 
     public static final String STATE_SKILL = "STATE_SKILL";
     public static final String EXTRA_SKILL = "EXTRA_SKILL";
@@ -65,6 +68,9 @@ public class SkillActivity extends BaseActivity {
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(skill.getLearnMoreUrl()));
                 if (intent.resolveActivity(getPackageManager()) != null) {
                     startActivity(intent);
+                } else {
+                    //TODO extract string
+                    Log.e(TAG, "Unable to handle ACTION_VIEW: " + skill.getLearnMoreUrl());
                 }
             }
         });
@@ -77,11 +83,15 @@ public class SkillActivity extends BaseActivity {
         });
     }
 
-    public static void startActivity(Context context, Skill skill) {
+    public static void startActivity(Context context, Skill skill, int... flags) {
         Intent intent = new Intent(context, SkillActivity.class);
 
         if (skill != null) {
             intent.putExtra(EXTRA_SKILL, skill);
+        }
+
+        for (int flag : flags) {
+            intent.addFlags(flag);
         }
 
         context.startActivity(intent);

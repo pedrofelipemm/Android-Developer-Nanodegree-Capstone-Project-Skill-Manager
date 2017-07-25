@@ -3,7 +3,7 @@ package study.pmoreira.skillmanager.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class Skill implements Parcelable {
+public class Skill extends Model implements Parcelable {
 
     private String name;
     private String description;
@@ -22,6 +22,7 @@ public class Skill implements Parcelable {
     }
 
     private Skill(Parcel in) {
+        setId(in.readString());
         name = in.readString();
         description = in.readString();
         learnMoreUrl = in.readString();
@@ -51,6 +52,7 @@ public class Skill implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(getId());
         dest.writeString(name);
         dest.writeString(description);
         dest.writeString(learnMoreUrl);
