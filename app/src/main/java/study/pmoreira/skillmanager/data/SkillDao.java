@@ -1,6 +1,12 @@
 package study.pmoreira.skillmanager.data;
 
 import android.net.Uri;
+import android.util.Log;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.List;
 
@@ -9,8 +15,8 @@ import study.pmoreira.skillmanager.model.Skill;
 
 public class SkillDao {
 
-    private static final String SKILLS_PATH = "skills";
-    private static final String SKILL_IMAGES_PATH = "skillImages";
+    static final String SKILLS_PATH = "skills";
+    static final String SKILL_IMAGES_PATH = "skillImages";
 
     public void findAll(final OperationListener<List<Skill>> listener) {
         FirebaseDao.findAllListener(Skill.class, SKILLS_PATH, listener);
