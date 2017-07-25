@@ -4,8 +4,11 @@ import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+
+import java.io.UnsupportedEncodingException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -16,6 +19,8 @@ import study.pmoreira.skillmanager.ui.OnTextChanged;
 import study.pmoreira.skillmanager.ui.skill.EditSkillActivity;
 
 public class MainActivity extends BaseActivity {
+
+    private static final String TAG = MainActivity.class.getName();
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
@@ -42,8 +47,16 @@ public class MainActivity extends BaseActivity {
 
         setupViews();
 
+        insertFakeData();
+    }
+
+    private void insertFakeData() {
         if (getResources().getBoolean(R.bool.insert_fake_data)) {
-            DataFaker.insertFakeData(this);
+            try {
+                DataFaker.insertFakeData(this);
+            } catch (UnsupportedEncodingException e) {
+                Log.d(TAG, "onCreate: " + e);
+            }
         }
     }
 

@@ -12,6 +12,7 @@ import com.google.firebase.storage.UploadTask.TaskSnapshot;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,28 +28,46 @@ public class DataFaker {
 
     private static final String TAG = DataFaker.class.getName();
 
-    public static void insertFakeData(Context context) {
+    public static void insertFakeData(Context context) throws UnsupportedEncodingException {
 
-        final DatabaseReference skillsRef = getDatabase().getReference("skills");
+        final DatabaseReference skillsRef = getDatabase().getReference(SkillDao.SKILLS_PATH);
         skillsRef.removeValue();
 
         final Map<String, Skill> skills = getSkills();
+        Map<String, byte[]> images = getBytesFromAssets(context);
 
-        for (final Entry<String, byte[]> img : getBytesFromAssets(context).entrySet()) {
+        for (final Entry<String, byte[]> img : images.entrySet()) {
             Log.d(TAG, "Upload started: " + img.getKey());
-            uploadImage(img.getValue(), "skillImages", img.getKey(), new OperationListener<String>() {
-                @Override
-                public void onSuccess(String picUrl) {
-                    try {
-                        Skill skill = skills.get(img.getKey());
-                        setField(skill, "pictureUrl", picUrl);
-                        skillsRef.push().setValue(skill);
-                        Log.d(TAG, "Upload complete: " + img.getKey());
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
+
+            FirebaseDao.uploadImage(img.getValue(), SkillDao.SKILL_IMAGES_PATH,
+                    new OperationListener<String>() {
+                        @Override
+                        public void onSuccess(String picUrl) {
+                            try {
+                                Skill skill = skills.get(img.getKey());
+                                setField(skill, "pictureUrl", picUrl);
+                                FirebaseDao.save(skill, SkillDao.SKILLS_PATH, new OperationListener<Object>());
+                                Log.d(TAG, "Upload complete: " + img.getKey());
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+
+//            uploadImage(img.getValue(), "skillImages", img.getKey(),
+//                    new OperationListener<String>() {
+//                        @Override
+//                        public void onSuccess(String picUrl) {
+//                            try {
+//                                Skill skill = skills.get(img.getKey());
+//                                setField(skill, "pictureUrl", picUrl);
+//                                skillsRef.push().setValue(skill);
+//                                Log.d(TAG, "Upload complete: " + img.getKey());
+//                            } catch (Exception e) {
+//                                e.printStackTrace();
+//                            }
+//                        }
+//                    });
         }
     }
 
