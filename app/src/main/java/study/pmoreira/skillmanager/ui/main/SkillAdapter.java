@@ -109,6 +109,6 @@ class SkillAdapter extends RecyclerView.Adapter<SkillAdapter.ViewHolder> impleme
     }
 
     void filter(CharSequence constraint) {
-        getFilter().filter(constraint);
+        getFilter().filter(TextUtils.isEmpty(constraint) ? "" : String.valueOf(constraint).trim());
     }
 }
