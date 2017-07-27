@@ -10,8 +10,15 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.UploadTask.TaskSnapshot;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -28,13 +35,15 @@ public class DataFaker {
 
     private static final String TAG = DataFaker.class.getName();
 
-    public static void insertFakeData(Context context) throws UnsupportedEncodingException {
+    private static final String FOLDER_FAKE_DATA = "fakeData";
+
+    public static void insertFakeData(Context context) throws UnsupportedEncodingException, JSONException {
 
         final DatabaseReference skillsRef = getDatabase().getReference(SkillDao.SKILLS_PATH);
         skillsRef.removeValue();
 
-        final Map<String, Skill> skills = getSkills();
-        Map<String, byte[]> images = getBytesFromAssets(context);
+        final Map<String, Skill> skills = getSkills(context);
+        final Map<String, byte[]> images = getBytesFromAssets(context);
 
         for (final Entry<String, byte[]> img : images.entrySet()) {
             Log.d(TAG, "Upload started: " + img.getKey());
@@ -53,59 +62,23 @@ public class DataFaker {
                             }
                         }
                     });
-
-//            uploadImage(img.getValue(), "skillImages", img.getKey(),
-//                    new OperationListener<String>() {
-//                        @Override
-//                        public void onSuccess(String picUrl) {
-//                            try {
-//                                Skill skill = skills.get(img.getKey());
-//                                setField(skill, "pictureUrl", picUrl);
-//                                skillsRef.push().setValue(skill);
-//                                Log.d(TAG, "Upload complete: " + img.getKey());
-//                            } catch (Exception e) {
-//                                e.printStackTrace();
-//                            }
-//                        }
-//                    });
         }
     }
 
-    //TODO; move to assets
-    private static Map<String, Skill> getSkills() {
+    private static Map<String, Skill> getSkills(Context context) throws JSONException {
         Map<String, Skill> result = new HashMap<>();
 
-        result.put("Android", new Skill(
-                "Android",
-                "Android is a mobile operating system developed by Google, based on the Linux kernel and designed " +
-                        "primarily for touchscreen mobile devices such as smartphones and tablets.",
-                "https://en.wikipedia.org/wiki/Android_(operating_system)",
-                ""
-        ));
-
-        result.put("Java", new Skill(
-                "Java",
-                "Java is a general-purpose computer programming language that is concurrent, class-based, " +
-                        "object-oriented, and specifically designed to have as few implementation dependencies as " +
-                        "possible.",
-                "https://en.wikipedia.org/wiki/Java_(programming_language)",
-                ""
-        ));
-
-        result.put("Ruby", new Skill(
-                "Ruby",
-                "Ruby is a dynamic, reflective, object-oriented, general-purpose programming language.",
-                "https://en.wikipedia.org/wiki/Ruby_(programming_language)",
-                ""
-        ));
-
-        result.put("Python", new Skill(
-                "Python",
-                "Python is a widely used high-level programming language for general-purpose programming, created by " +
-                        "Guido van Rossum and first released in 1991.",
-                "https://en.wikipedia.org/wiki/Python_(programming_language)",
-                ""
-        ));
+        String skillsJson = getJsonFromAssets(context, "skills.json");
+        JSONArray skills = new JSONObject(skillsJson).getJSONArray("skills");
+        for (int i = 0; i < skills.length(); i++) {
+            JSONObject skillJson = skills.getJSONObject(i);
+            result.put(skillJson.getString("name"), new Skill(
+                    skillJson.getString("name"),
+                    skillJson.getString("description"),
+                    skillJson.getString("learnMoreUrl"),
+                    ""
+            ));
+        }
 
         return result;
     }
@@ -135,10 +108,11 @@ public class DataFaker {
     @SuppressWarnings("ResultOfMethodCallIgnored")
     private static Map<String, byte[]> getBytesFromAssets(Context context) {
         Map<String, byte[]> results = new HashMap<>();
-
         try {
             for (String image : context.getAssets().list("fakeData")) {
-                try (InputStream is = context.getAssets().open("fakeData/" + image)) {
+                if (image.lastIndexOf(".png") == -1) continue;
+
+                try (InputStream is = context.getAssets().open(FOLDER_FAKE_DATA + File.separator + image)) {
                     byte[] imageBytes = new byte[is.available()];
                     is.read(imageBytes);
                     results.put(image.substring(0, image.indexOf(".png")), imageBytes);
@@ -147,10 +121,27 @@ public class DataFaker {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "getBytesFromAssets: ", e);
         }
 
         return results;
+    }
+
+    private static String getJsonFromAssets(Context context, String fileName) {
+        StringBuilder builder = new StringBuilder();
+
+        try (InputStream in = context.getAssets().open(FOLDER_FAKE_DATA + File.separator + fileName)) {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+
+            String line;
+            while ((line = reader.readLine()) != null) {
+                builder.append(line);
+            }
+        } catch (IOException e) {
+            Log.e(TAG, "getJsonFromAssets: ", e);
+        }
+
+        return builder.toString();
     }
 
     private static <T> void setField(T o, String fieldName, String val)

@@ -30,4 +30,12 @@
 
     <string name="wait_img_upload">Image being uploaded.\nWait a few seconds please.</string>
 
+    <string name="attention">Atention!</string>
+    <string name="yes_caps">YES</string>
+    <string name="no_caps">NO</string>
+
+    <string name="do_you_want_to_delete">Do you want to delete <xliff:g id="string">%s</xliff:g></string>
+
+    <string name="error_deleting">Erro while deleting <xliff:g id="string">%s</xliff:g></string>
+
 </resources>

@@ -1,0 +1,24 @@
+{
+  "skills": [
+    {
+      "name": "Android",
+      "description": "Android is a mobile operating system developed by Google, based on the Linux kernel and designed primarily for touchscreen mobile devices such as smartphones and tablets.",
+      "learnMoreUrl": "https://en.wikipedia.org/wiki/Android_(operating_system)"
+    },
+    {
+      "name": "Java",
+      "description": "Java is a general-purpose computer programming language that is concurrent, class-based, object-oriented, and specifically designed to have as few implementation dependencies as possible.",
+      "learnMoreUrl": "https://en.wikipedia.org/wiki/Java_(programming_language)"
+    },
+    {
+      "name": "Ruby",
+      "description": "Ruby is a dynamic, reflective, object-oriented, general-purpose programming language.",
+      "learnMoreUrl": "https://en.wikipedia.org/wiki/Ruby_(programming_language)"
+    },
+    {
+      "name": "Python",
+      "description": "Python is a widely used high-level programming language for general-purpose programming, created by Guido van Rossum and first released in 1991.",
+      "learnMoreUrl": "https://en.wikipedia.org/wiki/Python_(programming_language)"
+    }
+  ]
+}
