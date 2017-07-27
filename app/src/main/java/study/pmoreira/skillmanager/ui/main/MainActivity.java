@@ -91,4 +91,11 @@ public class MainActivity extends BaseActivity {
     public void onClickFab(View view) {
         EditSkillActivity.startActivity(this);
     }
+
+    public static void startActivity(Context context) {
+        Intent intent = new Intent(context, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+        context.startActivity(intent);
+    }
 }

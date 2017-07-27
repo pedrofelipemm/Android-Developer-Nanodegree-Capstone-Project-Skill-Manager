@@ -1,9 +1,11 @@
 package study.pmoreira.skillmanager.ui.skill;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
+import android.support.v7.app.AlertDialog;
 import android.text.InputFilter;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -28,6 +30,7 @@ import study.pmoreira.skillmanager.infrastructure.exception.BusinessException;
 import study.pmoreira.skillmanager.infrastructure.exception.ValidateException;
 import study.pmoreira.skillmanager.model.Skill;
 import study.pmoreira.skillmanager.ui.BaseActivity;
+import study.pmoreira.skillmanager.ui.main.MainActivity;
 
 import static study.pmoreira.skillmanager.ui.skill.SkillActivity.EXTRA_SKILL;
 import static study.pmoreira.skillmanager.ui.skill.SkillActivity.STATE_SKILL;
@@ -202,17 +205,23 @@ public class EditSkillActivity extends BaseActivity {
             return;
         }
 
-//        if (mIsEditing) {
-//            String name = ((Skill) getIntent().getParcelableExtra(EXTRA_SKILL)).getName();
-//            mSkillBusiness.update(name, newSkill(), new OnSkillSave());
-//        } else {
         mSkillBusiness.save(newSkill(), new OnSkillSave());
-//        }
     }
 
     private void delete() {
-        //TODO: dialog on discard changes
-        mSkillBusiness.delete(newSkill());
+        new AlertDialog.Builder(this)
+                .setTitle(getString(R.string.attention))
+                .setMessage(getString(R.string.do_you_want_to_delete, mNameEdiText.getText()))
+                .setPositiveButton(R.string.yes_caps,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                mSkillBusiness.delete(getSkillId(), new OnSkillDelete());
+                            }
+                        })
+                .setNegativeButton(R.string.no_caps, null)
+                .create()
+                .show();
     }
 
     private Skill newSkill() {
@@ -222,11 +231,17 @@ public class EditSkillActivity extends BaseActivity {
                 mLearnMoreEditText.getText().toString(),
                 mPhotoUrl);
 
-        if (getIntent().hasExtra(EXTRA_SKILL)) {
-            skill.setId(((Skill) getIntent().getParcelableExtra(EXTRA_SKILL)).getId());
-        }
+        skill.setId(getSkillId());
 
         return skill;
+    }
+
+    String getSkillId() {
+        String skillId = null;
+        if (getIntent().hasExtra(EXTRA_SKILL)) {
+            skillId = ((Skill) getIntent().getParcelableExtra(EXTRA_SKILL)).getId();
+        }
+        return skillId;
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -264,11 +279,7 @@ public class EditSkillActivity extends BaseActivity {
         @Override
         public void onSuccess(Skill skill) {
             displayMessage(getString(R.string.skill_successfully_saved));
-//            if (mIsEditing) {
-                SkillActivity.startActivity(EditSkillActivity.this, skill, Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//            } else {
-//                SkillActivity.startActivity(EditSkillActivity.this, skill);
-//            }
+            SkillActivity.startActivity(EditSkillActivity.this, skill, Intent.FLAG_ACTIVITY_CLEAR_TOP);
             finish();
         }
 
@@ -286,6 +297,19 @@ public class EditSkillActivity extends BaseActivity {
             if (SkillBusiness.INVALID_SKILL_PICTURE_URL == e.getCode()) {
                 displayMessage(getString(e.getResId()));
             }
+        }
+    }
+
+    private class OnSkillDelete extends OperationListener<String> {
+        @Override
+        public void onSuccess(String result) {
+            MainActivity.startActivity(EditSkillActivity.this);
+        }
+
+        @Override
+        public void onError(BusinessException e) {
+            Toast.makeText(EditSkillActivity.this,
+                    getString(R.string.error_deleting, mNameEdiText.getText()), Toast.LENGTH_SHORT).show();
         }
     }
 }

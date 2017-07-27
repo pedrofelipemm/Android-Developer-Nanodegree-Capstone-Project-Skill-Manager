@@ -9,6 +9,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.DatabaseReference.CompletionListener;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
@@ -106,31 +107,17 @@ class FirebaseDao {
         });
     }
 
-    static <T> void update(final Model model, final String refPath, final OperationListener<T> listener) {
-
-//        dbRef.removeValue(
-//                new CompletionListener() {
-//                    @Override
-//                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-//                        Log.d(TAG, "onComplete: ");
-//
-//                    }
-//                }
-//        );
-
-
-    }
-
-    static void delete(final String refPath, OperationListener listener) {
-        //TODO
-//        getDatabase().getReference(refPath).child(model.getId()).removeValue(
-//                new CompletionListener() {
-//                    @Override
-//                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-//                        Log.d(TAG, "onComplete: ");
-//                    }
-//                }
-//        );
+    static void delete(final String id, final String refPath, final OperationListener<String> listener) {
+        getDatabase().getReference(refPath).child(id).removeValue(new CompletionListener() {
+            @Override
+            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                if (databaseError != null) {
+                    listener.onError(new BusinessException(databaseError.getMessage(), databaseError.getCode()));
+                } else {
+                    listener.onSuccess(databaseReference.getKey());
+                }
+            }
+        });
     }
 
     static String uploadImage(Uri data, String refPath, OperationListener<String> listener) {

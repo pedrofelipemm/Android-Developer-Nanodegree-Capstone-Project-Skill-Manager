@@ -1,12 +1,6 @@
 package study.pmoreira.skillmanager.data;
 
 import android.net.Uri;
-import android.util.Log;
-
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.List;
 
@@ -24,6 +18,10 @@ public class SkillDao {
 
     public void save(Skill skill, OperationListener<Skill> listener) {
         FirebaseDao.save(skill, SKILLS_PATH, listener);
+    }
+
+    public void delete(String id, OperationListener<String> listener) {
+        FirebaseDao.delete(id, SKILLS_PATH, listener);
     }
 
     public String uploadImage(Uri data, final OperationListener<String> listener) {

@@ -30,9 +30,8 @@ public class SkillBusiness {
         }
     }
 
-    public void delete(Skill skill) {
-        mSkillDao.deleteImage(skill.getPictureUrl());
-//        mSkillDao.delete();
+    public void delete(String id, OperationListener<String> listener) {
+        mSkillDao.delete(id, listener);
     }
 
     public String uploadImage(Uri data, final OperationListener<String> listener) {
