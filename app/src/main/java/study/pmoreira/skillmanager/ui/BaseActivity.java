@@ -8,7 +8,6 @@ import android.view.WindowManager;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-
 public abstract class BaseActivity extends AppCompatActivity {
 
     @Override

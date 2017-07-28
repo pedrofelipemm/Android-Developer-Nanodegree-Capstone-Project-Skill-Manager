@@ -2,7 +2,7 @@ package study.pmoreira.skillmanager.infrastructure.exception;
 
 public class BusinessException extends Exception {
 
-    private static final int INVALOD_CODE = -1;
+    private static final int INVALID_CODE = -1;
 
     private final int code;
 
@@ -12,7 +12,7 @@ public class BusinessException extends Exception {
 
     public BusinessException(String message, Exception e) {
         super(message, e);
-        code = INVALOD_CODE;
+        code = INVALID_CODE;
     }
 
     public BusinessException(String message, int code) {

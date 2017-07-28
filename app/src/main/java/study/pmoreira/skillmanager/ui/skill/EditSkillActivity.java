@@ -8,6 +8,7 @@ import android.support.v4.app.NavUtils;
 import android.support.v7.app.AlertDialog;
 import android.text.InputFilter;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -31,13 +32,16 @@ import study.pmoreira.skillmanager.infrastructure.exception.ValidateException;
 import study.pmoreira.skillmanager.model.Skill;
 import study.pmoreira.skillmanager.ui.BaseActivity;
 import study.pmoreira.skillmanager.ui.main.MainActivity;
+import study.pmoreira.skillmanager.utils.FileUtils;
 
 import static study.pmoreira.skillmanager.ui.skill.SkillActivity.EXTRA_SKILL;
 import static study.pmoreira.skillmanager.ui.skill.SkillActivity.STATE_SKILL;
 
 public class EditSkillActivity extends BaseActivity {
 
-    private static final int PICK_IMAGE_REQUEST = 1;
+    private static final String TAG = EditSkillActivity.class.getName();
+
+    private static final int PICK_IMG_REQUEST = 1;
 
     private static final String STATE_IS_EDITING = "STATE_IS_EDITING";
     private static final String STATE_IMG_REF = "STATE_IMG_REF";
@@ -97,7 +101,7 @@ public class EditSkillActivity extends BaseActivity {
         if (isLoading(mProgressBar)) return;
         startActivityForResult(
                 new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI),
-                PICK_IMAGE_REQUEST);
+                PICK_IMG_REQUEST);
     }
 
     @Override
@@ -128,12 +132,18 @@ public class EditSkillActivity extends BaseActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
 
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
+        if (requestCode == PICK_IMG_REQUEST && resultCode == RESULT_OK && intent != null && intent.getData() != null) {
             displayProgressbar(mProgressBar);
-            mImgRef = mSkillBusiness.uploadImage(data.getData(), new OnPictureUpload());
+            try {
+                byte[] imgBytes = FileUtils.getBytes(getContentResolver().openInputStream(intent.getData()));
+                mImgRef = mSkillBusiness.uploadImage(imgBytes, new OnPictureUpload());
+            } catch (Exception e) {
+                Log.d(TAG, "onActivityResult: ", e);
+                displayMessage(getString(R.string.error_image_upload));
+            }
         }
     }
 
@@ -199,7 +209,6 @@ public class EditSkillActivity extends BaseActivity {
     }
 
     private void save() {
-        //TODO: edit / update
         if (isLoading(mProgressBar)) {
             Toast.makeText(this, getString(R.string.wait_img_upload), Toast.LENGTH_SHORT).show();
             return;
@@ -286,16 +295,16 @@ public class EditSkillActivity extends BaseActivity {
         @Override
         public void onValidationError(ValidateException e) {
             if (SkillBusiness.INVALID_SKILL_NAME == e.getCode()) {
-                mNameEdiText.setError(getString(e.getResId()));
+                mNameEdiText.setError(getString(R.string.name_cannot_be_empty));
             }
             if (SkillBusiness.INVALID_SKILL_DESCRIPTION == e.getCode()) {
-                mDescriptionEdiText.setError(getString(e.getResId()));
+                mDescriptionEdiText.setError(getString(R.string.description_cannot_be_empty));
             }
             if (SkillBusiness.INVALID_SKILL_LEARN_MORE_URL == e.getCode()) {
-                mLearnMoreEditText.setError(getString(e.getResId()));
+                mLearnMoreEditText.setError(getString(R.string.learn_more_cannot_be_empty));
             }
             if (SkillBusiness.INVALID_SKILL_PICTURE_URL == e.getCode()) {
-                displayMessage(getString(e.getResId()));
+                displayMessage(getString(R.string.picture_cannot_be_empty));
             }
         }
     }
@@ -303,6 +312,7 @@ public class EditSkillActivity extends BaseActivity {
     private class OnSkillDelete extends OperationListener<String> {
         @Override
         public void onSuccess(String result) {
+            displayMessage(getString(R.string.succesful_deleted));
             MainActivity.startActivity(EditSkillActivity.this);
         }
 

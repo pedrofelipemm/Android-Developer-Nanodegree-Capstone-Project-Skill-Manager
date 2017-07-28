@@ -1,16 +1,15 @@
 package study.pmoreira.skillmanager.business;
 
-import android.net.Uri;
-import android.text.TextUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 
-import study.pmoreira.skillmanager.R;
 import study.pmoreira.skillmanager.data.SkillDao;
 import study.pmoreira.skillmanager.infrastructure.OperationListener;
 import study.pmoreira.skillmanager.infrastructure.exception.ValidateException;
 import study.pmoreira.skillmanager.model.Skill;
 
+//TODO: make it static ?
 public class SkillBusiness {
 
     public static final int INVALID_SKILL_NAME = 1;
@@ -34,7 +33,7 @@ public class SkillBusiness {
         mSkillDao.delete(id, listener);
     }
 
-    public String uploadImage(Uri data, final OperationListener<String> listener) {
+    public String uploadImage(byte[] data, final OperationListener<String> listener) {
         return mSkillDao.uploadImage(data, listener);
     }
 
@@ -45,20 +44,20 @@ public class SkillBusiness {
     private boolean isValid(Skill skill, OperationListener<Skill> listener) {
         boolean isValid = true;
 
-        if (TextUtils.isEmpty(skill.getName())) {
-            listener.onValidationError(new ValidateException(R.string.name_cannot_be_empty, INVALID_SKILL_NAME));
+        if (StringUtils.isBlank(skill.getName())) {
+            listener.onValidationError(new ValidateException(INVALID_SKILL_NAME));
             isValid = false;
         }
-        if (TextUtils.isEmpty(skill.getDescription())) {
-            listener.onValidationError(new ValidateException(R.string.description_cannot_be_empty, INVALID_SKILL_DESCRIPTION));
+        if (StringUtils.isBlank(skill.getDescription())) {
+            listener.onValidationError(new ValidateException(INVALID_SKILL_DESCRIPTION));
             isValid = false;
         }
-        if (TextUtils.isEmpty(skill.getLearnMoreUrl())) {
-            listener.onValidationError(new ValidateException(R.string.learn_more_cannot_be_empty, INVALID_SKILL_LEARN_MORE_URL));
+        if (StringUtils.isBlank(skill.getLearnMoreUrl())) {
+            listener.onValidationError(new ValidateException(INVALID_SKILL_LEARN_MORE_URL));
             isValid = false;
         }
-        if (TextUtils.isEmpty(skill.getPictureUrl())) {
-            listener.onValidationError(new ValidateException(R.string.picture_cannot_be_empty, INVALID_SKILL_PICTURE_URL));
+        if (StringUtils.isBlank(skill.getPictureUrl())) {
+            listener.onValidationError(new ValidateException(INVALID_SKILL_PICTURE_URL));
             isValid = false;
         }
 

@@ -69,8 +69,7 @@ public class SkillActivity extends BaseActivity {
                 if (intent.resolveActivity(getPackageManager()) != null) {
                     startActivity(intent);
                 } else {
-                    //TODO extract string
-                    Log.e(TAG, "Unable to handle ACTION_VIEW: " + skill.getLearnMoreUrl());
+                    Log.e(TAG, getString(R.string.unable_to_handle_actionview, skill.getLearnMoreUrl()));
                 }
             }
         });

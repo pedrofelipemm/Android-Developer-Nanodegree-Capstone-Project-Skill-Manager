@@ -1,12 +1,11 @@
 package study.pmoreira.skillmanager.data;
 
-import android.net.Uri;
-
 import java.util.List;
 
 import study.pmoreira.skillmanager.infrastructure.OperationListener;
 import study.pmoreira.skillmanager.model.Skill;
 
+//TODO: make it static ?
 public class SkillDao {
 
     static final String SKILLS_PATH = "skills";
@@ -24,7 +23,7 @@ public class SkillDao {
         FirebaseDao.delete(id, SKILLS_PATH, listener);
     }
 
-    public String uploadImage(Uri data, final OperationListener<String> listener) {
+    public String uploadImage(byte[] data, final OperationListener<String> listener) {
         return FirebaseDao.uploadImage(data, SKILL_IMAGES_PATH, listener);
     }
 

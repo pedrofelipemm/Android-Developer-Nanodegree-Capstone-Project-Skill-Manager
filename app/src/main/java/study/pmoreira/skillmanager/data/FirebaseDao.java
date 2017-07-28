@@ -120,16 +120,6 @@ class FirebaseDao {
         });
     }
 
-    static String uploadImage(Uri data, String refPath, OperationListener<String> listener) {
-        StorageReference ref = FirebaseStorage.getInstance()
-                .getReference(refPath)
-                .child(String.valueOf(new Date().getTime()));
-
-        addUploadListeners(ref.putFile(data), listener);
-
-        return ref.toString();
-    }
-
     static String uploadImage(byte[] data, String refPath, OperationListener<String> listener) {
         StorageReference ref = FirebaseStorage.getInstance()
                 .getReference(refPath)
