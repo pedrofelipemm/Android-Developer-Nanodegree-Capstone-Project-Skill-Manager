@@ -6,7 +6,7 @@ import study.pmoreira.skillmanager.infrastructure.OperationListener;
 import study.pmoreira.skillmanager.model.Skill;
 
 //TODO: make it static ?
-public class SkillDao {
+public class SkillDao extends BaseDao {
 
     static final String SKILLS_PATH = "skills";
     static final String SKILL_IMAGES_PATH = "skillImages";
@@ -25,9 +25,5 @@ public class SkillDao {
 
     public String uploadImage(byte[] data, final OperationListener<String> listener) {
         return FirebaseDao.uploadImage(data, SKILL_IMAGES_PATH, listener);
-    }
-
-    public void deleteImage(String url) {
-        FirebaseDao.deleteImage(url);
     }
 }
