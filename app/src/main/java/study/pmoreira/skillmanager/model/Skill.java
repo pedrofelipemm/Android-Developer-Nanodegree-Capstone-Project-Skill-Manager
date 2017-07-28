@@ -5,6 +5,11 @@ import android.os.Parcelable;
 
 public class Skill extends Model implements Parcelable {
 
+    public static final String JSON_NAME = "name";
+    public static final String JSON_DESCRIPTION = "description";
+    public static final String JSON_LEARN_MORE_URL = "learnMoreUrl";
+    public static final String JSON_PICTURE_URL = "pictureUrl";
+
     private String name;
     private String description;
     private String learnMoreUrl;

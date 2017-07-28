@@ -1,0 +1,74 @@
+{
+  "collaborators": [
+    {
+      "name": "Gerolt Orion",
+      "birthDate": "641530800000",
+      "role": "Software Engineer",
+      "email": "geroltorion@email.com",
+      "phone": "19999999999"
+    },
+    {
+      "name": "Augustin Werdheri",
+      "birthDate": "641530800000",
+      "role": "Software Engineer",
+      "email": "augustinwerdheri@email.com",
+      "phone": "19999999999"
+    },
+    {
+      "name": "Pravin Jaromir",
+      "birthDate": "641530800000",
+      "role": "Software Engineer",
+      "email": "pravinjaromir@email.com",
+      "phone": "19999999999"
+    },
+    {
+      "name": "Yin Martyn",
+      "birthDate": "641530800000",
+      "role": "Software Engineer",
+      "email": "yinmartyn@email.com",
+      "phone": "19999999999"
+    },
+    {
+      "name": "Joakim Pórvaldr",
+      "birthDate": "641530800000",
+      "role": "Software Engineer",
+      "email": "joakimpórvaldr@email.com",
+      "phone": "19999999999"
+    },
+    {
+      "name": "Ilia Berahthram",
+      "birthDate": "641530800000",
+      "role": "Software Engineer",
+      "email": "iliaberahthram@email.com",
+      "phone": "19999999999"
+    },
+    {
+      "name": "Panagiotis Julio",
+      "birthDate": "641530800000",
+      "role": "Software Engineer",
+      "email": "panagiotisjulio@email.com",
+      "phone": "19999999999"
+    },
+    {
+      "name": "Ken Ram",
+      "birthDate": "641530800000",
+      "role": "Software Engineer",
+      "email": "kenram@email.com",
+      "phone": "19999999999"
+    },
+    {
+      "name": "Funske Chinweuba",
+      "birthDate": "641530800000",
+      "role": "Software Engineer",
+      "email": "funskechinweuba@email.com",
+      "phone": "19999999999"
+    },
+    {
+      "name": "Domenico Isa",
+      "birthDate": "641530800000",
+      "role": "Software Engineer",
+      "email": "domenicoisa@email.com",
+      "phone": "19999999999"
+    }
+  ]
+}
