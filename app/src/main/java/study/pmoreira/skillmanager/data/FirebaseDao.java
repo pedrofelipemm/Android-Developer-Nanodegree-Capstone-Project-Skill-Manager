@@ -44,24 +44,7 @@ class FirebaseDao {
         return database;
     }
 
-    static <T> void findAll(final Class<T> clazz, final String refPath, final OperationListener<List<T>> listener) {
-        getDatabase().getReference(refPath)
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        List<T> results = new ArrayList<>();
-                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                            results.add(snapshot.getValue(clazz));
-                        }
-                        listener.onSuccess(results);
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {}
-                });
-    }
-
-    static <T> void findAllListener(final Class<T> clazz, final String refPath,
+    static <T> void findAll(final Class<T> clazz, final String refPath,
                                     final OperationListener<List<T>> listener) {
         getDatabase().getReference(refPath)
                 .addValueEventListener(

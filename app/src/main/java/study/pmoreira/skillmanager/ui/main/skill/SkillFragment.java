@@ -1,9 +1,8 @@
-package study.pmoreira.skillmanager.ui.main;
+package study.pmoreira.skillmanager.ui.main.skill;
 
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
@@ -19,23 +18,20 @@ import study.pmoreira.skillmanager.R;
 import study.pmoreira.skillmanager.business.SkillBusiness;
 import study.pmoreira.skillmanager.infrastructure.OperationListener;
 import study.pmoreira.skillmanager.model.Skill;
-import study.pmoreira.skillmanager.ui.SearchFilter;
-import study.pmoreira.skillmanager.ui.main.SkillAdapter.ItemClickListener;
+import study.pmoreira.skillmanager.ui.SearchableFragment;
+import study.pmoreira.skillmanager.ui.main.skill.SkillAdapter.ItemClickListener;
 import study.pmoreira.skillmanager.ui.skill.SkillActivity;
 
-public class SkillFragment extends Fragment implements SearchFilter {
+public class SkillFragment extends SearchableFragment {
 
     private static final String STATE_RV_POSITION = "STATE_RV_POSITION";
     private static final String STATE_SKILLS = "STATE_SKILLS";
-    private static final String STATE_QUERY = "STATE_QUERY";
 
     @BindView(R.id.skill_recyclerview)
     RecyclerView mSkillRecyclerView;
 
     @BindView(R.id.emptyview)
     View mEmptyView;
-
-    CharSequence mQuery;
 
     SkillAdapter mAdapter;
 
@@ -64,7 +60,7 @@ public class SkillFragment extends Fragment implements SearchFilter {
 
         if (savedInstanceState != null) {
             mSkills = savedInstanceState.getParcelableArrayList(STATE_SKILLS);
-            mQuery = savedInstanceState.getCharSequence(STATE_QUERY);
+            setQuery(savedInstanceState.getCharSequence(STATE_QUERY));
 
             setupRecyclerView();
 
@@ -79,7 +75,6 @@ public class SkillFragment extends Fragment implements SearchFilter {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putCharSequence(STATE_QUERY, mQuery);
         outState.putParcelableArrayList(STATE_SKILLS, new ArrayList<>(mSkills));
         outState.putInt(STATE_RV_POSITION,
                 ((StaggeredGridLayoutManager) mSkillRecyclerView.getLayoutManager())
@@ -89,8 +84,10 @@ public class SkillFragment extends Fragment implements SearchFilter {
 
     @Override
     public void filter(CharSequence constraint) {
-        mQuery = constraint;
+        if (mAdapter == null) return;
+
         mAdapter.filter(constraint);
+        setQuery(constraint);
     }
 
     void setupRecyclerView() {
@@ -100,7 +97,7 @@ public class SkillFragment extends Fragment implements SearchFilter {
                         StaggeredGridLayoutManager.VERTICAL));
 
         mAdapter = new SkillAdapter(mContext, mItemClickListener, mSkills, mEmptyView);
-        mAdapter.filter(mQuery);
+        mAdapter.filter(getQuery());
         mSkillRecyclerView.setAdapter(mAdapter);
     }
 

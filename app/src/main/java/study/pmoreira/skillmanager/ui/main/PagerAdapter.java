@@ -1,7 +1,6 @@
 package study.pmoreira.skillmanager.ui.main;
 
 import android.content.Context;
-import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -9,6 +8,8 @@ import android.view.ViewGroup;
 
 import study.pmoreira.skillmanager.R;
 import study.pmoreira.skillmanager.ui.SearchFilter;
+import study.pmoreira.skillmanager.ui.main.collaborator.CollaboratorFragment;
+import study.pmoreira.skillmanager.ui.main.skill.SkillFragment;
 
 class PagerAdapter extends FragmentPagerAdapter {
 
@@ -24,13 +25,11 @@ class PagerAdapter extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
         Fragment fragment;
-        Bundle args = new Bundle();
 
         switch (position) {
             case 0:
                 fragment = new SkillFragment();
                 break;
-
             case 1:
                 fragment = new CollaboratorFragment();
                 break;
@@ -61,7 +60,7 @@ class PagerAdapter extends FragmentPagerAdapter {
     @Override
     public void setPrimaryItem(ViewGroup container, int position, Object object) {
         super.setPrimaryItem(container, position, object);
-        if (object instanceof  SearchFilter) {
+        if (object instanceof SearchFilter) {
             mSearchFilter = (SearchFilter) object;
         }
     }

@@ -20,10 +20,15 @@
     <string name="picture_cannot_be_empty">Picture cannot be empty.</string>
 
     <string name="skill_successfully_saved">Skill successfully saved!</string>
+    <string name="succesful_deleted">Successful deleted</string>
+    <string name="error_deleting">Erro while deleting <xliff:g id="string">%s</xliff:g></string>
+
     <string name="main_pager_invalid_position">Invalid fragment position: <xliff:g id="position">%d</xliff:g></string>
     <string name="no_skills_available">No skills available</string>
     <string name="main_pager_title_skills">Skills</string>
+
     <string name="main_pager_title_collaborators">Collaborators</string>
+    <string name="no_collaborators_available">No collaborators available</string>
 
     <string name="change">Change</string>
     <string name="skill_pic_optimal_size">Optimal size:\n 800 x 600</string>
@@ -35,9 +40,6 @@
     <string name="no_caps">NO</string>
 
     <string name="do_you_want_to_delete">Do you want to delete <xliff:g id="string">%s</xliff:g></string>
-
-    <string name="error_deleting">Erro while deleting <xliff:g id="string">%s</xliff:g></string>
-    <string name="succesful_deleted">Successful deleted</string>
 
     <string name="unable_to_handle_actionview">Unable to handle ACTION_VIEW, URL: <xliff:g id="url">%s</xliff:g></string>
 

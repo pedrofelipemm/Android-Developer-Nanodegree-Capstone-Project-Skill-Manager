@@ -12,7 +12,7 @@ public class SkillDao extends BaseDao {
     static final String SKILL_IMAGES_PATH = "skillImages";
 
     public void findAll(final OperationListener<List<Skill>> listener) {
-        FirebaseDao.findAllListener(Skill.class, SKILLS_PATH, listener);
+        FirebaseDao.findAll(Skill.class, SKILLS_PATH, listener);
     }
 
     public void save(Skill skill, OperationListener<Skill> listener) {

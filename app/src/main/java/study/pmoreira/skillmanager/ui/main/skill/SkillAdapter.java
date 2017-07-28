@@ -1,4 +1,4 @@
-package study.pmoreira.skillmanager.ui.main;
+package study.pmoreira.skillmanager.ui.main.skill;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;

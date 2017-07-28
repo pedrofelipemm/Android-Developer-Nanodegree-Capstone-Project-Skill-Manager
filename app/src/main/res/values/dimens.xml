@@ -21,4 +21,6 @@
     <dimen name="skillEditImageHeight">200dp</dimen>
     <dimen name="skillImageHeight">250dp</dimen>
 
+    <dimen name="rounded_iv_dimen">50dp</dimen>
+
 </resources>

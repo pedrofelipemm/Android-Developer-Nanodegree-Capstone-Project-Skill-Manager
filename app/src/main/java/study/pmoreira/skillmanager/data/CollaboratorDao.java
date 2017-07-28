@@ -12,7 +12,7 @@ public class CollaboratorDao extends BaseDao {
     static final String COLLABORATORS_IMAGES_PATH = "collaboratorImages";
 
     public void findAll(final OperationListener<List<Collaborator>> listener) {
-        FirebaseDao.findAllListener(Collaborator.class, COLLABORATORS_PATH, listener);
+        FirebaseDao.findAll(Collaborator.class, COLLABORATORS_PATH, listener);
     }
 
     public void save(Collaborator collab, OperationListener<Collaborator> listener) {

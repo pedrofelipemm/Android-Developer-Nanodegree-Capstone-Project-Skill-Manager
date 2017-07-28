@@ -1,4 +1,4 @@
-package study.pmoreira.skillmanager.ui.main;
+package study.pmoreira.skillmanager.ui.main.skill;
 
 import android.text.TextUtils;
 
