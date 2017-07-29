@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- TODO land layout -->
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.collaborator.CollaboratorActivity">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/pic_container_imageview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorPrimary"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent">
+
+                <study.pmoreira.skillmanager.ui.customview.RoundedImageView
+                    android:id="@+id/collab_pic_imageview"
+                    android:layout_width="@dimen/collaborator_pic_dimen"
+                    android:layout_height="@dimen/collaborator_pic_dimen"
+                    android:scaleType="centerCrop"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:src="@drawable/collaborator_placeholder"/>
+
+                <TextView
+                    android:id="@+id/collab_name_textview"
+                    style="@style/TextAppearance.AppCompat.Display1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/default_margin2x"
+                    android:textColor="#FAFAFA"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/collab_pic_imageview"
+                    tools:text="Peter Park"/>
+
+            </android.support.constraint.ConstraintLayout>
+
+            <android.support.v7.widget.CardView
+                android:id="@+id/info_cardview"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/default_margin"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?selectableItemBackground"
+                app:cardCornerRadius="@dimen/cardRadius"
+                app:cardElevation="@dimen/cardElevation"
+                app:cardPreventCornerOverlap="false"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/pic_container_imageview">
+
+                <android.support.constraint.ConstraintLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/default_margin2x">
+
+                    <TextView
+                        android:id="@+id/collab_role_textview"
+                        style="@style/TextAppearance.AppCompat.Medium"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:text="Software Engineer"/>
+
+                    <View
+                        android:id="@+id/divider"
+                        android:layout_width="wrap_content"
+                        android:layout_height="0.5dp"
+                        android:layout_marginTop="@dimen/default_margin2x"
+                        android:background="@drawable/line_divider"
+                        app:layout_constraintLeft_toLeftOf="@id/collab_role_textview"
+                        app:layout_constraintTop_toBottomOf="@id/collab_role_textview"/>
+
+                    <TextView
+                        android:id="@+id/collab_email_textview"
+                        style="@style/TextAppearance.AppCompat.Medium"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/default_margin2x"
+                        app:layout_constraintLeft_toLeftOf="@id/collab_role_textview"
+                        app:layout_constraintTop_toBottomOf="@id/divider"
+                        tools:text="email@email"/>
+
+                    <TextView
+                        android:id="@+id/collab_phone_textview"
+                        style="@style/TextAppearance.AppCompat.Medium"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/default_margin"
+                        app:layout_constraintLeft_toLeftOf="@id/collab_email_textview"
+                        app:layout_constraintTop_toBottomOf="@id/collab_email_textview"
+                        tools:text="19 9 9340-2589"/>
+
+                </android.support.constraint.ConstraintLayout>
+
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:id="@+id/skill_cardview"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/default_margin"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?selectableItemBackground"
+                app:cardCornerRadius="@dimen/cardRadius"
+                app:cardElevation="@dimen/cardElevation"
+                app:cardPreventCornerOverlap="false"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/info_cardview">
+
+
+
+            </android.support.v7.widget.CardView>
+
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/default_margin2x"
+                android:visibility="invisible"
+                app:layout_constraintLeft_toLeftOf="@id/skill_cardview"
+                app:layout_constraintTop_toBottomOf="@id/skill_cardview"/>
+
+        </android.support.constraint.ConstraintLayout>
+
+    </ScrollView>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/collab_fab"
+        style="@style/default_fab"
+        android:src="@drawable/ic_edit"/>
+
+</FrameLayout>

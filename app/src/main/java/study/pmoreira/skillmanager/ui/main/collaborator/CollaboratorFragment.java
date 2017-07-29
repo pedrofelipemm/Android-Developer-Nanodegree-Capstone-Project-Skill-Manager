@@ -20,6 +20,7 @@ import study.pmoreira.skillmanager.infrastructure.OperationListener;
 import study.pmoreira.skillmanager.model.Collaborator;
 import study.pmoreira.skillmanager.ui.SearchFilter;
 import study.pmoreira.skillmanager.ui.SearchableFragment;
+import study.pmoreira.skillmanager.ui.collaborator.CollaboratorActivity;
 import study.pmoreira.skillmanager.ui.main.collaborator.CollaboratorAdapter.ItemClickListener;
 
 public class CollaboratorFragment extends SearchableFragment implements SearchFilter {
@@ -41,8 +42,7 @@ public class CollaboratorFragment extends SearchableFragment implements SearchFi
     ItemClickListener mItemClickListener = new ItemClickListener() {
         @Override
         public void onItemClick(Collaborator collab) {
-            //TODO
-            //CollaboratorActivity.startActivity(mContext, collab);
+            CollaboratorActivity.startActivity(mContext, collab);
         }
     };
 
