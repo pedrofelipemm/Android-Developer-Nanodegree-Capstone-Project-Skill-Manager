@@ -3,9 +3,11 @@ package study.pmoreira.skillmanager.data;
 import android.content.Context;
 import android.util.Log;
 
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 
+import org.apache.commons.lang3.mutable.MutableInt;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -14,7 +16,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,10 +45,21 @@ public class DataFaker {
 
     private DataFaker() {}
 
-    public static void insertFakeData(Context context) throws UnsupportedEncodingException, JSONException {
-//TODO callback
-//        dropDatabase();
+    /**
+     * ###TEST PURPOSE ONLY ###
+     * <br/><br/>
+     *
+     * There is a bug related to deleting firebase storage files,
+     * it's not going to be fixed now since it's not core functionality.
+     * <br/>
+     * This code is going to be moved to backed in the future.
+     *
+     * */
+    public static void insertFakeData(Context context) {
+        dropDatabase(context);
+    }
 
+    private static void insertData(Context context) {
         final List<Collaborator> collabs = getCollaborators(context);
         final Map<String, Skill> skills = getSkills(context);
 
@@ -60,25 +72,40 @@ public class DataFaker {
                 whenSkillsInserted(skills.size(), new OperationListener<Void>() {
                     @Override
                     public void onSuccess(Void result) {
-                        insertFakeCollaboratorSkills(collabs, new ArrayList<Skill>(skills.values()));
+                        insertFakeCollaboratorSkills(collabs, new ArrayList<>(skills.values()));
                     }
                 });
             }
         });
     }
 
-    private static void dropDatabase() {
+    private static void dropDatabase(final Context context) {
         getDatabase().getReference("_STORAGE_REFERENCES")
                 .addListenerForSingleValueEvent(new OnDataChange() {
                     @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                            FirebaseDao.deleteImage(String.valueOf(snapshot.getValue()));
+                    public void onDataChange(final DataSnapshot dataSnapshot) {
+                        final MutableInt numRemoved = new MutableInt();
+
+                        if (dataSnapshot.getChildrenCount()==0) {
+                            insertData(context);
                         }
 
-                        getDatabase().getReference(SkillDao.SKILLS_PATH).removeValue();
-                        getDatabase().getReference(CollaboratorDao.COLLABORATORS_PATH).removeValue();
-                        getDatabase().getReference(CollaboratorSkillDao.COLLABORATOR_SKILLS_PATH).removeValue();
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            FirebaseDao.deleteImage(String.valueOf(snapshot.getValue()),
+                                    new OperationListener<Task <Void>>() {
+                                        @Override
+                                        public void onSuccess(Task<Void> result) {
+                                            numRemoved.increment();
+                                            if (numRemoved.getValue() == dataSnapshot.getChildrenCount()) {
+                                                getDatabase().getReference(SkillDao.SKILLS_PATH).removeValue();
+                                                getDatabase().getReference(CollaboratorDao.COLLABORATORS_PATH).removeValue();
+                                                getDatabase().getReference(CollaboratorSkillDao.COLLABORATOR_SKILLS_PATH).removeValue();
+
+                                                insertData(context);
+                                            }
+                                        }
+                                    });
+                        }
                     }
                 });
     }
@@ -109,7 +136,7 @@ public class DataFaker {
         });
     }
 
-    private static void insertFakeSkills(Context context, final Map<String, Skill> skills) throws JSONException {
+    private static void insertFakeSkills(Context context, final Map<String, Skill> skills) {
         final Map<String, byte[]> images = getBytesFromAssets(context, FOLDER_FAKE_DATA_SKILLS);
 
         for (final Entry<String, byte[]> img : images.entrySet()) {
@@ -132,26 +159,29 @@ public class DataFaker {
         }
     }
 
-    private static Map<String, Skill> getSkills(Context context) throws JSONException {
+    private static Map<String, Skill> getSkills(Context context) {
         Map<String, Skill> result = new HashMap<>();
 
         String skillsJson = getJsonFromAssets(context, FOLDER_FAKE_DATA_SKILLS + separator + "skills.json");
-        JSONArray skills = new JSONObject(skillsJson).getJSONArray("skills");
-        for (int i = 0; i < skills.length(); i++) {
-            JSONObject skillJson = skills.getJSONObject(i);
-            result.put(skillJson.getString(Skill.JSON_NAME), new Skill(
-                    skillJson.getString(Skill.JSON_NAME),
-                    skillJson.getString(Skill.JSON_DESCRIPTION),
-                    skillJson.getString(Skill.JSON_LEARN_MORE_URL),
-                    ""
-            ));
+        try {
+            JSONArray skills = new JSONObject(skillsJson).getJSONArray("skills");
+            for (int i = 0; i < skills.length(); i++) {
+                JSONObject skillJson = skills.getJSONObject(i);
+                result.put(skillJson.getString(Skill.JSON_NAME), new Skill(
+                        skillJson.getString(Skill.JSON_NAME),
+                        skillJson.getString(Skill.JSON_DESCRIPTION),
+                        skillJson.getString(Skill.JSON_LEARN_MORE_URL),
+                        ""
+                ));
+            }
+        } catch (JSONException e) {
+            Log.e(TAG, "getSkills: ", e);
         }
 
         return result;
     }
 
-    private static void insertFakeCollaborators(Context context, final List<Collaborator> collabs)
-            throws JSONException {
+    private static void insertFakeCollaborators(Context context, final List<Collaborator> collabs) {
 
         final Map<String, byte[]> images = getBytesFromAssets(context, FOLDER_FAKE_DATA_COLLABORATOR);
 
@@ -177,23 +207,27 @@ public class DataFaker {
         }
     }
 
-    private static List<Collaborator> getCollaborators(Context context) throws JSONException {
+    private static List<Collaborator> getCollaborators(Context context) {
         List<Collaborator> result = new ArrayList<>();
 
-        String collabsJson = getJsonFromAssets(context, FOLDER_FAKE_DATA_COLLABORATOR + separator +
-                "collaborators.json");
+        String collabsJson = getJsonFromAssets(context,
+                FOLDER_FAKE_DATA_COLLABORATOR + separator + "collaborators.json");
 
-        JSONArray collabs = new JSONObject(collabsJson).getJSONArray("collaborators");
-        for (int i = 0; i < collabs.length(); i++) {
-            JSONObject collabJson = collabs.getJSONObject(i);
-            result.add(new Collaborator(
-                    collabJson.getString(Collaborator.JSON_NAME),
-                    collabJson.getLong(Collaborator.JSON_BIRTH_DATE),
-                    collabJson.getString(Collaborator.JSON_ROLE),
-                    collabJson.getString(Collaborator.JSON_EMAIL),
-                    collabJson.getString(Collaborator.JSON_PHONE),
-                    ""
-            ));
+        try {
+            JSONArray collabs = new JSONObject(collabsJson).getJSONArray("collaborators");
+            for (int i = 0; i < collabs.length(); i++) {
+                JSONObject collabJson = collabs.getJSONObject(i);
+                result.add(new Collaborator(
+                        collabJson.getString(Collaborator.JSON_NAME),
+                        collabJson.getLong(Collaborator.JSON_BIRTH_DATE),
+                        collabJson.getString(Collaborator.JSON_ROLE),
+                        collabJson.getString(Collaborator.JSON_EMAIL),
+                        collabJson.getString(Collaborator.JSON_PHONE),
+                        ""
+                ));
+            }
+        } catch (JSONException e) {
+            Log.e(TAG, "getCollaborators: ", e);
         }
 
         return result;

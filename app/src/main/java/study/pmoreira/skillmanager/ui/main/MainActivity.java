@@ -51,11 +51,7 @@ public class MainActivity extends BaseActivity {
 
     private void insertFakeData() {
         if (getResources().getBoolean(R.bool.insert_fake_data)) {
-            try {
-                DataFaker.insertFakeData(this);
-            } catch (UnsupportedEncodingException | JSONException e) {
-                Log.d(TAG, "onCreate: " + e);
-            }
+            DataFaker.insertFakeData(this);
         }
     }
 
