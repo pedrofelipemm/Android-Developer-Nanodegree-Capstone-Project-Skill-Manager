@@ -1,13 +1,19 @@
 package study.pmoreira.skillmanager.business;
 
+import android.util.MutableInt;
+
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 
 import study.pmoreira.skillmanager.data.CollaboratorDao;
+import study.pmoreira.skillmanager.data.CollaboratorSkillDao;
 import study.pmoreira.skillmanager.infrastructure.OperationListener;
+import study.pmoreira.skillmanager.infrastructure.exception.BusinessException;
 import study.pmoreira.skillmanager.infrastructure.exception.ValidateException;
 import study.pmoreira.skillmanager.model.Collaborator;
+import study.pmoreira.skillmanager.model.CollaboratorSkill;
+import study.pmoreira.skillmanager.model.Skill;
 
 //TODO: make it static ?
 public class CollaboratorBusiness {
@@ -16,18 +22,21 @@ public class CollaboratorBusiness {
     public static final int INVALID_COLLABORATOR_NAME = 1;
 
     private CollaboratorDao mCollaboratorDao = new CollaboratorDao();
+    private CollaboratorSkillDao mCollaboratorSkillDao = new CollaboratorSkillDao();
 
     public void findAll(OperationListener<List<Collaborator>> listener) {
         mCollaboratorDao.findAll(listener);
     }
 
-    public void save(Collaborator collaborator, OperationListener<Collaborator> listener) {
+    public void saveOrUpdate(final Collaborator collaborator, final OperationListener<Collaborator> listener) {
         if (isValid(collaborator, listener)) {
-            mCollaboratorDao.save(collaborator, listener);
+            mCollaboratorDao.saveOrUpdate(collaborator, new OnSaveOrUpdate(collaborator, listener));
         }
     }
 
     public void delete(String id, OperationListener<String> listener) {
+        //TODO: delete CollaborratorSkill
+        //TODO: also delete it's picture ???
         mCollaboratorDao.delete(id, listener);
     }
 
@@ -49,5 +58,43 @@ public class CollaboratorBusiness {
         }
 
         return isValid;
+    }
+
+    private class OnSaveOrUpdate extends OperationListener<Collaborator> {
+
+        private final Collaborator mCollaborator;
+        private final OperationListener<Collaborator> mListener;
+
+        OnSaveOrUpdate(Collaborator collaborator, OperationListener<Collaborator> listener) {
+            mCollaborator = collaborator;
+            mListener = listener;
+        }
+
+        @Override
+        public void onSuccess(final Collaborator collab) {
+            final List<Skill> skills = mCollaborator.getSkills();
+            if (skills.isEmpty()) return;
+
+            final MutableInt savedSkills = new MutableInt(0);
+
+            for (Skill skill : skills) {
+                CollaboratorSkill collabSkill = new CollaboratorSkill(collab.getId(), skill.getId());
+                mCollaboratorSkillDao.saveOrUpdate(collabSkill, new OperationListener<CollaboratorSkill>() {
+                    @Override
+                    public void onSuccess(CollaboratorSkill result) {
+                        savedSkills.value++;
+                        if (savedSkills.value == skills.size()) {
+                            collab.setSkills(skills);
+                            mListener.onSuccess(collab);
+                        }
+                    }
+                });
+            }
+        }
+
+        @Override
+        public void onError(BusinessException e) {
+            mListener.onError(e);
+        }
     }
 }

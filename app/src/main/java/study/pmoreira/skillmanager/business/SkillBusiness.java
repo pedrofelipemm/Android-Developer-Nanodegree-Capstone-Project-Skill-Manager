@@ -25,11 +25,13 @@ public class SkillBusiness {
 
     public void save(Skill skill, OperationListener<Skill> listener) {
         if (isValid(skill, listener)) {
-            mSkillDao.save(skill, listener);
+            mSkillDao.saveOrUpdate(skill, listener);
         }
     }
 
     public void delete(String id, OperationListener<String> listener) {
+        //TODO: check if is there any collab using it
+        //TODO: also delete it's picture ???
         mSkillDao.delete(id, listener);
     }
 

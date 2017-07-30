@@ -15,8 +15,8 @@ public class CollaboratorDao extends BaseDao {
         FirebaseDao.findAll(Collaborator.class, COLLABORATORS_PATH, listener);
     }
 
-    public void save(Collaborator collab, OperationListener<Collaborator> listener) {
-        FirebaseDao.save(collab, COLLABORATORS_PATH, listener);
+    public void saveOrUpdate(Collaborator collab, OperationListener<Collaborator> listener) {
+        FirebaseDao.saveOrUpdate(collab, COLLABORATORS_PATH, listener);
     }
 
     public void delete(String id, OperationListener<String> listener) {

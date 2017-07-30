@@ -15,8 +15,8 @@ public class SkillDao extends BaseDao {
         FirebaseDao.findAll(Skill.class, SKILLS_PATH, listener);
     }
 
-    public void save(Skill skill, OperationListener<Skill> listener) {
-        FirebaseDao.save(skill, SKILLS_PATH, listener);
+    public void saveOrUpdate(Skill skill, OperationListener<Skill> listener) {
+        FirebaseDao.saveOrUpdate(skill, SKILLS_PATH, listener);
     }
 
     public void delete(String id, OperationListener<String> listener) {

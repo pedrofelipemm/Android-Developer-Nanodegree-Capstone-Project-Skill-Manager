@@ -44,37 +44,27 @@ class FirebaseDao {
         return database;
     }
 
-    static <T> void findAll(final Class<T> clazz, final String refPath,
-                                    final OperationListener<List<T>> listener) {
+    static <T> void findAll(final Class<T> clazz, final String refPath, final OperationListener<List<T>> listener) {
         getDatabase().getReference(refPath)
-                .addValueEventListener(
-                        //todo OnDataChange Class
-                        new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                List<T> results = new ArrayList<>();
-                                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                                    results.add(snapshot.getValue(clazz));
-                                }
-                                listener.onSuccess(results);
-                            }
-
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {}
-                        });
+                .addValueEventListener(new OnDataChange() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        List<T> results = new ArrayList<>();
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            results.add(snapshot.getValue(clazz));
+                        }
+                        listener.onSuccess(results);
+                    }
+                });
     }
 
-    static <T> void save(final Model model, final String refPath, final OperationListener<T> listener) {
+    static <T> void saveOrUpdate(final Model model, final String refPath, final OperationListener<T> listener) {
         DatabaseReference dbRef;
 
-        //TODO saveOrUpdate
         if (model.isNew()) {
-            dbRef = getDatabase().getReference(refPath).push();
-            model.setId(dbRef.getKey());
-            dbRef.setValue(model);
+            dbRef = save(model, refPath);
         } else {
-            dbRef = getDatabase().getReference(refPath).child(model.getId());
-            dbRef.setValue(model);
+            dbRef = update(model, refPath);
         }
 
         dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -88,6 +78,21 @@ class FirebaseDao {
                 listener.onError(new BusinessException(error.getMessage(), error.getCode()));
             }
         });
+    }
+
+    private static DatabaseReference save(Model model, String refPath) {
+        DatabaseReference dbRef = getDatabase().getReference(refPath).push();
+        model.setId(dbRef.getKey());
+        dbRef.setValue(model);
+
+        return dbRef;
+    }
+
+    private static <T> DatabaseReference update(Model model, String refPath) {
+        DatabaseReference dbRef = getDatabase().getReference(refPath).child(model.getId());
+        dbRef.setValue(model);
+
+        return dbRef;
     }
 
     static void delete(final String id, final String refPath, final OperationListener<String> listener) {

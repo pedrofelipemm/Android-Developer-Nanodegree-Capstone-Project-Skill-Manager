@@ -3,6 +3,11 @@ package study.pmoreira.skillmanager.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.firebase.database.Exclude;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class Collaborator extends Model implements Parcelable {
 
     public static final String JSON_NAME = "name";
@@ -18,6 +23,8 @@ public class Collaborator extends Model implements Parcelable {
     private String email;
     private String phone;
     private String pictureUrl;
+
+    private List<Skill> skills = new ArrayList<>();
 
     @SuppressWarnings("unused")
     public Collaborator() {
@@ -40,6 +47,7 @@ public class Collaborator extends Model implements Parcelable {
         email = in.readString();
         phone = in.readString();
         pictureUrl = in.readString();
+        skills = in.createTypedArrayList(Skill.CREATOR);
     }
 
     public String getName() {
@@ -66,6 +74,20 @@ public class Collaborator extends Model implements Parcelable {
         return pictureUrl;
     }
 
+    @Exclude
+    public List<Skill> getSkills() {
+        return skills;
+    }
+
+    @Exclude
+    public void setSkills(List<Skill> skills) {
+        this.skills = skills;
+    }
+
+    public boolean addSkill(Skill skill) {
+        return skills.add(skill);
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -80,6 +102,7 @@ public class Collaborator extends Model implements Parcelable {
         dest.writeString(email);
         dest.writeString(phone);
         dest.writeString(pictureUrl);
+        dest.readTypedList(skills, Skill.CREATOR);
     }
 
     static final Creator<Collaborator> CREATOR = new Creator<Collaborator>() {
