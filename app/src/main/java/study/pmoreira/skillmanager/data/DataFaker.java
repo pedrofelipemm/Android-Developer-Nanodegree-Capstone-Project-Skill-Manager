@@ -3,6 +3,7 @@ package study.pmoreira.skillmanager.data;
 import android.content.Context;
 import android.util.Log;
 
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 
 import org.json.JSONArray;
@@ -20,7 +21,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Random;
 
+import study.pmoreira.skillmanager.business.CollaboratorBusiness;
 import study.pmoreira.skillmanager.infrastructure.OperationListener;
 import study.pmoreira.skillmanager.model.Collaborator;
 import study.pmoreira.skillmanager.model.Skill;
@@ -39,16 +42,62 @@ public class DataFaker {
     private static final String FOLDER_FAKE_DATA_SKILLS = FOLDER_FAKE_DATA + separator + FOLDER_SKILLS;
     private static final String FOLDER_FAKE_DATA_COLLABORATOR = FOLDER_FAKE_DATA + separator + FOLDER_COLLABORATORS;
 
+    private DataFaker() {}
+
     public static void insertFakeData(Context context) throws UnsupportedEncodingException, JSONException {
-        insertFakeSkills(context);
-        insertFakeCollaborators(context);
+        final List<Collaborator> collabs = getCollaborators(context);
+        final Map<String, Skill> skills = getSkills(context);
+
+        dropDatabase();
+
+        insertFakeCollaborators(context, collabs);
+        insertFakeSkills(context, skills);
+
+        whenCollaboratorsInserted(collabs.size(), new OperationListener<Void>() {
+            @Override
+            public void onSuccess(Void result) {
+                whenSkillsInserted(skills.size(), new OperationListener<Void>() {
+                    @Override
+                    public void onSuccess(Void result) {
+                        insertFakeCollaboratorSkills(collabs, new ArrayList<Skill>(skills.values()));
+                    }
+                });
+            }
+        });
     }
 
-    private static void insertFakeSkills(Context context) throws JSONException {
-        final DatabaseReference skillsRef = getDatabase().getReference(SkillDao.SKILLS_PATH);
-        skillsRef.removeValue();
+    private static void dropDatabase() {
+        getDatabase().getReference(SkillDao.SKILLS_PATH).removeValue();
+        getDatabase().getReference(CollaboratorDao.COLLABORATORS_PATH).removeValue();
+    }
 
-        final Map<String, Skill> skills = getSkills(context);
+    private static void whenCollaboratorsInserted(final int collabsSize, final OperationListener<Void> listener) {
+        final DatabaseReference ref = getDatabase().getReference(CollaboratorDao.COLLABORATORS_PATH);
+        ref.addValueEventListener(new OnDataChange() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.getChildrenCount() == collabsSize) {
+                    ref.removeEventListener(this);
+                    listener.onSuccess(null);
+                }
+            }
+        });
+    }
+
+    private static void whenSkillsInserted(final int skillsSize, final OperationListener<Void> listener) {
+        final DatabaseReference ref = getDatabase().getReference(SkillDao.SKILLS_PATH);
+        ref.addValueEventListener(new OnDataChange() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.getChildrenCount() == skillsSize) {
+                    ref.removeEventListener(this);
+                    listener.onSuccess(null);
+                }
+            }
+        });
+    }
+
+    private static void insertFakeSkills(Context context, final Map<String, Skill> skills) throws JSONException {
         final Map<String, byte[]> images = getBytesFromAssets(context, FOLDER_FAKE_DATA_SKILLS);
 
         for (final Entry<String, byte[]> img : images.entrySet()) {
@@ -62,7 +111,7 @@ public class DataFaker {
                             try {
                                 Skill skill = skills.get(img.getKey());
                                 setField(skill, Skill.JSON_PICTURE_URL, picUrl);
-                                FirebaseDao.save(skill, SkillDao.SKILLS_PATH, new OperationListener<Skill>());
+                                FirebaseDao.saveOrUpdate(skill, SkillDao.SKILLS_PATH, new OperationListener<Skill>());
                             } catch (Exception e) {
                                 Log.e(TAG, "onSuccess: ", e);
                             }
@@ -89,13 +138,10 @@ public class DataFaker {
         return result;
     }
 
-    private static void insertFakeCollaborators(Context context) throws JSONException {
-        final DatabaseReference collabssRef = getDatabase().getReference(CollaboratorDao.COLLABORATORS_PATH);
-        collabssRef.removeValue();
+    private static void insertFakeCollaborators(Context context, final List<Collaborator> collabs)
+            throws JSONException {
 
-        final List<Collaborator> collabs = getCollaborators(context);
         final Map<String, byte[]> images = getBytesFromAssets(context, FOLDER_FAKE_DATA_COLLABORATOR);
-
 
         for (final Entry<String, byte[]> img : images.entrySet()) {
             Log.d(TAG, "Upload started: " + img.getKey());
@@ -108,7 +154,7 @@ public class DataFaker {
                             try {
                                 for (Collaborator collab : collabs) {
                                     setField(collab, Collaborator.JSON_PICTURE_URL, picUrl);
-                                    FirebaseDao.save(collab, CollaboratorDao.COLLABORATORS_PATH,
+                                    FirebaseDao.saveOrUpdate(collab, CollaboratorDao.COLLABORATORS_PATH,
                                             new OperationListener<Collaborator>());
                                 }
                             } catch (Exception e) {
@@ -139,6 +185,20 @@ public class DataFaker {
         }
 
         return result;
+    }
+
+    private static void insertFakeCollaboratorSkills(List<Collaborator> collabs, List<Skill> skills) {
+        Random random = new Random();
+        CollaboratorBusiness collaboratorBusiness = new CollaboratorBusiness();
+
+        for (Collaborator collab : collabs) {
+            int skillSize = random.nextInt(10);
+            for (int i = 0; i < skillSize; i++) {
+                collab.addSkill(skills.get(random.nextInt(skills.size())));
+            }
+
+            collaboratorBusiness.saveOrUpdate(collab, new OperationListener<Collaborator>());
+        }
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
