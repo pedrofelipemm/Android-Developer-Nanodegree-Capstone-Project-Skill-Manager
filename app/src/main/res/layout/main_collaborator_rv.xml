@@ -19,6 +19,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="@dimen/default_margin2x"
+        android:gravity="center"
         android:text="@string/no_collaborators_available"
         android:visibility="gone"/>
 

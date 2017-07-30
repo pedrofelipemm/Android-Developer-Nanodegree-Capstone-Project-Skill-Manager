@@ -114,15 +114,15 @@
 
             <ProgressBar
                 android:id="@+id/progressbar"
-                android:layout_margin="@dimen/default_margin"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/info_cardview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
+                android:layout_margin="@dimen/default_margin"
                 android:indeterminate="true"
-                android:visibility="gone"/>
+                android:visibility="gone"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/info_cardview"/>
 
             <android.support.v7.widget.CardView
                 android:id="@+id/skill_cardview"
@@ -142,11 +142,12 @@
                 app:layout_constraintTop_toBottomOf="@id/info_cardview">
 
                 <com.plumillonforge.android.chipview.ChipView
-                    android:layout_margin="@dimen/default_margin2x"
-                    app:chip_background="@color/colorPrimary"
                     android:id="@+id/chip_view"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/default_margin2x"
+                    app:chip_background="@color/colorPrimary"
+                    app:chip_background_selected="@color/colorPrimary"/>
 
             </android.support.v7.widget.CardView>
 
