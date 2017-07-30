@@ -4,14 +4,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.plumillonforge.android.chipview.ChipView;
 import com.squareup.picasso.Picasso;
-
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 
@@ -22,6 +21,7 @@ import study.pmoreira.skillmanager.business.CollaboratorSkillBusiness;
 import study.pmoreira.skillmanager.infrastructure.OperationListener;
 import study.pmoreira.skillmanager.model.Collaborator;
 import study.pmoreira.skillmanager.ui.BaseActivity;
+import study.pmoreira.skillmanager.ui.customview.StringChip;
 
 public class CollaboratorActivity extends BaseActivity {
 
@@ -42,6 +42,9 @@ public class CollaboratorActivity extends BaseActivity {
 
     @BindView(R.id.collab_pic_imageview)
     ImageView mPicImageView;
+
+    @BindView(R.id.chip_view)
+    ChipView mChipView;
 
     @BindView(R.id.collab_fab)
     FloatingActionButton mFab;
@@ -68,12 +71,12 @@ public class CollaboratorActivity extends BaseActivity {
             mCollaboratorSkillBusiness.findCollaboratorSkillsName(collab.getId(),
                     new OperationListener<List<String>>() {
                         @Override
-                        public void onSuccess(List<String> result) {
-                            //TODO: fillChips
-                            for (String s : result) {
-                                if (StringUtils.isNotBlank(s)) Log.d("TEST", s);
+                        public void onSuccess(List<String> results) {
+                            if (results == null || results.isEmpty()) {
+                                mChipView.setVisibility(View.GONE);
+                            } else {
+                                mChipView.setChipList(StringChip.toChipList(results));
                             }
-
                             hideProgressbar(mProgressBar);
                         }
                     });
