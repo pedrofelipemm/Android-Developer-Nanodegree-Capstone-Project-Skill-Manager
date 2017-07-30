@@ -1,12 +1,11 @@
 package study.pmoreira.skillmanager.business;
 
-import android.content.Context;
-
+// make it static ?
 abstract class BaseBusiness {
 
-    final Context mContext;
+//TODO: ?
+//    public static void addUploadListeners(String uploadRef, final OperationListener<String> listener) {
+//        BaseDao.addUploadListeners(uploadRef, listener);
+//    }
 
-    BaseBusiness(Context context) {
-        mContext = context;
-    }
 }

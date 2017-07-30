@@ -1,8 +1,7 @@
 package study.pmoreira.skillmanager.business;
 
-import android.util.MutableInt;
-
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.mutable.MutableInt;
 
 import java.util.List;
 
@@ -21,6 +20,8 @@ public class CollaboratorBusiness {
     //TODO
     public static final int INVALID_COLLABORATOR_NAME = 1;
 
+    private CollaboratorSkillBusiness mCollaboratorSkillBusiness = new CollaboratorSkillBusiness();
+
     private CollaboratorDao mCollaboratorDao = new CollaboratorDao();
     private CollaboratorSkillDao mCollaboratorSkillDao = new CollaboratorSkillDao();
 
@@ -36,7 +37,6 @@ public class CollaboratorBusiness {
 
     public void delete(String id, OperationListener<String> listener) {
         //TODO: delete CollaborratorSkill
-        //TODO: also delete it's picture ???
         mCollaboratorDao.delete(id, listener);
     }
 
@@ -75,15 +75,15 @@ public class CollaboratorBusiness {
             final List<Skill> skills = mCollaborator.getSkills();
             if (skills.isEmpty()) return;
 
-            final MutableInt savedSkills = new MutableInt(0);
+            final MutableInt savedSkills = new MutableInt();
 
             for (Skill skill : skills) {
-                CollaboratorSkill collabSkill = new CollaboratorSkill(collab.getId(), skill.getId());
+                CollaboratorSkill collabSkill = new CollaboratorSkill(collab.getId(), skill.getId(), skill.getName());
                 mCollaboratorSkillDao.saveOrUpdate(collabSkill, new OperationListener<CollaboratorSkill>() {
                     @Override
                     public void onSuccess(CollaboratorSkill result) {
-                        savedSkills.value++;
-                        if (savedSkills.value == skills.size()) {
+                        savedSkills.increment();
+                        if (savedSkills.getValue() == skills.size()) {
                             collab.setSkills(skills);
                             mListener.onSuccess(collab);
                         }

@@ -164,7 +164,7 @@ class FirebaseDao {
 //
 //    }
 
-    static void deleteImage(final String url) {
+    static void deleteImage(final String url, final OperationListener<Task<Void>> listener) {
         FirebaseStorage.getInstance().getReferenceFromUrl(url).delete()
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
@@ -180,6 +180,13 @@ class FirebaseDao {
                                         }
                                     }
                                 });
+                        listener.onSuccess(task);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        listener.onError(new BusinessException("Failed to delete url: " + url, e));
                     }
                 });
     }

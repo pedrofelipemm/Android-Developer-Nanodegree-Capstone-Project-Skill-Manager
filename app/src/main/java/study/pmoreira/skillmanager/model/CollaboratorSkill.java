@@ -5,20 +5,26 @@ import android.os.Parcelable;
 
 public class CollaboratorSkill extends Model implements Parcelable {
 
+    public static final String JSON_SKILL_ID = "skillId";
+    public static final String JSON_COLLABORATOR_ID = "collaboratorId";
+
     private String collaboratorId;
     private String skillId;
+    private String skillName;
 
     @SuppressWarnings("unused")
     public CollaboratorSkill() {}
 
-    public CollaboratorSkill(String collaboratorId, String skillId) {
+    public CollaboratorSkill(String collaboratorId, String skillId, String skillName) {
         this.collaboratorId = collaboratorId;
         this.skillId = skillId;
+        this.skillName = skillName;
     }
 
-    public CollaboratorSkill(Parcel in) {
+    private CollaboratorSkill(Parcel in) {
         collaboratorId = in.readString();
         skillId = in.readString();
+        skillName = in.readString();
     }
 
     public String getCollaboratorId() {
@@ -27,6 +33,10 @@ public class CollaboratorSkill extends Model implements Parcelable {
 
     public String getSkillId() {
         return skillId;
+    }
+
+    public String getSkillName() {
+        return skillName;
     }
 
     @Override
@@ -38,6 +48,7 @@ public class CollaboratorSkill extends Model implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(collaboratorId);
         dest.writeString(skillId);
+        dest.writeString(skillName);
     }
 
     static final Parcelable.Creator<CollaboratorSkill> CREATOR = new Parcelable.Creator<CollaboratorSkill>() {

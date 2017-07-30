@@ -31,7 +31,6 @@ public class SkillBusiness {
 
     public void delete(String id, OperationListener<String> listener) {
         //TODO: check if is there any collab using it
-        //TODO: also delete it's picture ???
         mSkillDao.delete(id, listener);
     }
 

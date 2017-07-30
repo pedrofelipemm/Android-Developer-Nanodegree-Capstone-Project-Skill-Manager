@@ -4,18 +4,26 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import study.pmoreira.skillmanager.R;
+import study.pmoreira.skillmanager.business.CollaboratorSkillBusiness;
+import study.pmoreira.skillmanager.infrastructure.OperationListener;
 import study.pmoreira.skillmanager.model.Collaborator;
+import study.pmoreira.skillmanager.ui.BaseActivity;
 
-public class CollaboratorActivity extends AppCompatActivity {
+public class CollaboratorActivity extends BaseActivity {
 
     private static final String EXTRA_COLLABORATOR = "EXTRA_COLLABORATOR";
     private static final String STATE_COLLABORATOR = "STATE_COLLABORATOR";
@@ -38,6 +46,11 @@ public class CollaboratorActivity extends AppCompatActivity {
     @BindView(R.id.collab_fab)
     FloatingActionButton mFab;
 
+    @BindView(R.id.progressbar)
+    ProgressBar mProgressBar;
+
+    private CollaboratorSkillBusiness mCollaboratorSkillBusiness = new CollaboratorSkillBusiness();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,7 +61,22 @@ public class CollaboratorActivity extends AppCompatActivity {
         if (getIntent().hasExtra(EXTRA_COLLABORATOR)) {
             Collaborator collab = getIntent().getParcelableExtra(EXTRA_COLLABORATOR);
             setTitle(collab.getName());
+
             setupViews(collab);
+
+            displayProgressbar(mProgressBar);
+            mCollaboratorSkillBusiness.findCollaboratorSkillsName(collab.getId(),
+                    new OperationListener<List<String>>() {
+                        @Override
+                        public void onSuccess(List<String> result) {
+                            //TODO: fillChips
+                            for (String s : result) {
+                                if (StringUtils.isNotBlank(s)) Log.d("TEST", s);
+                            }
+
+                            hideProgressbar(mProgressBar);
+                        }
+                    });
         }
     }
 
@@ -56,17 +84,12 @@ public class CollaboratorActivity extends AppCompatActivity {
         mNameTextView.setText(collab.getName());
         mRoleTextView.setText(collab.getRole());
         mEmailTextView.setText(collab.getEmail());
-        mPhoneTextView.setText(formatPhone(collab.getPhone()));
+        mPhoneTextView.setText(collab.getPhone());
 
         Picasso.with(this)
                 .load(collab.getPictureUrl())
                 .error(R.drawable.collaborator_placeholder)
                 .into(mPicImageView);
-    }
-
-    private String formatPhone(String phone) {
-        //TODO
-        return phone;
     }
 
     public static void startActivity(Context context, Collaborator collaborator, int... flags) {
