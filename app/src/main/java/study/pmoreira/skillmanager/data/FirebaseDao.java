@@ -4,8 +4,10 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -31,6 +33,7 @@ class FirebaseDao {
     private static final String TAG = FirebaseDao.class.getName();
 
     private static final int OPERATION_CANCELLED = -1;
+    private static final String _STORAGE_REFERENCES = "_STORAGE_REFERENCES";
 
     private static FirebaseDatabase database;
 
@@ -124,8 +127,10 @@ class FirebaseDao {
             public void onSuccess(TaskSnapshot taskSnapshot) {
                 Uri downloadUrl = taskSnapshot.getDownloadUrl();
                 if (downloadUrl != null) {
-                    Log.d(TAG, downloadUrl.toString());
-                    listener.onSuccess(downloadUrl.toString());
+                    String url = downloadUrl.toString();
+                    Log.d(TAG, "uploadImage successful: " + url);
+                    updateStorageReferences(url);
+                    listener.onSuccess(url);
                 }
             }
         }).addOnProgressListener(new OnProgressListener<TaskSnapshot>() {
@@ -159,8 +164,27 @@ class FirebaseDao {
 //
 //    }
 
-    static void deleteImage(String url) {
-        FirebaseStorage.getInstance().getReferenceFromUrl(url).delete();
+    static void deleteImage(final String url) {
+        FirebaseStorage.getInstance().getReferenceFromUrl(url).delete()
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        getDatabase().getReference(_STORAGE_REFERENCES)
+                                .orderByValue()
+                                .equalTo(url)
+                                .addListenerForSingleValueEvent(new OnDataChange() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                            snapshot.getRef().removeValue();
+                                        }
+                                    }
+                                });
+                    }
+                });
     }
 
+    private static void updateStorageReferences(String downloadUrl) {
+        getDatabase().getReference(_STORAGE_REFERENCES).push().setValue(downloadUrl);
+    }
 }

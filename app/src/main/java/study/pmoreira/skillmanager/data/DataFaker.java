@@ -45,10 +45,11 @@ public class DataFaker {
     private DataFaker() {}
 
     public static void insertFakeData(Context context) throws UnsupportedEncodingException, JSONException {
+//TODO callback
+//        dropDatabase();
+
         final List<Collaborator> collabs = getCollaborators(context);
         final Map<String, Skill> skills = getSkills(context);
-
-        dropDatabase();
 
         insertFakeCollaborators(context, collabs);
         insertFakeSkills(context, skills);
@@ -67,8 +68,19 @@ public class DataFaker {
     }
 
     private static void dropDatabase() {
-        getDatabase().getReference(SkillDao.SKILLS_PATH).removeValue();
-        getDatabase().getReference(CollaboratorDao.COLLABORATORS_PATH).removeValue();
+        getDatabase().getReference("_STORAGE_REFERENCES")
+                .addListenerForSingleValueEvent(new OnDataChange() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            FirebaseDao.deleteImage(String.valueOf(snapshot.getValue()));
+                        }
+
+                        getDatabase().getReference(SkillDao.SKILLS_PATH).removeValue();
+                        getDatabase().getReference(CollaboratorDao.COLLABORATORS_PATH).removeValue();
+                        getDatabase().getReference(CollaboratorSkillDao.COLLABORATOR_SKILLS_PATH).removeValue();
+                    }
+                });
     }
 
     private static void whenCollaboratorsInserted(final int collabsSize, final OperationListener<Void> listener) {
