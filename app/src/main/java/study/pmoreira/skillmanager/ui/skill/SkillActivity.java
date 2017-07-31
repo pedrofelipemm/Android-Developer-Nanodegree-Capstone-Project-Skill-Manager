@@ -2,11 +2,9 @@ package study.pmoreira.skillmanager.ui.skill;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.CardView;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
@@ -65,12 +63,7 @@ public class SkillActivity extends BaseActivity {
         mCardView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(skill.getLearnMoreUrl()));
-                if (intent.resolveActivity(getPackageManager()) != null) {
-                    startActivity(intent);
-                } else {
-                    Log.e(TAG, getString(R.string.unable_to_handle_actionview, skill.getLearnMoreUrl()));
-                }
+                launchChromeCustomTab(skill.getLearnMoreUrl());
             }
         });
 
