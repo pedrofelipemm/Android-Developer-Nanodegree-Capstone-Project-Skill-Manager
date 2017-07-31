@@ -18,11 +18,13 @@ import study.pmoreira.skillmanager.R;
 import study.pmoreira.skillmanager.business.SkillBusiness;
 import study.pmoreira.skillmanager.infrastructure.OperationListener;
 import study.pmoreira.skillmanager.model.Skill;
+import study.pmoreira.skillmanager.ui.ClickableView;
 import study.pmoreira.skillmanager.ui.SearchableFragment;
 import study.pmoreira.skillmanager.ui.main.skill.SkillAdapter.ItemClickListener;
+import study.pmoreira.skillmanager.ui.skill.EditSkillActivity;
 import study.pmoreira.skillmanager.ui.skill.SkillActivity;
 
-public class SkillFragment extends SearchableFragment {
+public class SkillFragment extends SearchableFragment implements ClickableView {
 
     private static final String STATE_RV_POSITION = "STATE_RV_POSITION";
     private static final String STATE_SKILLS = "STATE_SKILLS";
@@ -99,6 +101,11 @@ public class SkillFragment extends SearchableFragment {
         mAdapter = new SkillAdapter(mContext, mItemClickListener, mSkills, mEmptyView);
         mAdapter.filter(getQuery());
         mSkillRecyclerView.setAdapter(mAdapter);
+    }
+
+    @Override
+    public void onClick() {
+        EditSkillActivity.startActivity(mContext);
     }
 
     private class OnSkillLoad extends OperationListener<List<Skill>> {

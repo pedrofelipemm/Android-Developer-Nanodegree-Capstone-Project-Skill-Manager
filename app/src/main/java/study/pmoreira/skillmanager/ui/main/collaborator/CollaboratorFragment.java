@@ -20,12 +20,13 @@ import study.pmoreira.skillmanager.business.CollaboratorSkillBusiness;
 import study.pmoreira.skillmanager.infrastructure.OperationListener;
 import study.pmoreira.skillmanager.model.Collaborator;
 import study.pmoreira.skillmanager.model.CollaboratorSkill;
-import study.pmoreira.skillmanager.ui.SearchFilter;
+import study.pmoreira.skillmanager.ui.ClickableView;
 import study.pmoreira.skillmanager.ui.SearchableFragment;
 import study.pmoreira.skillmanager.ui.collaborator.CollaboratorActivity;
+import study.pmoreira.skillmanager.ui.collaborator.EditCollaboratorActivity;
 import study.pmoreira.skillmanager.ui.main.collaborator.CollaboratorAdapter.ItemClickListener;
 
-public class CollaboratorFragment extends SearchableFragment implements SearchFilter {
+public class CollaboratorFragment extends SearchableFragment implements ClickableView {
 
     private static final String STATE_RV_POSITION = "STATE_RV_POSITION";
     private static final String STATE_COLLABORATORS = "STATE_COLLABORATORS";
@@ -106,6 +107,11 @@ public class CollaboratorFragment extends SearchableFragment implements SearchFi
                 mCollaboratorSkills, mEmptyView);
         mAdapter.filter(getQuery());
         mRecyclerView.setAdapter(mAdapter);
+    }
+
+    @Override
+    public void onClick() {
+        EditCollaboratorActivity.startActivity(mContext);
     }
 
     private class OnCollaboratorLoad extends OperationListener<List<Collaborator>> {

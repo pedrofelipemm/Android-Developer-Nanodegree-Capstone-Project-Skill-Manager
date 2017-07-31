@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.view.ViewGroup;
 
 import study.pmoreira.skillmanager.R;
+import study.pmoreira.skillmanager.ui.ClickableView;
 import study.pmoreira.skillmanager.ui.SearchFilter;
 import study.pmoreira.skillmanager.ui.main.collaborator.CollaboratorFragment;
 import study.pmoreira.skillmanager.ui.main.skill.SkillFragment;
@@ -16,6 +17,7 @@ class PagerAdapter extends FragmentPagerAdapter {
     private Context mContext;
 
     private SearchFilter mSearchFilter;
+    private ClickableView mClickableView;
 
     PagerAdapter(Context context, FragmentManager fm) {
         super(fm);
@@ -60,8 +62,13 @@ class PagerAdapter extends FragmentPagerAdapter {
     @Override
     public void setPrimaryItem(ViewGroup container, int position, Object object) {
         super.setPrimaryItem(container, position, object);
+
         if (object instanceof SearchFilter) {
             mSearchFilter = (SearchFilter) object;
+        }
+
+        if (object instanceof  ClickableView) {
+            mClickableView = (ClickableView) object;
         }
     }
 
@@ -70,4 +77,8 @@ class PagerAdapter extends FragmentPagerAdapter {
         mSearchFilter.filter(constraint);
     }
 
+    void onClick() {
+        if (mClickableView == null) return;
+        mClickableView.onClick();
+    }
 }

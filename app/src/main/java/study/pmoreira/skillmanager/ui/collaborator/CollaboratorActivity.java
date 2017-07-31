@@ -25,8 +25,8 @@ import study.pmoreira.skillmanager.ui.customview.StringChip;
 
 public class CollaboratorActivity extends BaseActivity {
 
-    private static final String EXTRA_COLLABORATOR = "EXTRA_COLLABORATOR";
-    private static final String STATE_COLLABORATOR = "STATE_COLLABORATOR";
+    public static final String EXTRA_COLLABORATOR = "EXTRA_COLLABORATOR";
+    public static final String STATE_COLLABORATOR = "STATE_COLLABORATOR";
 
     @BindView(R.id.collab_name_textview)
     TextView mNameTextView;

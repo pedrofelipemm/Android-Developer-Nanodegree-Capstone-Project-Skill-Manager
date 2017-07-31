@@ -15,7 +15,6 @@ import study.pmoreira.skillmanager.R;
 import study.pmoreira.skillmanager.data.DataFaker;
 import study.pmoreira.skillmanager.ui.BaseActivity;
 import study.pmoreira.skillmanager.ui.OnTextChanged;
-import study.pmoreira.skillmanager.ui.skill.EditSkillActivity;
 
 public class MainActivity extends BaseActivity {
 
@@ -72,7 +71,7 @@ public class MainActivity extends BaseActivity {
     }
 
     public void onClickFab(View view) {
-        EditSkillActivity.startActivity(this);
+        mPagerAdapter.onClick();
     }
 
     public static void startActivity(Context context) {
