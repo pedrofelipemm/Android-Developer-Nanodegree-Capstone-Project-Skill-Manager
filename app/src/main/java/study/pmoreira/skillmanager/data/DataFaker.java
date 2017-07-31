@@ -43,18 +43,19 @@ public class DataFaker {
     private static final String FOLDER_FAKE_DATA_SKILLS = FOLDER_FAKE_DATA + separator + FOLDER_SKILLS;
     private static final String FOLDER_FAKE_DATA_COLLABORATOR = FOLDER_FAKE_DATA + separator + FOLDER_COLLABORATORS;
 
+    private static final int MAX_NUMBER_SKILLS = 4;
+
     private DataFaker() {}
 
     /**
      * ###TEST PURPOSE ONLY ###
      * <br/><br/>
-     *
+     * <p>
      * There is a bug related to deleting firebase storage files,
      * it's not going to be fixed now since it's not core functionality.
      * <br/>
      * This code is going to be moved to backed in the future.
-     *
-     * */
+     */
     public static void insertFakeData(Context context) {
         dropDatabase(context);
     }
@@ -86,25 +87,25 @@ public class DataFaker {
                     public void onDataChange(final DataSnapshot dataSnapshot) {
                         final MutableInt numRemoved = new MutableInt();
 
-                        if (dataSnapshot.getChildrenCount()==0) {
+                        if (dataSnapshot.getChildrenCount() == 0) {
                             insertData(context);
                         }
 
                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                            FirebaseDao.deleteImage(String.valueOf(snapshot.getValue()),
-                                    new OperationListener<Task <Void>>() {
-                                        @Override
-                                        public void onSuccess(Task<Void> result) {
-                                            numRemoved.increment();
-                                            if (numRemoved.getValue() == dataSnapshot.getChildrenCount()) {
-                                                getDatabase().getReference(SkillDao.SKILLS_PATH).removeValue();
-                                                getDatabase().getReference(CollaboratorDao.COLLABORATORS_PATH).removeValue();
-                                                getDatabase().getReference(CollaboratorSkillDao.COLLABORATOR_SKILLS_PATH).removeValue();
+                            FirebaseDao.deleteImage(String.valueOf(snapshot.getValue()), new OperationListener<Task<Void>>() {
+                                @Override
+                                public void onSuccess(Task<Void> result) {
+                                    numRemoved.increment();
+                                    if (numRemoved.getValue() == dataSnapshot.getChildrenCount()) {
+                                        getDatabase().getReference(SkillDao.SKILLS_PATH).removeValue();
+                                        getDatabase().getReference(CollaboratorDao.COLLABORATORS_PATH).removeValue();
+                                        getDatabase().getReference(CollaboratorSkillDao.COLLABORATOR_SKILLS_PATH)
+                                                .removeValue();
 
-                                                insertData(context);
-                                            }
-                                        }
-                                    });
+                                        insertData(context);
+                                    }
+                                }
+                            });
                         }
                     }
                 });
@@ -238,7 +239,7 @@ public class DataFaker {
         CollaboratorBusiness collaboratorBusiness = new CollaboratorBusiness();
 
         for (Collaborator collab : collabs) {
-            int skillSize = random.nextInt(10);
+            int skillSize = random.nextInt(MAX_NUMBER_SKILLS);
             for (int i = 0; i < skillSize; i++) {
                 collab.addSkill(skills.get(random.nextInt(skills.size())));
             }

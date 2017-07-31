@@ -20,6 +20,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import study.pmoreira.skillmanager.R;
 import study.pmoreira.skillmanager.model.Collaborator;
+import study.pmoreira.skillmanager.model.CollaboratorSkill;
 import study.pmoreira.skillmanager.ui.AdapterFilter.OnFilter;
 
 class CollaboratorAdapter extends RecyclerView.Adapter<CollaboratorAdapter.ViewHolder> implements Filterable {
@@ -34,6 +35,7 @@ class CollaboratorAdapter extends RecyclerView.Adapter<CollaboratorAdapter.ViewH
     private ItemClickListener mItemClickListener;
 
     private List<Collaborator> mCollaborators;
+    private List<CollaboratorSkill> mCollaboratorSkills;
 
     interface ItemClickListener {
         void onItemClick(Collaborator collab);
@@ -59,12 +61,14 @@ class CollaboratorAdapter extends RecyclerView.Adapter<CollaboratorAdapter.ViewH
         }
     }
 
-    CollaboratorAdapter(Context context, ItemClickListener clickListener, List<Collaborator> collab, View emptyView) {
+    CollaboratorAdapter(Context context, ItemClickListener clickListener, List<Collaborator> collab,
+                        List<CollaboratorSkill> collaboratorSkills, View emptyView) {
         mContext = context;
         mItemClickListener = clickListener;
         mInflater = LayoutInflater.from(mContext);
 
         mCollaborators = collab;
+        mCollaboratorSkills = collaboratorSkills;
 
         emptyView.setVisibility(collab.isEmpty() ? View.VISIBLE : View.INVISIBLE);
     }
@@ -102,13 +106,14 @@ class CollaboratorAdapter extends RecyclerView.Adapter<CollaboratorAdapter.ViewH
     @Override
     public Filter getFilter() {
         if (mCollaboratorFilter == null) {
-            mCollaboratorFilter = new CollaboratorAdapterFilter(mCollaborators, new OnFilter<Collaborator>() {
-                @Override
-                public void publishResults(List<Collaborator> results) {
-                    mCollaborators = results;
-                    notifyDataSetChanged();
-                }
-            });
+            mCollaboratorFilter = new CollaboratorAdapterFilter(mCollaborators, mCollaboratorSkills,
+                    new OnFilter<Collaborator>() {
+                        @Override
+                        public void publishResults(List<Collaborator> results) {
+                            mCollaborators = results;
+                            notifyDataSetChanged();
+                        }
+                    });
         }
         return mCollaboratorFilter;
     }

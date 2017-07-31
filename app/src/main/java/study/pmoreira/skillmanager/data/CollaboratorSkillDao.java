@@ -11,7 +11,7 @@ import study.pmoreira.skillmanager.model.CollaboratorSkill;
 //TODO: make it static ?
 public class CollaboratorSkillDao extends BaseDao {
 
-    public static final String COLLABORATOR_SKILLS_PATH = "collaboratorSkills";
+    static final String COLLABORATOR_SKILLS_PATH = "collaboratorSkills";
 
     public void findAll(OperationListener<List<CollaboratorSkill>> listener) {
         FirebaseDao.findAll(CollaboratorSkill.class, COLLABORATOR_SKILLS_PATH, listener);

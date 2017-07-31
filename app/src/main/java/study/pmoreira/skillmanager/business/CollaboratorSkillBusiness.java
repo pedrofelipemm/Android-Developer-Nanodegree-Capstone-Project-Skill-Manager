@@ -11,6 +11,10 @@ public class CollaboratorSkillBusiness {
 
     private CollaboratorSkillDao mCollaboratorSkillDao = new CollaboratorSkillDao();
 
+    public void findAll(OperationListener<List<CollaboratorSkill>> listener) {
+        mCollaboratorSkillDao.findAll(listener);
+    }
+
     public void findCollaboratorSkillsName(String collaboratorId, final OperationListener<List<String>> listener) {
         mCollaboratorSkillDao.findCollaboratorSkills(collaboratorId, new OperationListener<List<CollaboratorSkill>>() {
             @Override

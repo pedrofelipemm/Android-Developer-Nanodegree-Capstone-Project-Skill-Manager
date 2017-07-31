@@ -16,8 +16,10 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import study.pmoreira.skillmanager.R;
 import study.pmoreira.skillmanager.business.CollaboratorBusiness;
+import study.pmoreira.skillmanager.business.CollaboratorSkillBusiness;
 import study.pmoreira.skillmanager.infrastructure.OperationListener;
 import study.pmoreira.skillmanager.model.Collaborator;
+import study.pmoreira.skillmanager.model.CollaboratorSkill;
 import study.pmoreira.skillmanager.ui.SearchFilter;
 import study.pmoreira.skillmanager.ui.SearchableFragment;
 import study.pmoreira.skillmanager.ui.collaborator.CollaboratorActivity;
@@ -27,6 +29,7 @@ public class CollaboratorFragment extends SearchableFragment implements SearchFi
 
     private static final String STATE_RV_POSITION = "STATE_RV_POSITION";
     private static final String STATE_COLLABORATORS = "STATE_COLLABORATORS";
+    private static final String STATE_COLLABORATOR_SKILLS = "STATE_COLLABORATOR_SKILLS";
 
     @BindView(R.id.recyclerview)
     RecyclerView mRecyclerView;
@@ -38,6 +41,8 @@ public class CollaboratorFragment extends SearchableFragment implements SearchFi
 
     Context mContext;
     List<Collaborator> mCollaborators;
+    List<CollaboratorSkill> mCollaboratorSkills;
+
 
     ItemClickListener mItemClickListener = new ItemClickListener() {
         @Override
@@ -61,6 +66,8 @@ public class CollaboratorFragment extends SearchableFragment implements SearchFi
 
         if (savedInstanceState != null) {
             mCollaborators = savedInstanceState.getParcelableArrayList(STATE_COLLABORATORS);
+            mCollaboratorSkills = savedInstanceState.getParcelableArrayList(STATE_COLLABORATOR_SKILLS);
+
             setQuery(savedInstanceState.getCharSequence(STATE_QUERY));
 
             setupRecyclerView();
@@ -68,6 +75,7 @@ public class CollaboratorFragment extends SearchableFragment implements SearchFi
             mRecyclerView.getLayoutManager().scrollToPosition(savedInstanceState.getInt(STATE_RV_POSITION));
         } else {
             new CollaboratorBusiness().findAll(new OnCollaboratorLoad());
+            new CollaboratorSkillBusiness().findAll(new OnCollaboratorSkillsLoad());
         }
 
         return view;
@@ -77,6 +85,7 @@ public class CollaboratorFragment extends SearchableFragment implements SearchFi
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelableArrayList(STATE_COLLABORATORS, new ArrayList<>(mCollaborators));
+        outState.putParcelableArrayList(STATE_COLLABORATOR_SKILLS, new ArrayList<>(mCollaboratorSkills));
         outState.putInt(STATE_RV_POSITION,
                 ((LinearLayoutManager) mRecyclerView.getLayoutManager()).findFirstCompletelyVisibleItemPosition());
 
@@ -84,7 +93,7 @@ public class CollaboratorFragment extends SearchableFragment implements SearchFi
 
     @Override
     public void filter(CharSequence constraint) {
-        if (mAdapter == null ) return;
+        if (mAdapter == null) return;
 
         mAdapter.filter(constraint);
         setQuery(constraint);
@@ -93,7 +102,8 @@ public class CollaboratorFragment extends SearchableFragment implements SearchFi
     void setupRecyclerView() {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
 
-        mAdapter = new CollaboratorAdapter(mContext, mItemClickListener, mCollaborators, mEmptyView);
+        mAdapter = new CollaboratorAdapter(mContext, mItemClickListener, mCollaborators,
+                mCollaboratorSkills, mEmptyView);
         mAdapter.filter(getQuery());
         mRecyclerView.setAdapter(mAdapter);
     }
@@ -103,6 +113,16 @@ public class CollaboratorFragment extends SearchableFragment implements SearchFi
         @Override
         public void onSuccess(List<Collaborator> collaborators) {
             mCollaborators = collaborators;
+
+            setupRecyclerView();
+        }
+    }
+
+    private class OnCollaboratorSkillsLoad extends OperationListener<List<CollaboratorSkill>> {
+
+        @Override
+        public void onSuccess(List<CollaboratorSkill> collaboratorSkills) {
+            mCollaboratorSkills = collaboratorSkills;
 
             setupRecyclerView();
         }
