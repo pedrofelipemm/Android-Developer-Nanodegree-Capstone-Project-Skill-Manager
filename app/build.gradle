@@ -1,12 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 25
+    compileSdkVersion 26
     buildToolsVersion "25.0.3"
     defaultConfig {
         applicationId "study.pmoreira.skillmanager"
         minSdkVersion 21
-        targetSdkVersion 25
+        targetSdkVersion 26
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -22,7 +22,7 @@ android {
 ext {
     butterKnifeVersion = '8.5.1'
     firebaseVersion = '11.0.2'
-    supportLibVersion = '25.3.1'
+    supportLibVersion = '26.0.0'
 }
 
 dependencies {
