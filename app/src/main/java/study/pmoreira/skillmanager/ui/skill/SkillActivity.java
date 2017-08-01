@@ -3,6 +3,7 @@ package study.pmoreira.skillmanager.ui.skill;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.CardView;
 import android.view.View;
@@ -28,6 +29,10 @@ public class SkillActivity extends BaseActivity {
     @BindView(R.id.cardview)
     CardView mCardView;
 
+    @Nullable
+    @BindView(R.id.skill_name_textview)
+    TextView mNameTextView;
+
     @BindView(R.id.skill_description_textview)
     TextView mDescriptionTextView;
 
@@ -52,6 +57,7 @@ public class SkillActivity extends BaseActivity {
     }
 
     public void setupViews(final Skill skill) {
+        if (mNameTextView != null) mNameTextView.setText(skill.getName());
         mDescriptionTextView.setText(skill.getDescription());
 
         Picasso.with(this)
