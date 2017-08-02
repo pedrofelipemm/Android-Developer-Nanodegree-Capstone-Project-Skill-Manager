@@ -15,6 +15,7 @@ import study.pmoreira.skillmanager.R;
 import study.pmoreira.skillmanager.data.DataFaker;
 import study.pmoreira.skillmanager.ui.BaseActivity;
 import study.pmoreira.skillmanager.ui.OnTextChanged;
+import study.pmoreira.skillmanager.widget.WidgetScheduler;
 
 public class MainActivity extends BaseActivity {
 
@@ -29,11 +30,13 @@ public class MainActivity extends BaseActivity {
     @BindView(R.id.viewPager)
     ViewPager mvViewPager;
 
+    //TODO searchView
     @BindView(R.id.search_edittext)
     EditText mSearchEditText;
 
     private PagerAdapter mPagerAdapter;
 
+    //TODO add transitions
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,6 +49,8 @@ public class MainActivity extends BaseActivity {
         setupViews();
 
         insertFakeData();
+
+        WidgetScheduler.initialize(this);
     }
 
     private void insertFakeData() {

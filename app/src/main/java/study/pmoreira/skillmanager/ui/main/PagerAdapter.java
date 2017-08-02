@@ -30,10 +30,10 @@ class PagerAdapter extends FragmentPagerAdapter {
 
         switch (position) {
             case 0:
-                fragment = new SkillFragment();
+                fragment = new CollaboratorFragment();
                 break;
             case 1:
-                fragment = new CollaboratorFragment();
+                fragment = new SkillFragment();
                 break;
             default:
                 throw new IllegalArgumentException(mContext.getString(R.string.main_pager_invalid_position, position));
@@ -51,9 +51,9 @@ class PagerAdapter extends FragmentPagerAdapter {
     public CharSequence getPageTitle(int position) {
         switch (position) {
             case 0:
-                return mContext.getString(R.string.main_pager_title_skills);
-            case 1:
                 return mContext.getString(R.string.main_pager_title_collaborators);
+            case 1:
+                return mContext.getString(R.string.main_pager_title_skills);
             default:
                 throw new IllegalArgumentException(mContext.getString(R.string.main_pager_invalid_position, position));
         }
@@ -67,7 +67,7 @@ class PagerAdapter extends FragmentPagerAdapter {
             mSearchFilter = (SearchFilter) object;
         }
 
-        if (object instanceof  ClickableView) {
+        if (object instanceof ClickableView) {
             mClickableView = (ClickableView) object;
         }
     }

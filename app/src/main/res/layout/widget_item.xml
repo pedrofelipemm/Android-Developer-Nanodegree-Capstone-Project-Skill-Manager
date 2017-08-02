@@ -1,0 +1,26 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/default_margin2x"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/name_textview"
+        style="@style/TextAppearance.AppCompat.Medium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/default_margin2x"
+        android:textStyle="bold"
+        tools:text="John Smith"/>
+
+    <TextView
+        android:id="@+id/role_textview"
+        style="@style/Base.TextAppearance.AppCompat.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/default_margin2x"
+        tools:text="Software Engineer"/>
+
+</LinearLayout>

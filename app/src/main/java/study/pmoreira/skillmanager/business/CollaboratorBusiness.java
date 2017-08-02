@@ -29,6 +29,10 @@ public class CollaboratorBusiness {
         mCollaboratorDao.findAll(listener);
     }
 
+    public void findAllNoListener(OperationListener<List<Collaborator>> listener) {
+        mCollaboratorDao.findAllNoListener(listener);
+    }
+
     public void saveOrUpdate(final Collaborator collaborator, final OperationListener<Collaborator> listener) {
         if (isValid(collaborator, listener)) {
             mCollaboratorDao.saveOrUpdate(collaborator, new OnSaveOrUpdate(collaborator, listener));

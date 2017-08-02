@@ -61,6 +61,22 @@ class FirebaseDao {
                 });
     }
 
+    static <T> void findAllNoListener(final Class<T> clazz, final String refPath,
+                                      final OperationListener<List<T>> listener) {
+        getDatabase().getReference(refPath)
+                .addListenerForSingleValueEvent(new OnDataChange() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        List<T> results = new ArrayList<>();
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            results.add(snapshot.getValue(clazz));
+                        }
+                        listener.onSuccess(results);
+                    }
+                });
+    }
+
+
     static <T> void saveOrUpdate(final Model model, final String refPath, final OperationListener<T> listener) {
         DatabaseReference dbRef;
 

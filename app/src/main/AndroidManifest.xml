@@ -34,6 +34,34 @@
         <activity
             android:name=".ui.collaborator.EditCollaboratorActivity"
             android:parentActivityName=".ui.collaborator.CollaboratorActivity"/>
+
+        <service
+            android:name=".widget.service.WidgetIntentService"
+            android:exported="false"/>
+
+        <service
+            android:name=".widget.service.WidgetService"
+            android:enabled="true"
+            android:exported="true"
+            android:permission="android.permission.BIND_JOB_SERVICE"/>
+
+        <service
+            android:name=".widget.service.WidgetRemoteViewsService"
+            android:permission="android.permission.BIND_REMOTEVIEWS"/>
+
+        <receiver
+            android:name=".widget.WidgetProvider"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+                <action android:name="study.pmoreira.skillmanager.ACTION_DATA_UPDATED"/>
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget"/>
+        </receiver>
+
     </application>
 
 </manifest>

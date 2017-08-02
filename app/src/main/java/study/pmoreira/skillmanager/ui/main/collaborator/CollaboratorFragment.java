@@ -41,8 +41,8 @@ public class CollaboratorFragment extends SearchableFragment implements Clickabl
     CollaboratorAdapter mAdapter;
 
     Context mContext;
-    List<Collaborator> mCollaborators;
-    List<CollaboratorSkill> mCollaboratorSkills;
+    List<Collaborator> mCollaborators = new ArrayList<>();
+    List<CollaboratorSkill> mCollaboratorSkills = new ArrayList<>();
 
 
     ItemClickListener mItemClickListener = new ItemClickListener() {

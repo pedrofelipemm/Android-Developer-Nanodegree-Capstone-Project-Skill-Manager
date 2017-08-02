@@ -42,5 +42,6 @@
     <string name="do_you_want_to_delete">Do you want to delete <xliff:g id="string">%s</xliff:g></string>
 
     <string name="unable_to_handle_actionview">Unable to handle ACTION_VIEW, URL: <xliff:g id="url">%s</xliff:g></string>
+    <string name="error_while_updating_widget">Error while updating widget</string>
 
 </resources>

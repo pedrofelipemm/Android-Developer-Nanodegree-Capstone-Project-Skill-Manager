@@ -25,5 +25,8 @@
 
     <dimen name="default_fab_dimen">56dp</dimen>
     <dimen name="collaborator_pic_dimen">150dp</dimen>
+    <dimen name="widget_default_height">180dp</dimen>
+    <dimen name="widget_min_resize_height">60dp</dimen>
+    <dimen name="widget_default_width">294dp</dimen>
 
 </resources>
