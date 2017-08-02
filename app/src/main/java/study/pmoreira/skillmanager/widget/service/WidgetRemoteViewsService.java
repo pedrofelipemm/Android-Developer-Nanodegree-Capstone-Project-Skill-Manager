@@ -64,7 +64,7 @@ public class WidgetRemoteViewsService extends RemoteViewsService {
                 RemoteViews views = new RemoteViews(getPackageName(), R.layout.widget_item);
                 views.setTextViewText(R.id.name_textview, collaborator.getName());
                 views.setTextViewText(R.id.role_textview, collaborator.getRole());
-                views.setOnClickFillInIntent(R.id.widget_container, new Intent());
+                views.setOnClickFillInIntent(R.id.listview, fillInIntent);
 
                 return views;
             }
