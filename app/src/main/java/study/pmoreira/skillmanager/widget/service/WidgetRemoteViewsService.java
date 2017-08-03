@@ -11,11 +11,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import study.pmoreira.skillmanager.R;
+import study.pmoreira.skillmanager.business.CollaboratorBusiness;
+import study.pmoreira.skillmanager.infrastructure.OperationListener;
 import study.pmoreira.skillmanager.model.Collaborator;
 import study.pmoreira.skillmanager.ui.collaborator.CollaboratorActivity;
 import study.pmoreira.skillmanager.widget.WidgetScheduler;
 
-public class WidgetRemoteViewsService extends RemoteViewsService {
+    public class WidgetRemoteViewsService extends RemoteViewsService {
 
     private static final String TAG = WidgetRemoteViewsService.class.getName();
 
@@ -26,17 +28,23 @@ public class WidgetRemoteViewsService extends RemoteViewsService {
             private List<Collaborator> mCollabs = new ArrayList<>();
 
             @Override
-            public void onCreate() {}
+            public void onCreate() {
+                WidgetScheduler.initialize(getApplicationContext());
+            }
 
             @Override
             public void onDataSetChanged() {
                 Log.d(TAG, "onDataSetChanged: ");
                 final long identityToken = Binder.clearCallingIdentity();
 
-                //TODO:
-                mCollabs = new ArrayList<>(WidgetScheduler.sCollabs);
-
-                Binder.restoreCallingIdentity(identityToken);
+                new CollaboratorBusiness().findAllNoListener(new OperationListener<List<Collaborator>>() {
+                    @Override
+                    public void onSuccess(List<Collaborator> collabs) {
+                        mCollabs = collabs;
+                        Log.d(TAG, "Binder.restoreCallingIdentity ");
+                        Binder.restoreCallingIdentity(identityToken);
+                    }
+                });
             }
 
             @Override
@@ -64,7 +72,7 @@ public class WidgetRemoteViewsService extends RemoteViewsService {
                 RemoteViews views = new RemoteViews(getPackageName(), R.layout.widget_item);
                 views.setTextViewText(R.id.name_textview, collaborator.getName());
                 views.setTextViewText(R.id.role_textview, collaborator.getRole());
-                views.setOnClickFillInIntent(R.id.listview, fillInIntent);
+                views.setOnClickFillInIntent(R.id.widget_item, fillInIntent);
 
                 return views;
             }

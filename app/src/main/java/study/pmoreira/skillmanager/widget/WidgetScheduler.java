@@ -8,12 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import study.pmoreira.skillmanager.business.CollaboratorBusiness;
-import study.pmoreira.skillmanager.infrastructure.OperationListener;
-import study.pmoreira.skillmanager.model.Collaborator;
 import study.pmoreira.skillmanager.utils.NetworkUtils;
 import study.pmoreira.skillmanager.widget.service.WidgetIntentService;
 import study.pmoreira.skillmanager.widget.service.WidgetService;
@@ -31,17 +25,8 @@ public final class WidgetScheduler {
 
     private WidgetScheduler() {}
 
-    public static List<Collaborator> sCollabs = new ArrayList<>();
-
     public static void updateData(final Context context) {
-        //TODO:
-        new CollaboratorBusiness().findAllNoListener(new OperationListener<List<Collaborator>>() {
-            @Override
-            public void onSuccess(List<Collaborator> collabs) {
-                sCollabs = collabs;
-                context.sendBroadcast(new Intent(ACTION_DATA_UPDATED).setPackage(context.getPackageName()));
-            }
-        });
+        context.sendBroadcast(new Intent(ACTION_DATA_UPDATED).setPackage(context.getPackageName()));
     }
 
     public static synchronized void initialize(Context context) {
