@@ -32,7 +32,7 @@
                     android:contentDescription="@string/skill_image_content_description"
                     android:onClick="onClickChangeView"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/skill_placeholder"/>
+                    tools:src="@drawable/skill_placeholder"/>
 
                 <ProgressBar
                     android:id="@+id/progressbar"
@@ -69,7 +69,7 @@
                         android:layout_height="wrap_content"
                         android:layout_margin="@dimen/default_margin"
                         android:contentDescription="@string/camera_image_description"
-                        android:src="@drawable/ic_photo_camera"/>
+                        tools:src="@drawable/ic_photo_camera"/>
 
                     <TextView
                         style="@style/TextAppearance.AppCompat.Medium"

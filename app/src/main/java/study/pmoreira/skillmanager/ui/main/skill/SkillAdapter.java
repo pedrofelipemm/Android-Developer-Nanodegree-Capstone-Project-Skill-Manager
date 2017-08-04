@@ -12,7 +12,8 @@ import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 
 import java.util.List;
 
@@ -76,9 +77,10 @@ class SkillAdapter extends RecyclerView.Adapter<SkillAdapter.ViewHolder> impleme
         final Skill skill = mSkills.get(position);
 
         holder.mSkillNameTextView.setText(skill.getName());
-        Picasso.with(mContext)
+        Glide.with(mContext)
                 .load(TextUtils.isEmpty(skill.getPictureUrl()) ? INVALID_IMAGE : skill.getPictureUrl())
-                .error(R.drawable.skill_placeholder)
+                .apply(new RequestOptions()
+                        .error(R.drawable.skill_placeholder))
                 .into(holder.mSkillPicImageView);
 
         holder.root.setOnClickListener(new OnClickListener() {

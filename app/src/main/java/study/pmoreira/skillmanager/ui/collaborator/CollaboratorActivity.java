@@ -9,8 +9,9 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.plumillonforge.android.chipview.ChipView;
-import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -89,9 +90,10 @@ public class CollaboratorActivity extends BaseActivity {
         mEmailTextView.setText(collab.getEmail());
         mPhoneTextView.setText(collab.getPhone());
 
-        Picasso.with(this)
+        Glide.with(this)
                 .load(collab.getPictureUrl())
-                .error(R.drawable.collaborator_placeholder)
+                .apply(new RequestOptions()
+                        .error(R.drawable.collaborator_placeholder))
                 .into(mPicImageView);
     }
 

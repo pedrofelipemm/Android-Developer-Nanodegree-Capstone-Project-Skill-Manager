@@ -11,7 +11,8 @@ import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -60,9 +61,10 @@ public class SkillActivity extends BaseActivity {
         if (mNameTextView != null) mNameTextView.setText(skill.getName());
         mDescriptionTextView.setText(skill.getDescription());
 
-        Picasso.with(this)
+        Glide.with(this)
                 .load(skill.getPictureUrl())
-                .error(R.drawable.skill_placeholder)
+                .apply(new RequestOptions()
+                        .error(R.drawable.skill_placeholder))
                 .into(mPicImageView);
 
 

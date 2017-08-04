@@ -16,7 +16,7 @@
         android:scaleType="centerCrop"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/collaborator_placeholder"/>
+        tools:src="@drawable/collaborator_placeholder"/>
 
     <TextView
         android:id="@+id/name_textview"

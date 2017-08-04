@@ -12,7 +12,8 @@ import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 
 import java.util.List;
 
@@ -85,9 +86,10 @@ class CollaboratorAdapter extends RecyclerView.Adapter<CollaboratorAdapter.ViewH
         holder.mNameTextView.setText(collab.getName());
         holder.mRoleTextView.setText(collab.getRole());
 
-        Picasso.with(mContext)
+        Glide.with(mContext)
                 .load(TextUtils.isEmpty(collab.getPictureUrl()) ? INVALID_IMAGE : collab.getPictureUrl())
-                .error(R.drawable.collaborator_placeholder)
+                .apply(new RequestOptions()
+                        .error(R.drawable.collaborator_placeholder))
                 .into(holder.mPictureImageView);
 
         holder.root.setOnClickListener(new OnClickListener() {

@@ -17,10 +17,11 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -256,9 +257,10 @@ public class EditSkillActivity extends BaseActivity {
     @SuppressWarnings("ConstantConditions")
     void loadSkillPicture() {
         if (TextUtils.isEmpty(mPhotoUrl)) return;
-        Picasso.with(EditSkillActivity.this)
+        Glide.with(EditSkillActivity.this)
                 .load(mPhotoUrl)
-                .error(getDrawable(R.drawable.skill_placeholder))
+                .apply(new RequestOptions()
+                        .error(getDrawable(R.drawable.skill_placeholder)))
                 .into((ImageView) findViewById(R.id.skill_imageview));
     }
 
