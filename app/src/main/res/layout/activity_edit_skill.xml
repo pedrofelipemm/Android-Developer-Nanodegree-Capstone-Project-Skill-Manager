@@ -31,7 +31,6 @@
                     android:layout_margin="@dimen/default_margin"
                     android:contentDescription="@string/skill_image_content_description"
                     android:onClick="onClickChangeView"
-                    android:scaleType="fitCenter"
                     tools:src="@drawable/skill_placeholder"/>
 
                 <ProgressBar
@@ -69,7 +68,7 @@
                         android:layout_height="wrap_content"
                         android:layout_margin="@dimen/default_margin"
                         android:contentDescription="@string/camera_image_description"
-                        tools:src="@drawable/ic_photo_camera"/>
+                        android:src="@drawable/ic_photo_camera"/>
 
                     <TextView
                         style="@style/TextAppearance.AppCompat.Medium"
@@ -106,6 +105,7 @@
                 android:layout_margin="@dimen/default_margin2x"
                 android:ellipsize="end"
                 android:hint="@string/skill_name_hint"
+                android:inputType="textAutoComplete"
                 android:maxLines="1"
                 android:scrollHorizontally="true"/>
 
@@ -121,7 +121,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/default_margin2x"
-                android:hint="@string/skill_description_hint"/>
+                android:hint="@string/skill_description_hint"
+                android:inputType="textAutoComplete"/>
 
         </android.support.design.widget.TextInputLayout>
 
@@ -135,7 +136,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/default_margin2x"
-                android:hint="@string/skill_learn_more_hint"/>
+                android:hint="@string/skill_learn_more_hint"
+                android:inputType="textAutoComplete"/>
 
         </android.support.design.widget.TextInputLayout>
 

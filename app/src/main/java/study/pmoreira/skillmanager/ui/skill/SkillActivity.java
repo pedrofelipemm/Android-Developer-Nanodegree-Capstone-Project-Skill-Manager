@@ -63,8 +63,7 @@ public class SkillActivity extends BaseActivity {
 
         Glide.with(this)
                 .load(skill.getPictureUrl())
-                .apply(new RequestOptions()
-                        .error(R.drawable.skill_placeholder))
+                .apply(new RequestOptions().error(R.drawable.skill_placeholder))
                 .into(mPicImageView);
 
 

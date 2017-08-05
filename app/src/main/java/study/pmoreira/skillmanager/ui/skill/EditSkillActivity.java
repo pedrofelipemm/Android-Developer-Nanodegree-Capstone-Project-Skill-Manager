@@ -58,6 +58,9 @@ public class EditSkillActivity extends BaseActivity {
     @BindView(R.id.learn_more_edittext)
     EditText mLearnMoreEditText;
 
+    @BindView(R.id.skill_imageview)
+    ImageView mImageView;
+
     @BindView(R.id.progressbar)
     ProgressBar mProgressBar;
 
@@ -96,6 +99,12 @@ public class EditSkillActivity extends BaseActivity {
 
         int skillNameMaxLength = getInteger(R.integer.skill_name_max_length);
         mNameEdiText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(skillNameMaxLength)});
+
+        Glide.with(this)
+                .load(R.drawable.skill_placeholder)
+                .apply(new RequestOptions().error(getDrawable(R.drawable.skill_placeholder)))
+                .apply(new RequestOptions().fitCenter())
+                .into(mImageView);
     }
 
     public void onClickChangeView(View view) {
@@ -215,7 +224,7 @@ public class EditSkillActivity extends BaseActivity {
             return;
         }
 
-        mSkillBusiness.save(newSkill(), new OnSkillSave());
+        mSkillBusiness.saveOrUpdate(newSkill(), new OnSkillSave());
     }
 
     private void delete() {
@@ -259,9 +268,8 @@ public class EditSkillActivity extends BaseActivity {
         if (TextUtils.isEmpty(mPhotoUrl)) return;
         Glide.with(EditSkillActivity.this)
                 .load(mPhotoUrl)
-                .apply(new RequestOptions()
-                        .error(getDrawable(R.drawable.skill_placeholder)))
-                .into((ImageView) findViewById(R.id.skill_imageview));
+                .apply(new RequestOptions().error(getDrawable(R.drawable.skill_placeholder)))
+                .into(mImageView);
     }
 
     //TODO: progressbar

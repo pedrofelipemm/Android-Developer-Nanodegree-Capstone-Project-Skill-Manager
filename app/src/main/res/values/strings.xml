@@ -2,6 +2,7 @@
     <string name="app_name">Skill Manager</string>
 
     <string name="seach_skill_edittext">Type a name or skill</string>
+
     <string name="skill_name_hint">Skill Name</string>
     <string name="skill_description_hint">Skill Description</string>
     <string name="learn_more">Learn more</string>
@@ -32,6 +33,7 @@
 
     <string name="change">Change</string>
     <string name="skill_pic_optimal_size">Optimal size:\n 800 x 600</string>
+    <string name="collab_pic_optimal_size">Optimal size:\n 800 x 800</string>
 
     <string name="wait_img_upload">Image being uploaded.\nWait a few seconds please.</string>
 
@@ -50,5 +52,14 @@
     <string name="error_provider_operation_not_supported"><xliff:g id="operation">%s</xliff:g> not supported for <xliff:g id="uri">%s</xliff:g></string>
     <string name="error_insertion_failed">Failed to insert row for <xliff:g id="error_insertion">%s</xliff:g></string>
     <string name="field_required">Field required: <xliff:g id="field_name">%s</xliff:g></string>
+
+    <string name="collab_name_hint">Name</string>
+    <string name="collab_role_hint">Role</string>
+    <string name="collab_email_hint">Email</string>
+    <string name="collab_phone_hint">Phone</string>
+    <string name="collab_birth_date_hint">Birth date</string>
+    <string name="collab_image_content_description">A picture of the collaborator.</string>
+
+    <string name="collaborator_successfully_saved">Collaborator successfully saved!</string>
 
 </resources>

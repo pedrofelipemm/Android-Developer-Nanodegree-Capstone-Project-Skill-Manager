@@ -92,8 +92,7 @@ public class CollaboratorActivity extends BaseActivity {
 
         Glide.with(this)
                 .load(collab.getPictureUrl())
-                .apply(new RequestOptions()
-                        .error(R.drawable.collaborator_placeholder))
+                .apply(new RequestOptions().error(R.drawable.collaborator_placeholder))
                 .into(mPicImageView);
     }
 

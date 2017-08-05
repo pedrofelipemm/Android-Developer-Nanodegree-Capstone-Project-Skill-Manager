@@ -23,7 +23,7 @@ public class SkillBusiness {
         mSkillDao.findAll(listener);
     }
 
-    public void save(Skill skill, OperationListener<Skill> listener) {
+    public void saveOrUpdate(Skill skill, OperationListener<Skill> listener) {
         if (isValid(skill, listener)) {
             mSkillDao.saveOrUpdate(skill, listener);
         }

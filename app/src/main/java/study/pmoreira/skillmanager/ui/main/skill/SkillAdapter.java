@@ -79,8 +79,7 @@ class SkillAdapter extends RecyclerView.Adapter<SkillAdapter.ViewHolder> impleme
         holder.mSkillNameTextView.setText(skill.getName());
         Glide.with(mContext)
                 .load(TextUtils.isEmpty(skill.getPictureUrl()) ? INVALID_IMAGE : skill.getPictureUrl())
-                .apply(new RequestOptions()
-                        .error(R.drawable.skill_placeholder))
+                .apply(new RequestOptions().error(R.drawable.skill_placeholder))
                 .into(holder.mSkillPicImageView);
 
         holder.root.setOnClickListener(new OnClickListener() {

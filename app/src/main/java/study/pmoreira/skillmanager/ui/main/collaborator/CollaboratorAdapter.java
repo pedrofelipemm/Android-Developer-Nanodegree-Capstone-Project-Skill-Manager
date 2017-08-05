@@ -88,8 +88,7 @@ class CollaboratorAdapter extends RecyclerView.Adapter<CollaboratorAdapter.ViewH
 
         Glide.with(mContext)
                 .load(TextUtils.isEmpty(collab.getPictureUrl()) ? INVALID_IMAGE : collab.getPictureUrl())
-                .apply(new RequestOptions()
-                        .error(R.drawable.collaborator_placeholder))
+                .apply(new RequestOptions().error(R.drawable.collaborator_placeholder))
                 .into(holder.mPictureImageView);
 
         holder.root.setOnClickListener(new OnClickListener() {

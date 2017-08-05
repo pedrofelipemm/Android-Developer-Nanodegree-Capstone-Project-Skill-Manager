@@ -1,10 +1,202 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/parent"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:descendantFocusability="beforeDescendants"
+    android:focusableInTouchMode="true"
     tools:context="study.pmoreira.skillmanager.ui.collaborator.EditCollaboratorActivity">
 
-</android.support.constraint.ConstraintLayout>
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.constraint.Guideline
+            android:id="@+id/guideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.5"/>
+
+        <study.pmoreira.skillmanager.ui.customview.RoundedImageView
+            android:id="@+id/collab_imageview"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/collaborator_pic_dimen"
+            android:layout_margin="@dimen/default_margin"
+            android:contentDescription="@string/collab_image_content_description"
+            android:onClick="onClickChangeView"
+            android:src="@drawable/skill_placeholder"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="@id/guideline"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <ProgressBar
+            android:id="@+id/progressbar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_margin="@dimen/default_margin"
+            android:indeterminate="true"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/collab_imageview"
+            app:layout_constraintLeft_toLeftOf="@id/collab_imageview"
+            app:layout_constraintRight_toRightOf="@id/collab_imageview"
+            app:layout_constraintTop_toTopOf="@id/collab_imageview"/>
+
+        <LinearLayout
+            android:id="@+id/change_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white"
+            android:elevation="8dp"
+            android:onClick="onClickChangeView"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="@id/collab_imageview"
+            app:layout_constraintLeft_toLeftOf="@id/guideline"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="@id/collab_imageview">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/default_margin"
+                android:contentDescription="@string/camera_image_description"
+                android:src="@drawable/ic_photo_camera"/>
+
+            <TextView
+                style="@style/TextAppearance.AppCompat.Medium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="@dimen/default_margin"
+                android:text="@string/change"/>
+
+        </LinearLayout>
+
+        <TextView
+            style="@style/TextAppearance.AppCompat.Small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/default_margin"
+            android:text="@string/collab_pic_optimal_size"
+            app:layout_constraintLeft_toLeftOf="@id/change_view"
+            app:layout_constraintRight_toRightOf="@id/change_view"
+            app:layout_constraintTop_toBottomOf="@id/change_view"/>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/textinputlayout_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/default_margin"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/collab_imageview">
+
+            <EditText
+                android:id="@+id/collab_name_edittext"
+                style="@style/TextAppearance.AppCompat.Medium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/default_margin2x"
+                android:ellipsize="end"
+                android:hint="@string/collab_name_hint"
+                android:inputType="textPersonName"
+                android:maxLines="1"
+                android:scrollHorizontally="true"/>
+
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/textinputlayout_role"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toLeftOf="@+id/textinputlayout_name"
+            app:layout_constraintRight_toRightOf="@+id/textinputlayout_name"
+            app:layout_constraintTop_toBottomOf="@+id/textinputlayout_name">
+
+            <EditText
+                android:id="@+id/collab_role_edittext"
+                style="@style/TextAppearance.AppCompat.Medium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/default_margin2x"
+                android:ellipsize="end"
+                android:hint="@string/collab_role_hint"
+                android:maxLines="1"
+                android:scrollHorizontally="true"/>
+
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/textinputlayout_email"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toLeftOf="@+id/textinputlayout_role"
+            app:layout_constraintRight_toRightOf="@+id/textinputlayout_role"
+            app:layout_constraintTop_toBottomOf="@+id/textinputlayout_role">
+
+            <EditText
+                android:id="@+id/collab_email_edittext"
+                style="@style/TextAppearance.AppCompat.Medium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/default_margin2x"
+                android:ellipsize="end"
+                android:hint="@string/collab_email_hint"
+                android:inputType="textEmailAddress"
+                android:maxLines="1"
+                android:scrollHorizontally="true"/>
+
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/textinputlayout_phone"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toLeftOf="@+id/textinputlayout_email"
+            app:layout_constraintRight_toRightOf="@+id/textinputlayout_email"
+            app:layout_constraintTop_toBottomOf="@+id/textinputlayout_email">
+
+            <EditText
+                android:id="@+id/collab_phone_edittext"
+                style="@style/TextAppearance.AppCompat.Medium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/default_margin2x"
+                android:ellipsize="end"
+                android:hint="@string/collab_phone_hint"
+                android:inputType="phone"
+                android:maxLines="1"
+                android:scrollHorizontally="true"/>
+
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/textinputlayout_birth_date"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toLeftOf="@+id/textinputlayout_phone"
+            app:layout_constraintRight_toRightOf="@+id/textinputlayout_phone"
+            app:layout_constraintTop_toBottomOf="@+id/textinputlayout_phone">
+
+            <EditText
+                android:id="@+id/collab_birth_date_edittext"
+                style="@style/TextAppearance.AppCompat.Medium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/default_margin2x"
+                android:focusable="false"
+                android:hint="@string/collab_birth_date_hint"
+                android:inputType="date"
+                android:maxLines="1"
+                android:scrollHorizontally="true"/>
+
+        </android.support.design.widget.TextInputLayout>
+
+    </android.support.constraint.ConstraintLayout>
+
+</ScrollView>
