@@ -45,6 +45,7 @@
 
     <string name="error_while_updating_widget">Error while updating widget</string>
 
+    <string name="content_authority">study.pmoreira.skillmanager</string>
     <string name="error_unknown_uri">Cannot query unknown URI: <xliff:g id="unknown_uri">%s</xliff:g></string>
     <string name="error_provider_operation_not_supported"><xliff:g id="operation">%s</xliff:g> not supported for <xliff:g id="uri">%s</xliff:g></string>
     <string name="error_insertion_failed">Failed to insert row for <xliff:g id="error_insertion">%s</xliff:g></string>
