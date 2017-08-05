@@ -9,8 +9,11 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.EditText;
 
+import com.crashlytics.android.Crashlytics;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.fabric.sdk.android.Fabric;
 import study.pmoreira.skillmanager.R;
 import study.pmoreira.skillmanager.data.DataFaker;
 import study.pmoreira.skillmanager.ui.BaseActivity;
@@ -40,6 +43,7 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(this, new Crashlytics());
         setContentView(R.layout.activity_main);
 
         ButterKnife.bind(this);
