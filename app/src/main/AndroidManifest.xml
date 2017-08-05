@@ -62,6 +62,11 @@
                 android:resource="@xml/widget"/>
         </receiver>
 
+        <provider
+            android:name=".data.provider.CollaboratorProvider"
+            android:authorities="@string/content_authority"
+            android:exported="false"/>
+
     </application>
 
 </manifest>
