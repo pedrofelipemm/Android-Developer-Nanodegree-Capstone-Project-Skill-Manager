@@ -19,8 +19,8 @@ public class DbHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
 
         final String SQL_CREATE_COLLABORATOR_TABLE = "CREATE TABLE " + CollaboratorsEntry.TABLE_NAME + " (" +
-                " internal_id INTEGER PRIMARY KEY, " +
-                CollaboratorsEntry._ID + " VARCHAR NOT NULL, " +
+                CollaboratorsEntry._ID + " INTEGER PRIMARY KEY, " +
+                CollaboratorsEntry.COLUMN_ID + " VARCHAR NOT NULL, " +
                 CollaboratorsEntry.COLUMN_NAME + " VARCHAR NOT NULL, " +
                 CollaboratorsEntry.COLUMN_BIRTHD_ATE + " INTEGER NOT NULL, " +
                 CollaboratorsEntry.COLUMN_ROLE + " VARCHAR NOT NULL," +

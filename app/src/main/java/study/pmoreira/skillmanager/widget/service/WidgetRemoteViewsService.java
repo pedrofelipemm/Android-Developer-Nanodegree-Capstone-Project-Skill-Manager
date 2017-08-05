@@ -1,23 +1,19 @@
 package study.pmoreira.skillmanager.widget.service;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Binder;
 import android.util.Log;
 import android.widget.AdapterView;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import study.pmoreira.skillmanager.R;
-import study.pmoreira.skillmanager.business.CollaboratorBusiness;
-import study.pmoreira.skillmanager.infrastructure.OperationListener;
+import study.pmoreira.skillmanager.data.SkillManagerContract.CollaboratorsEntry;
 import study.pmoreira.skillmanager.model.Collaborator;
 import study.pmoreira.skillmanager.ui.collaborator.CollaboratorActivity;
-import study.pmoreira.skillmanager.widget.WidgetScheduler;
 
-    public class WidgetRemoteViewsService extends RemoteViewsService {
+public class WidgetRemoteViewsService extends RemoteViewsService {
 
     private static final String TAG = WidgetRemoteViewsService.class.getName();
 
@@ -25,46 +21,50 @@ import study.pmoreira.skillmanager.widget.WidgetScheduler;
     public RemoteViewsFactory onGetViewFactory(final Intent intent) {
         return new RemoteViewsFactory() {
 
-            private List<Collaborator> mCollabs = new ArrayList<>();
+            private Cursor data = null;
 
             @Override
-            public void onCreate() {
-                WidgetScheduler.initialize(getApplicationContext());
-            }
+            public void onCreate() {}
 
             @Override
             public void onDataSetChanged() {
                 Log.d(TAG, "onDataSetChanged: ");
-                final long identityToken = Binder.clearCallingIdentity();
+                if (data != null) {
+                    data.close();
+                }
 
-                new CollaboratorBusiness().findAllNoListener(new OperationListener<List<Collaborator>>() {
-                    @Override
-                    public void onSuccess(List<Collaborator> collabs) {
-                        mCollabs = collabs;
-                        Log.d(TAG, "Binder.restoreCallingIdentity ");
-                        Binder.restoreCallingIdentity(identityToken);
-                    }
-                });
+                long identityToken = Binder.clearCallingIdentity();
+
+                data = getContentResolver().query(
+                        CollaboratorsEntry.CONTENT_URI,
+                        CollaboratorsEntry.ALL_COLUMNS.toArray(new String[CollaboratorsEntry.ALL_COLUMNS_SIZE]),
+                        null, null,
+                        CollaboratorsEntry.ORDER_BY_NAME);
+
+                Binder.restoreCallingIdentity(identityToken);
             }
 
             @Override
             public void onDestroy() {
-                mCollabs = new ArrayList<>();
+                if (data != null) {
+                    data.close();
+                    data = null;
+                }
             }
 
             @Override
             public int getCount() {
-                return mCollabs.size();
+                return data == null ? 0 : data.getCount();
             }
 
             @Override
             public RemoteViews getViewAt(int position) {
                 Log.d(TAG, "getViewAt: ");
-                if (position == AdapterView.INVALID_POSITION || mCollabs.size() < 1) {
+                if (position == AdapterView.INVALID_POSITION || data == null || !data.moveToPosition(position)) {
                     return null;
                 }
 
-                Collaborator collaborator = mCollabs.get(position);
+                Collaborator collaborator = new Collaborator(data);
 
                 Intent fillInIntent = new Intent();
                 fillInIntent.putExtra(CollaboratorActivity.EXTRA_COLLABORATOR, collaborator);

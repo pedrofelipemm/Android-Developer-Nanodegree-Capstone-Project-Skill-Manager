@@ -4,10 +4,18 @@ import android.app.job.JobInfo;
 import android.app.job.JobInfo.Builder;
 import android.app.job.JobScheduler;
 import android.content.ComponentName;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import study.pmoreira.skillmanager.business.CollaboratorBusiness;
+import study.pmoreira.skillmanager.data.SkillManagerContract.CollaboratorsEntry;
+import study.pmoreira.skillmanager.infrastructure.OperationListener;
+import study.pmoreira.skillmanager.model.Collaborator;
 import study.pmoreira.skillmanager.utils.NetworkUtils;
 import study.pmoreira.skillmanager.widget.service.WidgetIntentService;
 import study.pmoreira.skillmanager.widget.service.WidgetService;
@@ -26,7 +34,25 @@ public final class WidgetScheduler {
     private WidgetScheduler() {}
 
     public static void updateData(final Context context) {
-        context.sendBroadcast(new Intent(ACTION_DATA_UPDATED).setPackage(context.getPackageName()));
+
+        new CollaboratorBusiness().findAllNoListener(new OperationListener<List<Collaborator>>() {
+            @Override
+            public void onSuccess(List<Collaborator> collabs) {
+                List<ContentValues> collabsContentValue = new ArrayList<>(collabs.size());
+
+                for (Collaborator collab : collabs) {
+                    collabsContentValue.add(collab.toContentValue());
+                }
+
+                context.getContentResolver().delete(CollaboratorsEntry.CONTENT_URI, null, null);
+
+                context.getContentResolver().bulkInsert(
+                        CollaboratorsEntry.CONTENT_URI,
+                        collabsContentValue.toArray(new ContentValues[collabsContentValue.size()]));
+
+                context.sendBroadcast(new Intent(ACTION_DATA_UPDATED).setPackage(context.getPackageName()));
+            }
+        });
     }
 
     public static synchronized void initialize(Context context) {
@@ -47,7 +73,7 @@ public final class WidgetScheduler {
     }
 
 
-    public static synchronized void syncImmediately(Context context) {
+    private static synchronized void syncImmediately(Context context) {
 
         if (NetworkUtils.isConnected(context)) {
             context.startService(new Intent(context, WidgetIntentService.class));

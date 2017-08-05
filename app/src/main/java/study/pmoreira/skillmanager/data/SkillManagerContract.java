@@ -24,7 +24,7 @@ public class SkillManagerContract {
         public static final String CONTENT_LIST_TYPE =
                 ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_COLLABORATORS;
 
-        public static final String COLUMN_ID = _ID;
+        public static final String COLUMN_ID = "id";
         public static final String COLUMN_NAME = "name";
         public static final String COLUMN_BIRTHD_ATE = "birth_date";
         public static final String COLUMN_ROLE = "role";
@@ -32,8 +32,10 @@ public class SkillManagerContract {
         public static final String COLUMN_PHONE = "phone";
         public static final String COLUMN_PICTURE_URL = "picture_url";
 
-        public static final List<String> ALL_COLUMNS = Arrays.asList(_ID, COLUMN_NAME, COLUMN_BIRTHD_ATE,
+        public static final List<String> ALL_COLUMNS = Arrays.asList(COLUMN_ID, COLUMN_NAME, COLUMN_BIRTHD_ATE,
                 COLUMN_ROLE, COLUMN_EMAIL, COLUMN_PHONE, COLUMN_PICTURE_URL);
+
+        public static final int ALL_COLUMNS_SIZE = ALL_COLUMNS.size();
 
         public static final String ORDER_BY_NAME = COLUMN_NAME + " ASC";
     }

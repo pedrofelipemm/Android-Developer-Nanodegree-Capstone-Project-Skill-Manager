@@ -143,8 +143,24 @@ public class CollaboratorProvider extends ContentProvider {
     }
 
     @Override
-    public int delete(@NonNull Uri uri, @Nullable String s, @Nullable String[] strings) {
-        throw new IllegalArgumentException(mContext.getString(R.string.error_unknown_uri, uri));
+    public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
+        int numRowsDeleted = 0;
+
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
+        switch (sUriMatcher.match(uri)) {
+            case COD_COLLABORATORS:
+                numRowsDeleted = db.delete(CollaboratorsEntry.TABLE_NAME, selection, selectionArgs);
+                break;
+            default:
+                throw new UnsupportedOperationException(mContext.getString(R.string.error_unknown_uri, uri));
+        }
+
+        if (numRowsDeleted != 0) {
+            mContext.getContentResolver().notifyChange(uri, null);
+        }
+
+        return numRowsDeleted;
     }
 
     @Nullable

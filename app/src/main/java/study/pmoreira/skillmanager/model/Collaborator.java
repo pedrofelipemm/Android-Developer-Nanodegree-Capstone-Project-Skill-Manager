@@ -1,5 +1,7 @@
 package study.pmoreira.skillmanager.model;
 
+import android.content.ContentValues;
+import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -7,6 +9,8 @@ import com.google.firebase.database.Exclude;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import study.pmoreira.skillmanager.data.SkillManagerContract.CollaboratorsEntry;
 
 public class Collaborator extends Model implements Parcelable {
 
@@ -48,6 +52,16 @@ public class Collaborator extends Model implements Parcelable {
         phone = in.readString();
         pictureUrl = in.readString();
         skills = in.createTypedArrayList(Skill.CREATOR);
+    }
+
+    public Collaborator(Cursor cursor) {
+        setId(cursor.getString(cursor.getColumnIndex(CollaboratorsEntry.COLUMN_ID)));
+        name = cursor.getString(cursor.getColumnIndex(CollaboratorsEntry.COLUMN_NAME));
+        birthDate = cursor.getLong(cursor.getColumnIndex(CollaboratorsEntry.COLUMN_BIRTHD_ATE));
+        role = cursor.getString(cursor.getColumnIndex(CollaboratorsEntry.COLUMN_ROLE));
+        email = cursor.getString(cursor.getColumnIndex(CollaboratorsEntry.COLUMN_EMAIL));
+        phone = cursor.getString(cursor.getColumnIndex(CollaboratorsEntry.COLUMN_PHONE));
+        pictureUrl = cursor.getString(cursor.getColumnIndex(CollaboratorsEntry.COLUMN_PICTURE_URL));
     }
 
     public String getName() {
@@ -116,4 +130,16 @@ public class Collaborator extends Model implements Parcelable {
         }
     };
 
+    public ContentValues toContentValue() {
+        ContentValues cv = new ContentValues();
+        cv.put(CollaboratorsEntry.COLUMN_ID, getId());
+        cv.put(CollaboratorsEntry.COLUMN_NAME, name);
+        cv.put(CollaboratorsEntry.COLUMN_BIRTHD_ATE, birthDate);
+        cv.put(CollaboratorsEntry.COLUMN_ROLE, role);
+        cv.put(CollaboratorsEntry.COLUMN_EMAIL, email);
+        cv.put(CollaboratorsEntry.COLUMN_PHONE, phone);
+        cv.put(CollaboratorsEntry.COLUMN_PICTURE_URL, pictureUrl);
+
+        return cv;
+    }
 }
