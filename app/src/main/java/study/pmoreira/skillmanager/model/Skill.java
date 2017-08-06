@@ -15,9 +15,7 @@ public class Skill extends Model implements Parcelable {
     private String learnMoreUrl;
     private String pictureUrl;
 
-    @SuppressWarnings("unused")
-    public Skill() {
-    }
+    public Skill() {}
 
     public Skill(String name, String description, String learnMoreUrl, String pictureUrl) {
         this.name = name;

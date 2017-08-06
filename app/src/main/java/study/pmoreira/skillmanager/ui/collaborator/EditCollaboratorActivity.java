@@ -37,13 +37,16 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import study.pmoreira.skillmanager.R;
 import study.pmoreira.skillmanager.business.CollaboratorBusiness;
+import study.pmoreira.skillmanager.business.CollaboratorSkillBusiness;
 import study.pmoreira.skillmanager.infrastructure.OperationListener;
 import study.pmoreira.skillmanager.infrastructure.exception.BusinessException;
 import study.pmoreira.skillmanager.infrastructure.exception.ValidateException;
@@ -69,6 +72,7 @@ public class EditCollaboratorActivity extends BaseActivity implements OnRequestP
     private static final int PERMISSION_REQUEST_CONTACT = 777;
 
     private CollaboratorBusiness mCollaboratorBusiness = new CollaboratorBusiness();
+    private CollaboratorSkillBusiness mCollaboratorSkillBusiness = new CollaboratorSkillBusiness();
 
     @BindView(R.id.collab_name_edittext)
     AutoCompleteTextView mNameAutoCompleteTextView;
@@ -105,6 +109,14 @@ public class EditCollaboratorActivity extends BaseActivity implements OnRequestP
         ButterKnife.bind(this);
 
         setupViews();
+
+        if (getIntent().hasExtra(EXTRA_COLLABORATOR)) {
+            Collaborator collaborator = getIntent().getParcelableExtra(EXTRA_COLLABORATOR);
+
+            setTitle(collaborator.getName());
+            fillFields(collaborator);
+            mIsEditing = true;
+        }
 
         askForContactPermission();
     }
@@ -160,10 +172,13 @@ public class EditCollaboratorActivity extends BaseActivity implements OnRequestP
     private void fillFields(Collaborator collab) {
         //TODO
         mNameAutoCompleteTextView.setText(collab.getName());
-//        mDescriptionEdiText.setText(collab.getDescription());
-//        mLearnMoreEditText.setText(collab.getLearnMoreUrl());
+        mRoleEditText.setText(collab.getRole());
+        mEmailEditText.setText(collab.getEmail());
+        mPhoneEditText.setText(collab.getPhone());
+        mBirthDateEditText.setText(DateUtils.format(new Date(collab.getBirthDate())));
         mPhotoUrl = collab.getPictureUrl();
         loadCollaboratorPicture();
+        loadCollaboratorSkills(collab);
     }
 
     @Override
@@ -219,7 +234,10 @@ public class EditCollaboratorActivity extends BaseActivity implements OnRequestP
         switch (item.getItemId()) {
             case android.R.id.home:
                 cancelUpload();
-                NavUtils.navigateUpFromSameTask(this);
+
+                Intent intent = new Intent(this, CollaboratorActivity.class);
+                intent.putExtra(EXTRA_COLLABORATOR, newCollaborator());
+                NavUtils.navigateUpTo(this, intent);
                 return true;
             case R.id.menu_save:
                 save();
@@ -273,12 +291,21 @@ public class EditCollaboratorActivity extends BaseActivity implements OnRequestP
     }
 
     private Collaborator newCollaborator() {
+        Date birthDate;
+        try {
+            birthDate = DateUtils.parse(mBirthDateEditText.getText().toString());
+        } catch (ParseException e) {
+            Log.d(TAG, "newCollaborator: Failed to parse date");
+            Toast.makeText(this, getString(R.string.confirm_birthdate), Toast.LENGTH_SHORT).show();
+            birthDate = new Date();
+        }
+
         Collaborator collab = new Collaborator(
                 mNameAutoCompleteTextView.getText().toString(),
-                1,
-                "role",
-                "email",
-                "phone",
+                birthDate.getTime(),
+                mRoleEditText.getText().toString(),
+                mEmailEditText.getText().toString(),
+                mPhoneEditText.getText().toString(),
                 mPhotoUrl);
 
         collab.setId(getCollaboratorId());
@@ -294,13 +321,28 @@ public class EditCollaboratorActivity extends BaseActivity implements OnRequestP
         return collabId;
     }
 
-    @SuppressWarnings("ConstantConditions")
     void loadCollaboratorPicture() {
         if (TextUtils.isEmpty(mPhotoUrl)) return;
         Glide.with(EditCollaboratorActivity.this)
                 .load(mPhotoUrl)
                 .apply(new RequestOptions().error(getDrawable(R.drawable.collaborator_placeholder)))
                 .into(mImageView);
+    }
+
+    private void loadCollaboratorSkills(Collaborator collab) {
+        mCollaboratorSkillBusiness.findCollaboratorSkillsName(collab.getId(),
+                new OperationListener<List<String>>() {
+                    @Override
+                    public void onSuccess(List<String> results) {
+                        if (results == null || results.isEmpty()) {
+//TODO
+//                            mChipView.setVisibility(View.GONE);
+                        } else {
+//                            mChipView.setChipList(StringChip.toChipList(results));
+                        }
+                        hideProgressbar(mProgressBar);
+                    }
+                });
     }
 
     private class OnPictureUpload extends OperationListener<String> {

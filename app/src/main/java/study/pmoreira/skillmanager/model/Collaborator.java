@@ -30,9 +30,7 @@ public class Collaborator extends Model implements Parcelable {
 
     private List<Skill> skills = new ArrayList<>();
 
-    @SuppressWarnings("unused")
-    public Collaborator() {
-    }
+    public Collaborator() {}
 
     public Collaborator(String name, long birthDate, String role, String email, String phone, String pictureUrl) {
         this.name = name;

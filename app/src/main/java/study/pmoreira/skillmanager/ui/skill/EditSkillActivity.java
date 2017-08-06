@@ -176,7 +176,10 @@ public class EditSkillActivity extends BaseActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 cancelUpload();
-                NavUtils.navigateUpFromSameTask(this);
+
+                Intent intent = new Intent(this, EditSkillActivity.class);
+                intent.putExtra(EXTRA_SKILL, newSkill());
+                NavUtils.navigateUpTo(this, intent);
                 return true;
             case R.id.menu_save:
                 save();
@@ -263,7 +266,6 @@ public class EditSkillActivity extends BaseActivity {
         return skillId;
     }
 
-    @SuppressWarnings("ConstantConditions")
     void loadSkillPicture() {
         if (TextUtils.isEmpty(mPhotoUrl)) return;
         Glide.with(EditSkillActivity.this)
@@ -271,8 +273,6 @@ public class EditSkillActivity extends BaseActivity {
                 .apply(new RequestOptions().error(getDrawable(R.drawable.skill_placeholder)))
                 .into(mImageView);
     }
-
-    //TODO: progressbar
 
     private class OnPictureUpload extends OperationListener<String> {
 

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -84,7 +85,7 @@ public class CollaboratorActivity extends BaseActivity {
         }
     }
 
-    private void setupViews(Collaborator collab) {
+    private void setupViews(final Collaborator collab) {
         mNameTextView.setText(collab.getName());
         mRoleTextView.setText(collab.getRole());
         mEmailTextView.setText(collab.getEmail());
@@ -94,6 +95,13 @@ public class CollaboratorActivity extends BaseActivity {
                 .load(collab.getPictureUrl())
                 .apply(new RequestOptions().error(R.drawable.collaborator_placeholder))
                 .into(mPicImageView);
+
+        mFab.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EditCollaboratorActivity.startActivity(CollaboratorActivity.this, collab);
+            }
+        });
     }
 
     public static void startActivity(Context context, Collaborator collaborator, int... flags) {

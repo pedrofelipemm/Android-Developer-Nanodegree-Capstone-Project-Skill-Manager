@@ -23,15 +23,16 @@
 
         <study.pmoreira.skillmanager.ui.customview.RoundedImageView
             android:id="@+id/collab_imageview"
-            android:layout_width="0dp"
-            android:layout_height="@dimen/collaborator_pic_dimen"
+            android:layout_width="@dimen/edit_collaborator_pic_dimen"
+            android:layout_height="@dimen/edit_collaborator_pic_dimen"
             android:layout_margin="@dimen/default_margin"
+            android:layout_marginTop="8dp"
             android:contentDescription="@string/collab_image_content_description"
             android:onClick="onClickChangeView"
-            android:src="@drawable/skill_placeholder"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="@id/guideline"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@drawable/skill_placeholder"/>
 
         <ProgressBar
             android:id="@+id/progressbar"

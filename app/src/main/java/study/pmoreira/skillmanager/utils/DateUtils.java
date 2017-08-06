@@ -17,6 +17,10 @@ public class DateUtils {
                 .format(newCalendar(dayOfMonth, monthOfYear, year).getTime());
     }
 
+    public static String format(Date date) {
+        return new SimpleDateFormat(DEFAULT_DATE_PATTERN, Locale.US).format(date);
+    }
+
     /**
      * @param date String date format: {@link DateUtils#DEFAULT_DATE_PATTERN}
      */

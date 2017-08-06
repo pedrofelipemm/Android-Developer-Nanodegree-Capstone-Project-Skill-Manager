@@ -27,7 +27,6 @@
                     android:id="@+id/collab_pic_imageview"
                     android:layout_width="@dimen/collaborator_pic_dimen"
                     android:layout_height="@dimen/collaborator_pic_dimen"
-                    android:scaleType="centerCrop"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
@@ -62,7 +61,7 @@
                 app:cardPreventCornerOverlap="false"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/pic_container_imageview">
+                app:layout_constraintTop_toBottomOf="@id/pic_container_imageview">
 
                 <android.support.constraint.ConstraintLayout
                     android:layout_width="wrap_content"
