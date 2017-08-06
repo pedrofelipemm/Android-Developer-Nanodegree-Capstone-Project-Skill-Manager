@@ -45,16 +45,16 @@ public class SkillBusiness {
     private boolean isValid(Skill skill, OperationListener<Skill> listener) {
         boolean isValid = true;
 
-        if (StringUtils.isBlank(skill.getName())) {
-            listener.onValidationError(new ValidateException(INVALID_SKILL_NAME));
+        if (StringUtils.isBlank(skill.getLearnMoreUrl())) {
+            listener.onValidationError(new ValidateException(INVALID_SKILL_LEARN_MORE_URL));
             isValid = false;
         }
         if (StringUtils.isBlank(skill.getDescription())) {
             listener.onValidationError(new ValidateException(INVALID_SKILL_DESCRIPTION));
             isValid = false;
         }
-        if (StringUtils.isBlank(skill.getLearnMoreUrl())) {
-            listener.onValidationError(new ValidateException(INVALID_SKILL_LEARN_MORE_URL));
+        if (StringUtils.isBlank(skill.getName())) {
+            listener.onValidationError(new ValidateException(INVALID_SKILL_NAME));
             isValid = false;
         }
         if (StringUtils.isBlank(skill.getPictureUrl())) {

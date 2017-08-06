@@ -10,8 +10,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.text.TextUtils;
 import android.util.Log;
+
+import org.apache.commons.lang3.StringUtils;
 
 import study.pmoreira.skillmanager.R;
 import study.pmoreira.skillmanager.data.DbHelper;
@@ -100,37 +101,37 @@ public class CollaboratorProvider extends ContentProvider {
 
     private void validateItem(ContentValues values) {
         String name = values.getAsString(CollaboratorsEntry.COLUMN_NAME);
-        if (TextUtils.isEmpty(name.trim())) {
+        if (StringUtils.isBlank(name.trim())) {
             throw new IllegalArgumentException(
                     mContext.getString(R.string.field_required, CollaboratorsEntry.COLUMN_NAME));
         }
 
-        Long birthDate = values.getAsLong(CollaboratorsEntry.COLUMN_BIRTHD_ATE);
-        if (birthDate == null || birthDate < 0) {
+        Long birthdate = values.getAsLong(CollaboratorsEntry.COLUMN_BIRTHDATE);
+        if (birthdate == null || birthdate < 0) {
             throw new IllegalArgumentException(
-                    mContext.getString(R.string.field_required, CollaboratorsEntry.COLUMN_BIRTHD_ATE));
+                    mContext.getString(R.string.field_required, CollaboratorsEntry.COLUMN_BIRTHDATE));
         }
 
         String phone = values.getAsString(CollaboratorsEntry.COLUMN_PHONE);
-        if (TextUtils.isEmpty(phone.trim())) {
+        if (StringUtils.isBlank(phone.trim())) {
             throw new IllegalArgumentException(
                     mContext.getString(R.string.field_required, CollaboratorsEntry.COLUMN_PHONE));
         }
 
         String email = values.getAsString(CollaboratorsEntry.COLUMN_EMAIL);
-        if (TextUtils.isEmpty(email.trim())) {
+        if (StringUtils.isBlank(email.trim())) {
             throw new IllegalArgumentException(
                     mContext.getString(R.string.field_required, CollaboratorsEntry.COLUMN_EMAIL));
         }
 
         String role = values.getAsString(CollaboratorsEntry.COLUMN_ROLE);
-        if (TextUtils.isEmpty(role.trim())) {
+        if (StringUtils.isBlank(role.trim())) {
             throw new IllegalArgumentException(
                     mContext.getString(R.string.field_required, CollaboratorsEntry.COLUMN_ROLE));
         }
 
         String pictureUrl = values.getAsString(CollaboratorsEntry.COLUMN_PICTURE_URL);
-        if (TextUtils.isEmpty(pictureUrl.trim())) {
+        if (StringUtils.isBlank(pictureUrl.trim())) {
             throw new IllegalArgumentException(
                     mContext.getString(R.string.field_required, CollaboratorsEntry.COLUMN_PICTURE_URL));
         }

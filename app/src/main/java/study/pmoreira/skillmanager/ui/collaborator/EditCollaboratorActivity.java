@@ -67,9 +67,11 @@ public class EditCollaboratorActivity extends BaseActivity implements OnRequestP
 
     private static final String STATE_IS_EDITING = "STATE_IS_EDITING";
     private static final String STATE_IMG_REF = "STATE_IMG_REF";
+    private static final String STATE_IS_INVAlID_DATE = "STATE_IS_INVAlID_DATE";
 
     private static final int NAME_AUTOCOMPLETE_THRESHOLD = 3;
     private static final int PERMISSION_REQUEST_CONTACT = 777;
+    private static final Long INVALID_DATE = 0L;
 
     private CollaboratorBusiness mCollaboratorBusiness = new CollaboratorBusiness();
     private CollaboratorSkillBusiness mCollaboratorSkillBusiness = new CollaboratorSkillBusiness();
@@ -77,7 +79,7 @@ public class EditCollaboratorActivity extends BaseActivity implements OnRequestP
     @BindView(R.id.collab_name_edittext)
     AutoCompleteTextView mNameAutoCompleteTextView;
 
-    @BindView(R.id.collab_birth_date_edittext)
+    @BindView(R.id.collab_birthdate_edittext)
     EditText mBirthDateEditText;
 
     @BindView(R.id.collab_role_edittext)
@@ -98,6 +100,11 @@ public class EditCollaboratorActivity extends BaseActivity implements OnRequestP
     private String mImgRef;
 
     private boolean mIsEditing;
+
+    /**
+     * Cannot send null to parcel
+     */
+    private boolean mIsInvalidDate;
 
     String mPhotoUrl;
 
@@ -155,6 +162,7 @@ public class EditCollaboratorActivity extends BaseActivity implements OnRequestP
         super.onSaveInstanceState(outState);
         outState.putParcelable(STATE_COLLABORATOR, newCollaborator());
         outState.putBoolean(STATE_IS_EDITING, mIsEditing);
+        outState.putBoolean(STATE_IS_INVAlID_DATE, mIsInvalidDate);
 
         if (mImgRef != null) {
             cancelUpload();
@@ -164,18 +172,18 @@ public class EditCollaboratorActivity extends BaseActivity implements OnRequestP
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
+        mIsInvalidDate = savedInstanceState.getBoolean(STATE_IS_INVAlID_DATE);
         fillFields((Collaborator) savedInstanceState.getParcelable(STATE_COLLABORATOR));
         mIsEditing = savedInstanceState.getBoolean(STATE_IS_EDITING);
         mImgRef = savedInstanceState.getString(STATE_IMG_REF);
     }
 
     private void fillFields(Collaborator collab) {
-        //TODO
         mNameAutoCompleteTextView.setText(collab.getName());
         mRoleEditText.setText(collab.getRole());
         mEmailEditText.setText(collab.getEmail());
         mPhoneEditText.setText(collab.getPhone());
-        mBirthDateEditText.setText(DateUtils.format(new Date(collab.getBirthDate())));
+        mBirthDateEditText.setText(mIsInvalidDate ? null : DateUtils.format(new Date(collab.getBirthdate())));
         mPhotoUrl = collab.getPictureUrl();
         loadCollaboratorPicture();
         loadCollaboratorSkills(collab);
@@ -271,7 +279,12 @@ public class EditCollaboratorActivity extends BaseActivity implements OnRequestP
             return;
         }
 
-        mCollaboratorBusiness.saveOrUpdate(newCollaborator(), new OnCollaboratorSave());
+        Collaborator collab = newCollaborator();
+        if (mIsInvalidDate) {
+            collab.setBirthdate(null);
+        }
+
+        mCollaboratorBusiness.saveOrUpdate(collab, new OnCollaboratorSave());
     }
 
     private void delete() {
@@ -291,18 +304,19 @@ public class EditCollaboratorActivity extends BaseActivity implements OnRequestP
     }
 
     private Collaborator newCollaborator() {
-        Date birthDate;
+        Long birthdate = null;
         try {
-            birthDate = DateUtils.parse(mBirthDateEditText.getText().toString());
+            birthdate = DateUtils.parse(mBirthDateEditText.getText().toString()).getTime();
+            mIsInvalidDate = false;
         } catch (ParseException e) {
             Log.d(TAG, "newCollaborator: Failed to parse date");
-            Toast.makeText(this, getString(R.string.confirm_birthdate), Toast.LENGTH_SHORT).show();
-            birthDate = new Date();
+            birthdate = INVALID_DATE;
+            mIsInvalidDate = true;
         }
 
         Collaborator collab = new Collaborator(
                 mNameAutoCompleteTextView.getText().toString(),
-                birthDate.getTime(),
+                birthdate,
                 mRoleEditText.getText().toString(),
                 mEmailEditText.getText().toString(),
                 mPhoneEditText.getText().toString(),
@@ -403,9 +417,27 @@ public class EditCollaboratorActivity extends BaseActivity implements OnRequestP
 
         @Override
         public void onValidationError(ValidateException e) {
-            //TODO
             if (CollaboratorBusiness.INVALID_COLLABORATOR_NAME == e.getCode()) {
                 mNameAutoCompleteTextView.setError(getString(R.string.name_cannot_be_empty));
+                mNameAutoCompleteTextView.requestFocus();
+            }
+            if (CollaboratorBusiness.INVALID_COLLABORATOR_BIRTHDATE == e.getCode()) {
+                mBirthDateEditText.setError(getString(R.string.birthdate_cannot_be_empty));
+            }
+            if (CollaboratorBusiness.INVALID_COLLABORATOR_ROLE == e.getCode()) {
+                mRoleEditText.setError(getString(R.string.role_cannot_be_empty));
+                mRoleEditText.requestFocus();
+            }
+            if (CollaboratorBusiness.INVALID_COLLABORATOR_EMAIL == e.getCode()) {
+                mEmailEditText.setError(getString(R.string.email_cannot_be_empty));
+                mEmailEditText.requestFocus();
+            }
+            if (CollaboratorBusiness.INVALID_COLLABORATOR_PHONE == e.getCode()) {
+                mPhoneEditText.setError(getString(R.string.phone_cannot_be_empty));
+                mPhoneEditText.requestFocus();
+            }
+            if (CollaboratorBusiness.INVALID_COLLABORATOR_PICTURE == e.getCode()) {
+                displayMessage(getString(R.string.picture_cannot_be_empty));
             }
         }
     }

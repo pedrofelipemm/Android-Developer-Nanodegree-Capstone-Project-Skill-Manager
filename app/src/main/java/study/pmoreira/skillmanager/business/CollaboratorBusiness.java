@@ -17,8 +17,12 @@ import study.pmoreira.skillmanager.model.Skill;
 //TODO: make it static ?
 public class CollaboratorBusiness {
 
-    //TODO
     public static final int INVALID_COLLABORATOR_NAME = 1;
+    public static final int INVALID_COLLABORATOR_BIRTHDATE = 2;
+    public static final int INVALID_COLLABORATOR_ROLE = 3;
+    public static final int INVALID_COLLABORATOR_EMAIL = 4;
+    public static final int INVALID_COLLABORATOR_PHONE = 5;
+    public static final int INVALID_COLLABORATOR_PICTURE = 6;
 
     private CollaboratorSkillBusiness mCollaboratorSkillBusiness = new CollaboratorSkillBusiness();
 
@@ -55,9 +59,28 @@ public class CollaboratorBusiness {
     private boolean isValid(Collaborator collaborator, OperationListener<Collaborator> listener) {
         boolean isValid = true;
 
-        //TODO
+        if (StringUtils.isBlank(collaborator.getPhone())) {
+            listener.onValidationError(new ValidateException(INVALID_COLLABORATOR_PHONE));
+            isValid = false;
+        }
+        if (StringUtils.isBlank(collaborator.getEmail())) {
+            listener.onValidationError(new ValidateException(INVALID_COLLABORATOR_EMAIL));
+            isValid = false;
+        }
+        if (StringUtils.isBlank(collaborator.getRole())) {
+            listener.onValidationError(new ValidateException(INVALID_COLLABORATOR_ROLE));
+            isValid = false;
+        }
+        if (collaborator.getBirthdate() == null) {
+            listener.onValidationError(new ValidateException(INVALID_COLLABORATOR_BIRTHDATE));
+            isValid = false;
+        }
         if (StringUtils.isBlank(collaborator.getName())) {
             listener.onValidationError(new ValidateException(INVALID_COLLABORATOR_NAME));
+            isValid = false;
+        }
+        if (StringUtils.isBlank(collaborator.getPictureUrl())) {
+            listener.onValidationError(new ValidateException(INVALID_COLLABORATOR_PICTURE));
             isValid = false;
         }
 

@@ -15,14 +15,14 @@ import study.pmoreira.skillmanager.data.SkillManagerContract.CollaboratorsEntry;
 public class Collaborator extends Model implements Parcelable {
 
     public static final String JSON_NAME = "name";
-    public static final String JSON_BIRTH_DATE = "birthDate";
+    public static final String JSON_BIRTHDATE = "birthdate";
     public static final String JSON_ROLE = "role";
     public static final String JSON_EMAIL = "email";
     public static final String JSON_PHONE = "phone";
     public static final String JSON_PICTURE_URL = "pictureUrl";
 
     private String name;
-    private long birthDate;
+    private Long birthdate;
     private String role;
     private String email;
     private String phone;
@@ -32,9 +32,9 @@ public class Collaborator extends Model implements Parcelable {
 
     public Collaborator() {}
 
-    public Collaborator(String name, long birthDate, String role, String email, String phone, String pictureUrl) {
+    public Collaborator(String name, Long birthdate, String role, String email, String phone, String pictureUrl) {
         this.name = name;
-        this.birthDate = birthDate;
+        this.birthdate = birthdate;
         this.role = role;
         this.email = email;
         this.phone = phone;
@@ -44,7 +44,7 @@ public class Collaborator extends Model implements Parcelable {
     private Collaborator(Parcel in) {
         setId(in.readString());
         name = in.readString();
-        birthDate = in.readLong();
+        birthdate = in.readLong();
         role = in.readString();
         email = in.readString();
         phone = in.readString();
@@ -55,7 +55,7 @@ public class Collaborator extends Model implements Parcelable {
     public Collaborator(Cursor cursor) {
         setId(cursor.getString(cursor.getColumnIndex(CollaboratorsEntry.COLUMN_ID)));
         name = cursor.getString(cursor.getColumnIndex(CollaboratorsEntry.COLUMN_NAME));
-        birthDate = cursor.getLong(cursor.getColumnIndex(CollaboratorsEntry.COLUMN_BIRTHD_ATE));
+        birthdate = cursor.getLong(cursor.getColumnIndex(CollaboratorsEntry.COLUMN_BIRTHDATE));
         role = cursor.getString(cursor.getColumnIndex(CollaboratorsEntry.COLUMN_ROLE));
         email = cursor.getString(cursor.getColumnIndex(CollaboratorsEntry.COLUMN_EMAIL));
         phone = cursor.getString(cursor.getColumnIndex(CollaboratorsEntry.COLUMN_PHONE));
@@ -66,8 +66,12 @@ public class Collaborator extends Model implements Parcelable {
         return name;
     }
 
-    public long getBirthDate() {
-        return birthDate;
+    public Long getBirthdate() {
+        return birthdate;
+    }
+
+    public void setBirthdate(Long birthdate) {
+        this.birthdate = birthdate;
     }
 
     public String getRole() {
@@ -109,7 +113,7 @@ public class Collaborator extends Model implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(getId());
         dest.writeString(name);
-        dest.writeLong(birthDate);
+        dest.writeLong(birthdate);
         dest.writeString(role);
         dest.writeString(email);
         dest.writeString(phone);
@@ -132,7 +136,7 @@ public class Collaborator extends Model implements Parcelable {
         ContentValues cv = new ContentValues();
         cv.put(CollaboratorsEntry.COLUMN_ID, getId());
         cv.put(CollaboratorsEntry.COLUMN_NAME, name);
-        cv.put(CollaboratorsEntry.COLUMN_BIRTHD_ATE, birthDate);
+        cv.put(CollaboratorsEntry.COLUMN_BIRTHDATE, birthdate);
         cv.put(CollaboratorsEntry.COLUMN_ROLE, role);
         cv.put(CollaboratorsEntry.COLUMN_EMAIL, email);
         cv.put(CollaboratorsEntry.COLUMN_PHONE, phone);

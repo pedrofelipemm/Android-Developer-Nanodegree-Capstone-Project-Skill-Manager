@@ -220,7 +220,7 @@ public class DataFaker {
                 JSONObject collabJson = collabs.getJSONObject(i);
                 result.add(new Collaborator(
                         collabJson.getString(Collaborator.JSON_NAME),
-                        collabJson.getLong(Collaborator.JSON_BIRTH_DATE),
+                        collabJson.getLong(Collaborator.JSON_BIRTHDATE),
                         collabJson.getString(Collaborator.JSON_ROLE),
                         collabJson.getString(Collaborator.JSON_EMAIL),
                         collabJson.getString(Collaborator.JSON_PHONE),

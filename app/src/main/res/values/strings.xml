@@ -16,6 +16,11 @@
     <string name="camera_image_description">A little image of a camera.</string>
 
     <string name="name_cannot_be_empty">Name cannot be empty.</string>
+    <string name="birthdate_cannot_be_empty">Birthdate cannot be empty.</string>
+    <string name="role_cannot_be_empty">Role cannot be empty.</string>
+    <string name="email_cannot_be_empty">Email cannot be empty.</string>
+    <string name="phone_cannot_be_empty">Phone cannot be empty.</string>
+
     <string name="description_cannot_be_empty">Description cannot be empty.</string>
     <string name="learn_more_cannot_be_empty">Learn more cannot be empty.</string>
     <string name="picture_cannot_be_empty">Picture cannot be empty.</string>
@@ -57,7 +62,7 @@
     <string name="collab_role_hint">Role</string>
     <string name="collab_email_hint">Email</string>
     <string name="collab_phone_hint">Phone</string>
-    <string name="collab_birth_date_hint">Birth date</string>
+    <string name="collab_birthdate_hint">Birth date</string>
     <string name="collab_image_content_description">A picture of the collaborator.</string>
 
     <string name="collaborator_successfully_saved">Collaborator successfully saved!</string>

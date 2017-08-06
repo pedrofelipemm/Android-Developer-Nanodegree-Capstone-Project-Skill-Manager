@@ -306,12 +306,15 @@ public class EditSkillActivity extends BaseActivity {
         public void onValidationError(ValidateException e) {
             if (SkillBusiness.INVALID_SKILL_NAME == e.getCode()) {
                 mNameEdiText.setError(getString(R.string.name_cannot_be_empty));
+                mNameEdiText.requestFocus();
             }
             if (SkillBusiness.INVALID_SKILL_DESCRIPTION == e.getCode()) {
                 mDescriptionEdiText.setError(getString(R.string.description_cannot_be_empty));
+                mDescriptionEdiText.requestFocus();
             }
             if (SkillBusiness.INVALID_SKILL_LEARN_MORE_URL == e.getCode()) {
                 mLearnMoreEditText.setError(getString(R.string.learn_more_cannot_be_empty));
+                mLearnMoreEditText.requestFocus();
             }
             if (SkillBusiness.INVALID_SKILL_PICTURE_URL == e.getCode()) {
                 displayMessage(getString(R.string.picture_cannot_be_empty));

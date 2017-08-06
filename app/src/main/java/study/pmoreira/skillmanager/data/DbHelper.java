@@ -22,7 +22,7 @@ public class DbHelper extends SQLiteOpenHelper {
                 CollaboratorsEntry._ID + " INTEGER PRIMARY KEY, " +
                 CollaboratorsEntry.COLUMN_ID + " VARCHAR NOT NULL, " +
                 CollaboratorsEntry.COLUMN_NAME + " VARCHAR NOT NULL, " +
-                CollaboratorsEntry.COLUMN_BIRTHD_ATE + " INTEGER NOT NULL, " +
+                CollaboratorsEntry.COLUMN_BIRTHDATE + " INTEGER NOT NULL, " +
                 CollaboratorsEntry.COLUMN_ROLE + " VARCHAR NOT NULL," +
                 CollaboratorsEntry.COLUMN_EMAIL + " VARCHAR NOT NULL, " +
                 CollaboratorsEntry.COLUMN_PHONE + " VARCHAR NOT NULL, " +
