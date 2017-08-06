@@ -23,6 +23,10 @@ public class SkillBusiness {
         mSkillDao.findAll(listener);
     }
 
+    public void findAllSingleEvent(OperationListener<List<Skill>> listener) {
+        mSkillDao.findAllSingleEvent(listener);
+    }
+
     public void saveOrUpdate(Skill skill, OperationListener<Skill> listener) {
         if (isValid(skill, listener)) {
             mSkillDao.saveOrUpdate(skill, listener);

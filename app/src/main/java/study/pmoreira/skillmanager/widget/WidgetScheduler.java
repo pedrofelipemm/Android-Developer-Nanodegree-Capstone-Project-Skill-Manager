@@ -35,7 +35,7 @@ public final class WidgetScheduler {
 
     public static void updateData(final Context context) {
 
-        new CollaboratorBusiness().findAllNoListener(new OperationListener<List<Collaborator>>() {
+        new CollaboratorBusiness().findAllSingleEvent(new OperationListener<List<Collaborator>>() {
             @Override
             public void onSuccess(List<Collaborator> collabs) {
                 List<ContentValues> collabsContentValue = new ArrayList<>(collabs.size());

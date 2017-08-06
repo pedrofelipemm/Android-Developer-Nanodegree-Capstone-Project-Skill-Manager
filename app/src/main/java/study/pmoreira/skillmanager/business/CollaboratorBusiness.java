@@ -33,8 +33,8 @@ public class CollaboratorBusiness {
         mCollaboratorDao.findAll(listener);
     }
 
-    public void findAllNoListener(OperationListener<List<Collaborator>> listener) {
-        mCollaboratorDao.findAllNoListener(listener);
+    public void findAllSingleEvent(OperationListener<List<Collaborator>> listener) {
+        mCollaboratorDao.findAllSingleEvent(listener);
     }
 
     public void saveOrUpdate(final Collaborator collaborator, final OperationListener<Collaborator> listener) {

@@ -1,6 +1,7 @@
 package study.pmoreira.skillmanager.ui.collaborator;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -16,8 +17,10 @@ import android.support.v4.app.ActivityCompat.OnRequestPermissionsResultCallback;
 import android.support.v4.app.NavUtils;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AlertDialog.Builder;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,6 +29,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -36,6 +40,7 @@ import com.codetroopers.betterpickers.calendardatepicker.CalendarDatePickerDialo
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.plumillonforge.android.chipview.ChipView;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -47,11 +52,14 @@ import butterknife.ButterKnife;
 import study.pmoreira.skillmanager.R;
 import study.pmoreira.skillmanager.business.CollaboratorBusiness;
 import study.pmoreira.skillmanager.business.CollaboratorSkillBusiness;
+import study.pmoreira.skillmanager.business.SkillBusiness;
 import study.pmoreira.skillmanager.infrastructure.OperationListener;
 import study.pmoreira.skillmanager.infrastructure.exception.BusinessException;
 import study.pmoreira.skillmanager.infrastructure.exception.ValidateException;
 import study.pmoreira.skillmanager.model.Collaborator;
+import study.pmoreira.skillmanager.model.Skill;
 import study.pmoreira.skillmanager.ui.BaseActivity;
+import study.pmoreira.skillmanager.ui.customview.StringChip;
 import study.pmoreira.skillmanager.ui.main.MainActivity;
 import study.pmoreira.skillmanager.utils.DateUtils;
 import study.pmoreira.skillmanager.utils.FileUtils;
@@ -68,12 +76,14 @@ public class EditCollaboratorActivity extends BaseActivity implements OnRequestP
     private static final String STATE_IS_EDITING = "STATE_IS_EDITING";
     private static final String STATE_IMG_REF = "STATE_IMG_REF";
     private static final String STATE_IS_INVAlID_DATE = "STATE_IS_INVAlID_DATE";
+    private static final String STATE_CHIP_LIST = "STATE_CHIP_LIST";
 
     private static final int NAME_AUTOCOMPLETE_THRESHOLD = 3;
     private static final int PERMISSION_REQUEST_CONTACT = 777;
     private static final Long INVALID_DATE = 0L;
 
     private CollaboratorBusiness mCollaboratorBusiness = new CollaboratorBusiness();
+    private SkillBusiness mSkillBusiness = new SkillBusiness();
     private CollaboratorSkillBusiness mCollaboratorSkillBusiness = new CollaboratorSkillBusiness();
 
     @BindView(R.id.collab_name_edittext)
@@ -94,8 +104,13 @@ public class EditCollaboratorActivity extends BaseActivity implements OnRequestP
     @BindView(R.id.collab_imageview)
     ImageView mImageView;
 
+    @BindView(R.id.chip_view)
+    ChipView mChipView;
+
     @BindView(R.id.progressbar)
     ProgressBar mProgressBar;
+
+    AlertDialog mSkillDialog;
 
     private String mImgRef;
 
@@ -115,6 +130,8 @@ public class EditCollaboratorActivity extends BaseActivity implements OnRequestP
 
         ButterKnife.bind(this);
 
+        setTitle(getString(R.string.new_collaborator));
+
         setupViews();
 
         if (getIntent().hasExtra(EXTRA_COLLABORATOR)) {
@@ -128,6 +145,7 @@ public class EditCollaboratorActivity extends BaseActivity implements OnRequestP
         askForContactPermission();
     }
 
+    @SuppressLint("InflateParams")
     private void setupViews() {
         findViewById(R.id.parent).requestFocus();
 
@@ -144,10 +162,55 @@ public class EditCollaboratorActivity extends BaseActivity implements OnRequestP
             }
         });
 
+        View addSkillView = getLayoutInflater().inflate(R.layout.add_skill, null);
+        final ListView addSkillListView = (ListView) addSkillView.findViewById(R.id.add_skill_listview);
+
+        mSkillDialog = createSkillDialog(addSkillView, addSkillListView);
+
+        mSkillBusiness.findAllSingleEvent(new OperationListener<List<Skill>>() {
+            @Override
+            public void onSuccess(List<Skill> skills) {
+                List<String> results = new ArrayList<String>();
+                for (Skill skill : skills) {
+                    results.add(skill.getName());
+                }
+
+                if (addSkillListView != null) {
+                    addSkillListView.setAdapter(new ArrayAdapter<String>(
+                            EditCollaboratorActivity.this,
+                            android.R.layout.simple_list_item_multiple_choice,
+                            results));
+                }
+            }
+        });
+
         Glide.with(this)
                 .load(R.drawable.collaborator_placeholder)
                 .apply(new RequestOptions().error(getDrawable(R.drawable.collaborator_placeholder)))
                 .into(mImageView);
+    }
+
+    private AlertDialog createSkillDialog(View view, final ListView listView) {
+        return new Builder(this)
+                .setTitle(getString(R.string.new_skills))
+                .setView(view)
+                .setPositiveButton(R.string.add_skill, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        List<String> results = new ArrayList<>();
+
+                        SparseBooleanArray checkedItemPositions = listView.getCheckedItemPositions();
+                        for (int index = 0; index < listView.getCount(); index++) {
+                            if (checkedItemPositions.get(index)) {
+                                results.add((String) listView.getItemAtPosition(index));
+                            }
+                        }
+
+                        StringChip.setChipList(mChipView, results);
+                    }
+                })
+                .setNegativeButton(R.string.dismiss, null)
+                .create();
     }
 
     public void onClickChangeView(View view) {
@@ -163,6 +226,7 @@ public class EditCollaboratorActivity extends BaseActivity implements OnRequestP
         outState.putParcelable(STATE_COLLABORATOR, newCollaborator());
         outState.putBoolean(STATE_IS_EDITING, mIsEditing);
         outState.putBoolean(STATE_IS_INVAlID_DATE, mIsInvalidDate);
+        outState.putStringArrayList(STATE_CHIP_LIST, StringChip.getChipList(mChipView));
 
         if (mImgRef != null) {
             cancelUpload();
@@ -176,6 +240,7 @@ public class EditCollaboratorActivity extends BaseActivity implements OnRequestP
         fillFields((Collaborator) savedInstanceState.getParcelable(STATE_COLLABORATOR));
         mIsEditing = savedInstanceState.getBoolean(STATE_IS_EDITING);
         mImgRef = savedInstanceState.getString(STATE_IMG_REF);
+        StringChip.setChipList(mChipView, savedInstanceState.getStringArrayList(STATE_CHIP_LIST));
     }
 
     private void fillFields(Collaborator collab) {
@@ -299,20 +364,11 @@ public class EditCollaboratorActivity extends BaseActivity implements OnRequestP
                             }
                         })
                 .setNegativeButton(R.string.no_caps, null)
-                .create()
                 .show();
     }
 
     private Collaborator newCollaborator() {
-        Long birthdate = null;
-        try {
-            birthdate = DateUtils.parse(mBirthDateEditText.getText().toString()).getTime();
-            mIsInvalidDate = false;
-        } catch (ParseException e) {
-            Log.d(TAG, "newCollaborator: Failed to parse date");
-            birthdate = INVALID_DATE;
-            mIsInvalidDate = true;
-        }
+        Long birthdate = getBirthdate();
 
         Collaborator collab = new Collaborator(
                 mNameAutoCompleteTextView.getText().toString(),
@@ -324,7 +380,27 @@ public class EditCollaboratorActivity extends BaseActivity implements OnRequestP
 
         collab.setId(getCollaboratorId());
 
+        addCollabSkill(collab);
+
         return collab;
+    }
+
+    private void addCollabSkill(Collaborator collab) {
+        //TODO
+    }
+
+    private Long getBirthdate() {
+        Long birthdate = null;
+        try {
+            birthdate = DateUtils.parse(mBirthDateEditText.getText().toString()).getTime();
+            mIsInvalidDate = false;
+        } catch (ParseException e) {
+            Log.d(TAG, "newCollaborator: Failed to parse date");
+            birthdate = INVALID_DATE;
+            mIsInvalidDate = true;
+        }
+
+        return birthdate;
     }
 
     String getCollaboratorId() {
@@ -357,6 +433,10 @@ public class EditCollaboratorActivity extends BaseActivity implements OnRequestP
                         hideProgressbar(mProgressBar);
                     }
                 });
+    }
+
+    public void addSkill(View view) {
+        mSkillDialog.show();
     }
 
     private class OnPictureUpload extends OperationListener<String> {

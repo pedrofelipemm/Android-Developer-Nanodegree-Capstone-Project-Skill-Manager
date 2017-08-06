@@ -12,6 +12,8 @@
     <string name="image_picker_text">Select Image</string>
     <string name="error_image_upload">Error while uploading image.</string>
     <string name="new_skill">New Skill</string>
+    <string name="new_skills">New Skills</string>
+    <string name="new_collaborator">New Collaborator</string>
     <string name="skill_image_content_description">An image of the skill.</string>
     <string name="camera_image_description">A little image of a camera.</string>
 
@@ -69,5 +71,9 @@
     <string name="ask_permision_read_contacts_title">Permission to read contacts</string>
     <string name="ask_permision_read_contacts_message">Your contacts names we\'ll be used to provide you a btter experience with the app.</string>
     <string name="confirm_birthdate">Confirm your birthdate, please</string>
+    <string name="skills">Skills</string>
+    <string name="dismiss">dismiss</string>
+    <string name="add_skill">add skill</string>
+    <string name="nothing_selected">Nothing selected</string>
 
 </resources>

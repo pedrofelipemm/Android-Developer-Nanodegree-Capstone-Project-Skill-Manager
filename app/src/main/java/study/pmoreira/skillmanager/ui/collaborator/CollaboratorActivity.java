@@ -74,11 +74,7 @@ public class CollaboratorActivity extends BaseActivity {
                     new OperationListener<List<String>>() {
                         @Override
                         public void onSuccess(List<String> results) {
-                            if (results == null || results.isEmpty()) {
-                                mChipView.setVisibility(View.GONE);
-                            } else {
-                                mChipView.setChipList(StringChip.toChipList(results));
-                            }
+                            StringChip.setChipList(mChipView, results);
                             hideProgressbar(mProgressBar);
                         }
                     });

@@ -19,7 +19,7 @@ public class CollaboratorSkillBusiness {
         mCollaboratorSkillDao.findCollaboratorSkills(collaboratorId, new OperationListener<List<CollaboratorSkill>>() {
             @Override
             public void onSuccess(List<CollaboratorSkill> collabSkills) {
-                List<String> results = new ArrayList<String>();
+                List<String> results = new ArrayList<>();
                 for (CollaboratorSkill collabSkill : collabSkills) {
                     results.add(collabSkill.getSkillName());
                 }

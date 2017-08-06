@@ -61,7 +61,7 @@ class FirebaseDao {
                 });
     }
 
-    static <T> void findAllNoListener(final Class<T> clazz, final String refPath,
+    static <T> void findAllSingleEvent(final Class<T> clazz, final String refPath,
                                       final OperationListener<List<T>> listener) {
         getDatabase().getReference(refPath)
                 .addListenerForSingleValueEvent(new OnDataChange() {

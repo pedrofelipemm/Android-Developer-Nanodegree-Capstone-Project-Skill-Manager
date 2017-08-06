@@ -242,7 +242,6 @@ public class EditSkillActivity extends BaseActivity {
                             }
                         })
                 .setNegativeButton(R.string.no_caps, null)
-                .create()
                 .show();
     }
 
