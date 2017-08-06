@@ -1,10 +1,20 @@
 package study.pmoreira.skillmanager.ui.collaborator;
 
+import android.Manifest;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.ContactsContract.Contacts;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityCompat.OnRequestPermissionsResultCallback;
 import android.support.v4.app.NavUtils;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.Log;
@@ -12,6 +22,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -24,6 +36,9 @@ import com.codetroopers.betterpickers.calendardatepicker.CalendarDatePickerDialo
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -41,7 +56,7 @@ import study.pmoreira.skillmanager.utils.FileUtils;
 import static study.pmoreira.skillmanager.ui.collaborator.CollaboratorActivity.EXTRA_COLLABORATOR;
 import static study.pmoreira.skillmanager.ui.collaborator.CollaboratorActivity.STATE_COLLABORATOR;
 
-public class EditCollaboratorActivity extends BaseActivity {
+public class EditCollaboratorActivity extends BaseActivity implements OnRequestPermissionsResultCallback {
 
     private static final String TAG = EditCollaboratorActivity.class.getName();
 
@@ -50,10 +65,13 @@ public class EditCollaboratorActivity extends BaseActivity {
     private static final String STATE_IS_EDITING = "STATE_IS_EDITING";
     private static final String STATE_IMG_REF = "STATE_IMG_REF";
 
+    private static final int NAME_AUTOCOMPLETE_THRESHOLD = 3;
+    private static final int PERMISSION_REQUEST_CONTACT = 777;
+
     private CollaboratorBusiness mCollaboratorBusiness = new CollaboratorBusiness();
 
     @BindView(R.id.collab_name_edittext)
-    EditText mNameEdiText;
+    AutoCompleteTextView mNameAutoCompleteTextView;
 
     @BindView(R.id.collab_birth_date_edittext)
     EditText mBirthDateEditText;
@@ -87,23 +105,22 @@ public class EditCollaboratorActivity extends BaseActivity {
         ButterKnife.bind(this);
 
         setupViews();
+
+        askForContactPermission();
     }
 
     private void setupViews() {
         findViewById(R.id.parent).requestFocus();
+
+        mNameAutoCompleteTextView.setThreshold(NAME_AUTOCOMPLETE_THRESHOLD);
 
         mBirthDateEditText.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
                 new CalendarDatePickerDialogFragment()
                         .setOnDateSetListener(new OnDatePickerChangeListener())
-//                        .setFirstDayOfWeek(Calendar.SUNDAY)
-//                        .setPreselectedDate(towDaysAgo.getYear(), towDaysAgo.getMonthOfYear() - 1, towDaysAgo
-// .getDayOfMonth())
-//                        .setDateRange(minDate, null)
-                        .setDoneText("Yay")
-                        .setCancelText("Nop")
-//                        .setThemeDark()
+                        .setDoneText(getString(R.string.yes_caps))
+                        .setCancelText(getString(R.string.no_caps))
                         .show(getSupportFragmentManager(), "bunda");
             }
         });
@@ -142,7 +159,7 @@ public class EditCollaboratorActivity extends BaseActivity {
 
     private void fillFields(Collaborator collab) {
         //TODO
-        mNameEdiText.setText(collab.getName());
+        mNameAutoCompleteTextView.setText(collab.getName());
 //        mDescriptionEdiText.setText(collab.getDescription());
 //        mLearnMoreEditText.setText(collab.getLearnMoreUrl());
         mPhotoUrl = collab.getPictureUrl();
@@ -163,6 +180,24 @@ public class EditCollaboratorActivity extends BaseActivity {
                 displayMessage(getString(R.string.error_image_upload));
             }
         }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        for (int i = 0; i < permissions.length; i++) {
+            if (permissionReadContactsGranted(requestCode, permissions[i], grantResults[i])) {
+                new FindContactsAsyncTask().execute();
+                break;
+            }
+        }
+    }
+
+    private boolean permissionReadContactsGranted(int requestCode, String permission, int grantResult) {
+        return PERMISSION_REQUEST_CONTACT == requestCode &&
+                permission.equals(Manifest.permission.READ_CONTACTS) &&
+                grantResult == PackageManager.PERMISSION_GRANTED;
     }
 
     @Override
@@ -224,7 +259,7 @@ public class EditCollaboratorActivity extends BaseActivity {
     private void delete() {
         new AlertDialog.Builder(this)
                 .setTitle(getString(R.string.attention))
-                .setMessage(getString(R.string.do_you_want_to_delete, mNameEdiText.getText()))
+                .setMessage(getString(R.string.do_you_want_to_delete, mNameAutoCompleteTextView.getText()))
                 .setPositiveButton(R.string.yes_caps,
                         new DialogInterface.OnClickListener() {
                             @Override
@@ -239,7 +274,7 @@ public class EditCollaboratorActivity extends BaseActivity {
 
     private Collaborator newCollaborator() {
         Collaborator collab = new Collaborator(
-                mNameEdiText.getText().toString(),
+                mNameAutoCompleteTextView.getText().toString(),
                 1,
                 "role",
                 "email",
@@ -268,8 +303,6 @@ public class EditCollaboratorActivity extends BaseActivity {
                 .into(mImageView);
     }
 
-    //TODO: progressbar
-
     private class OnPictureUpload extends OperationListener<String> {
 
         @Override
@@ -283,16 +316,38 @@ public class EditCollaboratorActivity extends BaseActivity {
             hideProgressbar(mProgressBar);
         }
 
-// TODO: ???
-//        @Override
-//        public void onProgress(int progress) {
-//            mProgressBar.setProgress(progress);
-//        }
-
         @Override
         public void onError(BusinessException e) {
             displayMessage(e.getMessage());
             hideProgressbar(mProgressBar);
+        }
+    }
+
+    public void askForContactPermission() {
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_CONTACTS)) {
+                new AlertDialog.Builder(this)
+                        .setTitle(getString(R.string.ask_permision_read_contacts_title))
+                        .setMessage(getString(R.string.ask_permision_read_contacts_message))
+                        .setPositiveButton(android.R.string.ok, null)
+                        .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                            @Override
+                            public void onDismiss(DialogInterface dialog) {
+                                ActivityCompat.requestPermissions(EditCollaboratorActivity.this,
+                                        new String[]{Manifest.permission.READ_CONTACTS},
+                                        PERMISSION_REQUEST_CONTACT);
+                            }
+                        })
+                        .show();
+            } else {
+                ActivityCompat.requestPermissions(EditCollaboratorActivity.this,
+                        new String[]{Manifest.permission.READ_CONTACTS},
+                        PERMISSION_REQUEST_CONTACT);
+            }
+        } else {
+            new FindContactsAsyncTask().execute();
         }
     }
 
@@ -308,7 +363,7 @@ public class EditCollaboratorActivity extends BaseActivity {
         public void onValidationError(ValidateException e) {
             //TODO
             if (CollaboratorBusiness.INVALID_COLLABORATOR_NAME == e.getCode()) {
-                mNameEdiText.setError(getString(R.string.name_cannot_be_empty));
+                mNameAutoCompleteTextView.setError(getString(R.string.name_cannot_be_empty));
             }
         }
     }
@@ -323,7 +378,7 @@ public class EditCollaboratorActivity extends BaseActivity {
         @Override
         public void onError(BusinessException e) {
             Toast.makeText(EditCollaboratorActivity.this,
-                    getString(R.string.error_deleting, mNameEdiText.getText()), Toast.LENGTH_SHORT).show();
+                    getString(R.string.error_deleting, mNameAutoCompleteTextView.getText()), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -349,6 +404,33 @@ public class EditCollaboratorActivity extends BaseActivity {
 
         private String formatDate(int dayOfMonth, int monthOfYear, int year) {
             return DateUtils.format(dayOfMonth, monthOfYear, year);
+        }
+    }
+
+    private class FindContactsAsyncTask extends AsyncTask<Void, Void, List<String>> {
+        @Override
+        protected List<String> doInBackground(Void... voids) {
+            List<String> contacts = new ArrayList<>();
+            ContentResolver contentResolver = getContentResolver();
+            Cursor cursor = contentResolver.query(Contacts.CONTENT_URI, null, null, null, null);
+
+            if (cursor == null) {
+                return contacts;
+            }
+
+            while (cursor.moveToNext()) {
+                contacts.add(cursor.getString(cursor.getColumnIndex(Contacts.DISPLAY_NAME)));
+            }
+
+            cursor.close();
+            return contacts;
+        }
+
+        @Override
+        protected void onPostExecute(List<String> contacts) {
+            mNameAutoCompleteTextView.setAdapter(
+                    new ArrayAdapter<>(EditCollaboratorActivity.this, android.R.layout.select_dialog_item, contacts)
+            );
         }
     }
 }

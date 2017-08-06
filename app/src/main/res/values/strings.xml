@@ -61,5 +61,7 @@
     <string name="collab_image_content_description">A picture of the collaborator.</string>
 
     <string name="collaborator_successfully_saved">Collaborator successfully saved!</string>
+    <string name="ask_permision_read_contacts_title">Permission to read contacts</string>
+    <string name="ask_permision_read_contacts_message">Your contacts names we\'ll be used to provide you a btter experience with the app.</string>
 
 </resources>

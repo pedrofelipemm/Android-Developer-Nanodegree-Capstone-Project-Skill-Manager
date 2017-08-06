@@ -96,7 +96,7 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@id/collab_imageview">
 
-            <EditText
+            <AutoCompleteTextView
                 android:id="@+id/collab_name_edittext"
                 style="@style/TextAppearance.AppCompat.Medium"
                 android:layout_width="match_parent"
