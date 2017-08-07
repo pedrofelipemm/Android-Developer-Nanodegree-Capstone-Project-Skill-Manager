@@ -24,7 +24,7 @@ public class CollaboratorBusiness {
     public static final int INVALID_COLLABORATOR_PHONE = 5;
     public static final int INVALID_COLLABORATOR_PICTURE = 6;
 
-    private CollaboratorSkillBusiness mCollaboratorSkillBusiness = new CollaboratorSkillBusiness();
+    private SkillBusiness mSkillBusiness = new SkillBusiness();
 
     private CollaboratorDao mCollaboratorDao = new CollaboratorDao();
     private CollaboratorSkillDao mCollaboratorSkillDao = new CollaboratorSkillDao();
@@ -43,9 +43,28 @@ public class CollaboratorBusiness {
         }
     }
 
+    public void saveOrUpdate(final Collaborator collaborator, List<String> collabSkillNames,
+                             final OperationListener<Collaborator> listener) {
+
+        if (isValid(collaborator, listener)) {
+            mSkillBusiness.findSkillsByName(collabSkillNames, new OperationListener<List<Skill>>() {
+                @Override
+                public void onSuccess(final List<Skill> skills) {
+                    mCollaboratorSkillDao.deleteCollaboratorSkills(collaborator.getId(), new OperationListener<Void>() {
+                        @Override
+                        public void onSuccess(Void result) {
+                            collaborator.setSkills(skills);
+                            mCollaboratorDao.saveOrUpdate(collaborator, new OnSaveOrUpdate(collaborator, listener));
+                        }
+                    });
+                }
+            });
+        }
+    }
+
     public void delete(String id, OperationListener<String> listener) {
         mCollaboratorDao.delete(id, listener);
-        mCollaboratorSkillDao.deleteCollaboratorSkills(id);
+        mCollaboratorSkillDao.deleteCollaboratorSkills(id, new OperationListener<Void>());
     }
 
     public String uploadImage(byte[] data, final OperationListener<String> listener) {

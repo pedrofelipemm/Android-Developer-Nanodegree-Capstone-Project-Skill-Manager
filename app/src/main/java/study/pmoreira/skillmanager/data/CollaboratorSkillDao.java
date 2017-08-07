@@ -2,6 +2,8 @@ package study.pmoreira.skillmanager.data;
 
 import com.google.firebase.database.DataSnapshot;
 
+import org.apache.commons.lang3.mutable.MutableInt;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,7 +34,7 @@ public class CollaboratorSkillDao extends BaseDao {
                 .addListenerForSingleValueEvent(new OnDataChange() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        List<CollaboratorSkill> results = new ArrayList<CollaboratorSkill>();
+                        List<CollaboratorSkill> results = new ArrayList<>();
                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                             results.add(snapshot.getValue(CollaboratorSkill.class));
                         }
@@ -41,12 +43,25 @@ public class CollaboratorSkillDao extends BaseDao {
                 });
     }
 
-    public void deleteCollaboratorSkills(String collaboratorId) {
+    public void deleteCollaboratorSkills(String collaboratorId, final OperationListener<Void> listener) {
         findCollaboratorSkills(collaboratorId, new OperationListener<List<CollaboratorSkill>>() {
             @Override
-            public void onSuccess(List<CollaboratorSkill> collabSkills) {
-                for (CollaboratorSkill collabSkill : collabSkills) {
-                    delete(collabSkill.getId(), new OperationListener<String>());
+            public void onSuccess(final List<CollaboratorSkill> collabSkills) {
+                final MutableInt skillsCount = new MutableInt();
+                if (collabSkills.isEmpty()) {
+                    listener.onSuccess(null);
+                }
+
+                for (final CollaboratorSkill collabSkill : collabSkills) {
+                    delete(collabSkill.getId(), new OperationListener<String>() {
+                        @Override
+                        public void onSuccess(String result) {
+                            skillsCount.increment();
+                            if ( skillsCount.getValue().equals(collabSkills.size()) ) {
+                                listener.onSuccess(null);
+                            }
+                        }
+                    });
                 }
             }
         });

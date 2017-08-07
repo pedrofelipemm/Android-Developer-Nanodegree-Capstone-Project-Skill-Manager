@@ -15,7 +15,6 @@ import com.google.firebase.database.DatabaseReference.CompletionListener;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.google.firebase.storage.UploadTask.TaskSnapshot;
@@ -148,13 +147,6 @@ class FirebaseDao {
                     updateStorageReferences(url);
                     listener.onSuccess(url);
                 }
-            }
-        }).addOnProgressListener(new OnProgressListener<TaskSnapshot>() {
-            @Override
-            public void onProgress(TaskSnapshot task) {
-                int progress = (int) ((100.0 * task.getBytesTransferred()) / task.getTotalByteCount());
-                Log.d(TAG, "Uploading.. " + progress + "%");
-                listener.onProgress(progress);
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override

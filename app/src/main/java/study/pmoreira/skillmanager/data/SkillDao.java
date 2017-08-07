@@ -1,5 +1,8 @@
 package study.pmoreira.skillmanager.data;
 
+import com.google.firebase.database.DataSnapshot;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import study.pmoreira.skillmanager.infrastructure.OperationListener;
@@ -17,6 +20,22 @@ public class SkillDao extends BaseDao {
 
     public void findAllSingleEvent(final OperationListener<List<Skill>> listener) {
         FirebaseDao.findAllSingleEvent(Skill.class, SKILLS_PATH, listener);
+    }
+
+    public void findSkillsByName(String name, final OperationListener<List<Skill>> listener) {
+        FirebaseDao.getDatabase().getReference(SKILLS_PATH)
+                .orderByChild(Skill.JSON_NAME)
+                .equalTo(name)
+                .addListenerForSingleValueEvent(new OnDataChange() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        List<Skill> results = new ArrayList<>();
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            results.add(snapshot.getValue(Skill.class));
+                        }
+                        listener.onSuccess(results);
+                    }
+                });
     }
 
     public void saveOrUpdate(Skill skill, OperationListener<Skill> listener) {

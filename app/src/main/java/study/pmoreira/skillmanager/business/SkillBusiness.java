@@ -1,7 +1,9 @@
 package study.pmoreira.skillmanager.business;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.mutable.MutableInt;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import study.pmoreira.skillmanager.data.SkillDao;
@@ -25,6 +27,28 @@ public class SkillBusiness {
 
     public void findAllSingleEvent(OperationListener<List<Skill>> listener) {
         mSkillDao.findAllSingleEvent(listener);
+    }
+
+    public void findSkillsByName(final List<String> names, final OperationListener<List<Skill>> listener) {
+        final MutableInt namesCount = new MutableInt();
+        final List<Skill> skills = new ArrayList<>();
+
+        if (names.isEmpty()) {
+            listener.onSuccess(skills);
+        }
+
+        for (final String name : names) {
+            mSkillDao.findSkillsByName(name, new OperationListener<List<Skill>>() {
+                @Override
+                public void onSuccess(List<Skill> result) {
+                    skills.addAll(result);
+                    namesCount.increment();
+                    if (namesCount.getValue().equals(names.size())) {
+                        listener.onSuccess(skills);
+                    }
+                }
+            });
+        }
     }
 
     public void saveOrUpdate(Skill skill, OperationListener<Skill> listener) {

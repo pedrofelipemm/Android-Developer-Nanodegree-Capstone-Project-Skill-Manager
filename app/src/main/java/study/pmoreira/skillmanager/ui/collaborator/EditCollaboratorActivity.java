@@ -201,6 +201,7 @@ public class EditCollaboratorActivity extends BaseActivity implements OnRequestP
     private void setupSkillDialog() {
         View addSkillView = getLayoutInflater().inflate(R.layout.add_skill, null);
         final ListView addSkillListView = addSkillView.findViewById(R.id.add_skill_listview);
+        final View emptyView = addSkillView.findViewById(R.id.empty_view);
 
         mSkillDialog = createSkillDialog(addSkillView, addSkillListView);
 
@@ -219,18 +220,23 @@ public class EditCollaboratorActivity extends BaseActivity implements OnRequestP
                             android.R.layout.simple_list_item_multiple_choice,
                             results));
 
-                    List<String> collabSkills;
-                    if (mLoadSkillsFromExtra && getIntent().hasExtra(EXTRA_COLLABORATOR_SKILLS)) {
-                        collabSkills = getIntent().getStringArrayListExtra(EXTRA_COLLABORATOR_SKILLS);
-                        mLoadSkillsFromExtra = false;
-                    } else {
-                        collabSkills = StringChip.getChipList(mChipView);
-                    }
-
-                    loadCollaboratorSkills(collabSkills, addSkillListView, results);
+                    loadCollaboratorSkills(getCollaboratorSkills(), addSkillListView, results);
                 }
+
+                emptyView.setVisibility(results.isEmpty() ? View.VISIBLE : View.GONE);
             }
         });
+    }
+
+    private List<String> getCollaboratorSkills() {
+        List<String> collabSkills;
+        if (mLoadSkillsFromExtra && getIntent().hasExtra(EXTRA_COLLABORATOR_SKILLS)) {
+            collabSkills = getIntent().getStringArrayListExtra(EXTRA_COLLABORATOR_SKILLS);
+            mLoadSkillsFromExtra = false;
+        } else {
+            collabSkills = StringChip.getChipList(mChipView);
+        }
+        return collabSkills;
     }
 
     public void onClickChangeView(View view) {
@@ -370,7 +376,7 @@ public class EditCollaboratorActivity extends BaseActivity implements OnRequestP
             collab.setBirthdate(null);
         }
 
-        mCollaboratorBusiness.saveOrUpdate(collab, new OnCollaboratorSave());
+        mCollaboratorBusiness.saveOrUpdate(collab, getCollaboratorSkills(), new OnCollaboratorSave());
     }
 
     private void delete() {
@@ -401,13 +407,7 @@ public class EditCollaboratorActivity extends BaseActivity implements OnRequestP
 
         collab.setId(getCollaboratorId());
 
-        addCollabSkill(collab);
-
         return collab;
-    }
-
-    private void addCollabSkill(Collaborator collab) {
-        //TODO
     }
 
     private Long getBirthdate() {
