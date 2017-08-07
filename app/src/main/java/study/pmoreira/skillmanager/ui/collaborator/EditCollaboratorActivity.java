@@ -44,6 +44,7 @@ import com.plumillonforge.android.chipview.ChipView;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -65,6 +66,7 @@ import study.pmoreira.skillmanager.utils.DateUtils;
 import study.pmoreira.skillmanager.utils.FileUtils;
 
 import static study.pmoreira.skillmanager.ui.collaborator.CollaboratorActivity.EXTRA_COLLABORATOR;
+import static study.pmoreira.skillmanager.ui.collaborator.CollaboratorActivity.EXTRA_COLLABORATOR_SKILLS;
 import static study.pmoreira.skillmanager.ui.collaborator.CollaboratorActivity.STATE_COLLABORATOR;
 
 public class EditCollaboratorActivity extends BaseActivity implements OnRequestPermissionsResultCallback {
@@ -77,6 +79,7 @@ public class EditCollaboratorActivity extends BaseActivity implements OnRequestP
     private static final String STATE_IMG_REF = "STATE_IMG_REF";
     private static final String STATE_IS_INVAlID_DATE = "STATE_IS_INVAlID_DATE";
     private static final String STATE_CHIP_LIST = "STATE_CHIP_LIST";
+    private static final String STATE_LOAD_SKILL_FROM_EXTRA = "STATE_LOAD_SKILL_FROM_EXTRA";
 
     private static final int NAME_AUTOCOMPLETE_THRESHOLD = 3;
     private static final int PERMISSION_REQUEST_CONTACT = 777;
@@ -116,6 +119,8 @@ public class EditCollaboratorActivity extends BaseActivity implements OnRequestP
 
     private boolean mIsEditing;
 
+    boolean mLoadSkillsFromExtra = true;
+
     /**
      * Cannot send null to parcel
      */
@@ -145,7 +150,6 @@ public class EditCollaboratorActivity extends BaseActivity implements OnRequestP
         askForContactPermission();
     }
 
-    @SuppressLint("InflateParams")
     private void setupViews() {
         findViewById(R.id.parent).requestFocus();
 
@@ -162,27 +166,7 @@ public class EditCollaboratorActivity extends BaseActivity implements OnRequestP
             }
         });
 
-        View addSkillView = getLayoutInflater().inflate(R.layout.add_skill, null);
-        final ListView addSkillListView = (ListView) addSkillView.findViewById(R.id.add_skill_listview);
-
-        mSkillDialog = createSkillDialog(addSkillView, addSkillListView);
-
-        mSkillBusiness.findAllSingleEvent(new OperationListener<List<Skill>>() {
-            @Override
-            public void onSuccess(List<Skill> skills) {
-                List<String> results = new ArrayList<String>();
-                for (Skill skill : skills) {
-                    results.add(skill.getName());
-                }
-
-                if (addSkillListView != null) {
-                    addSkillListView.setAdapter(new ArrayAdapter<String>(
-                            EditCollaboratorActivity.this,
-                            android.R.layout.simple_list_item_multiple_choice,
-                            results));
-                }
-            }
-        });
+        setupSkillDialog();
 
         Glide.with(this)
                 .load(R.drawable.collaborator_placeholder)
@@ -194,7 +178,7 @@ public class EditCollaboratorActivity extends BaseActivity implements OnRequestP
         return new Builder(this)
                 .setTitle(getString(R.string.new_skills))
                 .setView(view)
-                .setPositiveButton(R.string.add_skill, new DialogInterface.OnClickListener() {
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         List<String> results = new ArrayList<>();
@@ -213,6 +197,42 @@ public class EditCollaboratorActivity extends BaseActivity implements OnRequestP
                 .create();
     }
 
+    @SuppressLint("InflateParams")
+    private void setupSkillDialog() {
+        View addSkillView = getLayoutInflater().inflate(R.layout.add_skill, null);
+        final ListView addSkillListView = addSkillView.findViewById(R.id.add_skill_listview);
+
+        mSkillDialog = createSkillDialog(addSkillView, addSkillListView);
+
+        mSkillBusiness.findAllSingleEvent(new OperationListener<List<Skill>>() {
+            @Override
+            public void onSuccess(List<Skill> skills) {
+                List<String> results = new ArrayList<>();
+                for (Skill skill : skills) {
+                    results.add(skill.getName());
+                }
+
+                Collections.sort(results);
+                if (addSkillListView != null) {
+                    addSkillListView.setAdapter(new ArrayAdapter<>(
+                            EditCollaboratorActivity.this,
+                            android.R.layout.simple_list_item_multiple_choice,
+                            results));
+
+                    List<String> collabSkills;
+                    if (mLoadSkillsFromExtra && getIntent().hasExtra(EXTRA_COLLABORATOR_SKILLS)) {
+                        collabSkills = getIntent().getStringArrayListExtra(EXTRA_COLLABORATOR_SKILLS);
+                        mLoadSkillsFromExtra = false;
+                    } else {
+                        collabSkills = StringChip.getChipList(mChipView);
+                    }
+
+                    loadCollaboratorSkills(collabSkills, addSkillListView, results);
+                }
+            }
+        });
+    }
+
     public void onClickChangeView(View view) {
         if (isLoading(mProgressBar)) return;
         startActivityForResult(
@@ -227,6 +247,7 @@ public class EditCollaboratorActivity extends BaseActivity implements OnRequestP
         outState.putBoolean(STATE_IS_EDITING, mIsEditing);
         outState.putBoolean(STATE_IS_INVAlID_DATE, mIsInvalidDate);
         outState.putStringArrayList(STATE_CHIP_LIST, StringChip.getChipList(mChipView));
+        outState.putBoolean(STATE_LOAD_SKILL_FROM_EXTRA, mLoadSkillsFromExtra);
 
         if (mImgRef != null) {
             cancelUpload();
@@ -240,6 +261,7 @@ public class EditCollaboratorActivity extends BaseActivity implements OnRequestP
         fillFields((Collaborator) savedInstanceState.getParcelable(STATE_COLLABORATOR));
         mIsEditing = savedInstanceState.getBoolean(STATE_IS_EDITING);
         mImgRef = savedInstanceState.getString(STATE_IMG_REF);
+        mLoadSkillsFromExtra = savedInstanceState.getBoolean(STATE_LOAD_SKILL_FROM_EXTRA);
         StringChip.setChipList(mChipView, savedInstanceState.getStringArrayList(STATE_CHIP_LIST));
     }
 
@@ -251,7 +273,6 @@ public class EditCollaboratorActivity extends BaseActivity implements OnRequestP
         mBirthDateEditText.setText(mIsInvalidDate ? null : DateUtils.format(new Date(collab.getBirthdate())));
         mPhotoUrl = collab.getPictureUrl();
         loadCollaboratorPicture();
-        loadCollaboratorSkills(collab);
     }
 
     @Override
@@ -419,20 +440,19 @@ public class EditCollaboratorActivity extends BaseActivity implements OnRequestP
                 .into(mImageView);
     }
 
-    private void loadCollaboratorSkills(Collaborator collab) {
-        mCollaboratorSkillBusiness.findCollaboratorSkillsName(collab.getId(),
-                new OperationListener<List<String>>() {
-                    @Override
-                    public void onSuccess(List<String> results) {
-                        if (results == null || results.isEmpty()) {
-//TODO
-//                            mChipView.setVisibility(View.GONE);
-                        } else {
-//                            mChipView.setChipList(StringChip.toChipList(results));
-                        }
-                        hideProgressbar(mProgressBar);
-                    }
-                });
+    private void loadCollaboratorSkills(List<String> collabSkills, final ListView addSkillListView,
+                                        List<String> skillsName) {
+        List<String> skillToChip = new ArrayList<>();
+        for (String collabSkill : collabSkills) {
+            for (int i = 0; i < skillsName.size(); i++) {
+                if (collabSkill.equals(skillsName.get(i))) {
+                    skillToChip.add(collabSkill);
+                    addSkillListView.setItemChecked(i, true);
+                    break;
+                }
+            }
+        }
+        StringChip.setChipList(mChipView, skillToChip);
     }
 
     public void addSkill(View view) {
@@ -537,14 +557,18 @@ public class EditCollaboratorActivity extends BaseActivity implements OnRequestP
     }
 
     public static void startActivity(Context context) {
-        startActivity(context, null);
+        startActivity(context, null, null);
     }
 
-    public static void startActivity(Context context, Collaborator collaborator) {
+    public static void startActivity(Context context, Collaborator collaborator, List<String> collabSkills) {
         Intent intent = new Intent(context, EditCollaboratorActivity.class);
 
         if (collaborator != null) {
             intent.putExtra(EXTRA_COLLABORATOR, collaborator);
+        }
+
+        if (collabSkills != null) {
+            intent.putStringArrayListExtra(EXTRA_COLLABORATOR_SKILLS, new ArrayList<>(collabSkills));
         }
 
         context.startActivity(intent);

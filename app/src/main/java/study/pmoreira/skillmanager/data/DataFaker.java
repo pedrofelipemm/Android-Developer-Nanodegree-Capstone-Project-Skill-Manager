@@ -19,10 +19,12 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
+import java.util.Set;
 
 import study.pmoreira.skillmanager.business.CollaboratorBusiness;
 import study.pmoreira.skillmanager.infrastructure.OperationListener;
@@ -237,13 +239,15 @@ public class DataFaker {
     private static void insertFakeCollaboratorSkills(List<Collaborator> collabs, List<Skill> skills) {
         Random random = new Random();
         CollaboratorBusiness collaboratorBusiness = new CollaboratorBusiness();
+        Set<Skill> uniqueSkills = new HashSet<>();
 
         for (Collaborator collab : collabs) {
             int skillSize = random.nextInt(MAX_NUMBER_SKILLS);
             for (int i = 0; i < skillSize; i++) {
-                collab.addSkill(skills.get(random.nextInt(skills.size())));
+                uniqueSkills.add(skills.get(random.nextInt(skills.size())));
             }
 
+            collab.setSkills(new ArrayList<>(uniqueSkills));
             collaboratorBusiness.saveOrUpdate(collab, new OperationListener<Collaborator>());
         }
     }
