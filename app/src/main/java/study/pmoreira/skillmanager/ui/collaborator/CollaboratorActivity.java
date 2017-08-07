@@ -1,9 +1,12 @@
 package study.pmoreira.skillmanager.ui.collaborator;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
@@ -98,7 +101,10 @@ public class CollaboratorActivity extends BaseActivity {
         mFab.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                EditCollaboratorActivity.startActivity(CollaboratorActivity.this, collab, mCollabSkills);
+                ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity)
+                        CollaboratorActivity.this, mPicImageView, getString(R.string.transition_collab));
+
+                EditCollaboratorActivity.startActivity(CollaboratorActivity.this, collab, mCollabSkills, options);
             }
         });
     }
@@ -122,6 +128,11 @@ public class CollaboratorActivity extends BaseActivity {
     }
 
     public static void startActivity(Context context, Collaborator collaborator, int... flags) {
+        startActivity(context, collaborator, null, flags);
+    }
+
+    public static void startActivity(Context context, Collaborator collaborator,
+                                     @Nullable ActivityOptionsCompat options, int... flags) {
         Intent intent = new Intent(context, CollaboratorActivity.class);
 
         if (collaborator != null) {
@@ -132,6 +143,10 @@ public class CollaboratorActivity extends BaseActivity {
             intent.addFlags(flag);
         }
 
-        context.startActivity(intent);
+        if (options != null) {
+            context.startActivity(intent, options.toBundle());
+        } else {
+            context.startActivity(intent);
+        }
     }
 }

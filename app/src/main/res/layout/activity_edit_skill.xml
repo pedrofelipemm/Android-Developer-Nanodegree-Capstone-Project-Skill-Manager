@@ -31,6 +31,7 @@
                     android:layout_margin="@dimen/default_margin"
                     android:contentDescription="@string/skill_image_content_description"
                     android:onClick="onClickChangeView"
+                    android:transitionName="@string/transition_skill"
                     tools:src="@drawable/skill_placeholder"/>
 
                 <ProgressBar

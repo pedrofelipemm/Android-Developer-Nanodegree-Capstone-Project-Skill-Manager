@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AlertDialog;
 import android.text.InputFilter;
@@ -208,17 +209,21 @@ public class EditSkillActivity extends BaseActivity {
     }
 
     public static void startActivity(Context context) {
-        startActivity(context, null);
+        startActivity(context, null, null);
     }
 
-    public static void startActivity(Context context, Skill skill) {
+    public static void startActivity(Context context, Skill skill, ActivityOptionsCompat options) {
         Intent intent = new Intent(context, EditSkillActivity.class);
 
         if (skill != null) {
             intent.putExtra(EXTRA_SKILL, skill);
         }
 
-        context.startActivity(intent);
+        if (options != null) {
+            context.startActivity(intent, options.toBundle());
+        } else {
+            context.startActivity(intent);
+        }
     }
 
     private void save() {

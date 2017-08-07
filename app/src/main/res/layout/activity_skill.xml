@@ -55,6 +55,7 @@
                         android:layout_height="250dp"
                         android:contentDescription="@string/skill_image_content_description"
                         android:scaleType="centerCrop"
+                        android:transitionName="@string/transition_skill"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintRight_toRightOf="parent"
                         app:layout_constraintTop_toTopOf="parent"

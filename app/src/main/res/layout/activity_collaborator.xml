@@ -27,6 +27,8 @@
                     android:id="@+id/collab_pic_imageview"
                     android:layout_width="@dimen/collaborator_pic_dimen"
                     android:layout_height="@dimen/collaborator_pic_dimen"
+                    android:contentDescription="@string/collab_image_content_description"
+                    android:transitionName="@string/transition_collab"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"

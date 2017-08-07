@@ -39,7 +39,7 @@ class CollaboratorAdapter extends RecyclerView.Adapter<CollaboratorAdapter.ViewH
     private List<CollaboratorSkill> mCollaboratorSkills;
 
     interface ItemClickListener {
-        void onItemClick(Collaborator collab);
+        void onItemClick(Collaborator collab, View v);
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
@@ -94,7 +94,7 @@ class CollaboratorAdapter extends RecyclerView.Adapter<CollaboratorAdapter.ViewH
         holder.root.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                mItemClickListener.onItemClick(collab);
+                mItemClickListener.onItemClick(collab, v);
             }
         });
     }

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.widget.CardView;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -77,12 +78,20 @@ public class SkillActivity extends BaseActivity {
         mFab.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                EditSkillActivity.startActivity(SkillActivity.this, skill);
+                ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(SkillActivity.this,
+                        mPicImageView, getString(R.string.transition_skill));
+
+                EditSkillActivity.startActivity(SkillActivity.this, skill, options);
             }
         });
     }
 
     public static void startActivity(Context context, Skill skill, int... flags) {
+        startActivity(context, skill, null, flags);
+    }
+
+    public static void startActivity(Context context, Skill skill, @Nullable ActivityOptionsCompat options,
+                                     int... flags) {
         Intent intent = new Intent(context, SkillActivity.class);
 
         if (skill != null) {
@@ -93,6 +102,10 @@ public class SkillActivity extends BaseActivity {
             intent.addFlags(flag);
         }
 
-        context.startActivity(intent);
+        if (options != null) {
+            context.startActivity(intent, options.toBundle());
+        } else {
+            context.startActivity(intent);
+        }
     }
 }

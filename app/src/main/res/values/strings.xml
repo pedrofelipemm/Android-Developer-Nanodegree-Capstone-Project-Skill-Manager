@@ -77,4 +77,7 @@
     <string name="add_skill">add skill</string>
     <string name="nothing_selected">Nothing selected</string>
 
+    <string name="transition_skill">transition_skill</string>
+    <string name="transition_collab">transition_collab</string>
+
 </resources>

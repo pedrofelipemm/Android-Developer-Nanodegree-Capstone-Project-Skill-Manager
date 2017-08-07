@@ -37,7 +37,7 @@ class SkillAdapter extends RecyclerView.Adapter<SkillAdapter.ViewHolder> impleme
     private List<Skill> mSkills;
 
     interface ItemClickListener {
-        void onItemClick(Skill skill);
+        void onItemClick(Skill skill, View v);
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
@@ -85,7 +85,7 @@ class SkillAdapter extends RecyclerView.Adapter<SkillAdapter.ViewHolder> impleme
         holder.root.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                mItemClickListener.onItemClick(skill);
+                mItemClickListener.onItemClick(skill, v);
             }
         });
     }

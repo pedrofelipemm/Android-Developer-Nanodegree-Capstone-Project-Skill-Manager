@@ -12,8 +12,10 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.ContactsContract.Contacts;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityCompat.OnRequestPermissionsResultCallback;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.NavUtils;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -555,10 +557,11 @@ public class EditCollaboratorActivity extends BaseActivity implements OnRequestP
     }
 
     public static void startActivity(Context context) {
-        startActivity(context, null, null);
+        startActivity(context, null, null, null);
     }
 
-    public static void startActivity(Context context, Collaborator collaborator, List<String> collabSkills) {
+    public static void startActivity(Context context, Collaborator collaborator, List<String> collabSkills,
+                                     @Nullable ActivityOptionsCompat options) {
         Intent intent = new Intent(context, EditCollaboratorActivity.class);
 
         if (collaborator != null) {
@@ -569,7 +572,11 @@ public class EditCollaboratorActivity extends BaseActivity implements OnRequestP
             intent.putStringArrayListExtra(EXTRA_COLLABORATOR_SKILLS, new ArrayList<>(collabSkills));
         }
 
-        context.startActivity(intent);
+        if (options != null) {
+            context.startActivity(intent, options.toBundle());
+        } else {
+            context.startActivity(intent);
+        }
     }
 
     private class OnDatePickerChangeListener implements OnDateSetListener {

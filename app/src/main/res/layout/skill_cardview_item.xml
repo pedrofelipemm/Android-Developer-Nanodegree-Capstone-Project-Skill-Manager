@@ -35,6 +35,7 @@
             android:layout_height="@dimen/cardviewSkillPicHeight"
             android:contentDescription="@string/skill_image_content_description"
             android:scaleType="centerCrop"
+            android:transitionName="@string/transition_skill"
             tools:src="@color/colorPrimary"/>
 
     </LinearLayout>

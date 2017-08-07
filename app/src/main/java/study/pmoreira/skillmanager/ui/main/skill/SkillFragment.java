@@ -1,8 +1,10 @@
 package study.pmoreira.skillmanager.ui.main.skill;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
@@ -42,8 +44,11 @@ public class SkillFragment extends SearchableFragment implements ClickableView {
 
     ItemClickListener mItemClickListener = new ItemClickListener() {
         @Override
-        public void onItemClick(Skill skill) {
-            SkillActivity.startActivity(mContext, skill);
+        public void onItemClick(Skill skill, View v) {
+            ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity)
+                    mContext, v, mContext.getString(R.string.transition_skill));
+
+            SkillActivity.startActivity(mContext, skill, options);
         }
     };
 

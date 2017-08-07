@@ -1,8 +1,10 @@
 package study.pmoreira.skillmanager.ui.main.collaborator;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -44,11 +46,13 @@ public class CollaboratorFragment extends SearchableFragment implements Clickabl
     List<Collaborator> mCollaborators = new ArrayList<>();
     List<CollaboratorSkill> mCollaboratorSkills = new ArrayList<>();
 
-
     ItemClickListener mItemClickListener = new ItemClickListener() {
         @Override
-        public void onItemClick(Collaborator collab) {
-            CollaboratorActivity.startActivity(mContext, collab);
+        public void onItemClick(Collaborator collab, View v) {
+            ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity)
+                    mContext, v, mContext.getString(R.string.transition_collab));
+
+            CollaboratorActivity.startActivity(mContext, collab, options);
         }
     };
 
