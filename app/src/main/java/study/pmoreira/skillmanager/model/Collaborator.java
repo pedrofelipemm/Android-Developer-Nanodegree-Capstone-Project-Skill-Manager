@@ -117,7 +117,7 @@ public class Collaborator extends Model implements Parcelable {
         dest.readTypedList(skills, Skill.CREATOR);
     }
 
-    static final Creator<Collaborator> CREATOR = new Creator<Collaborator>() {
+    public static final Creator<Collaborator> CREATOR = new Creator<Collaborator>() {
 
         public Collaborator createFromParcel(Parcel in) {
             return new Collaborator(in);

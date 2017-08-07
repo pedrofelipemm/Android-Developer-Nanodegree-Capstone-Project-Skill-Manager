@@ -62,7 +62,7 @@ public class Skill extends Model implements Parcelable {
         dest.writeString(pictureUrl);
     }
 
-    static final Parcelable.Creator<Skill> CREATOR = new Parcelable.Creator<Skill>() {
+    public static final Parcelable.Creator<Skill> CREATOR = new Parcelable.Creator<Skill>() {
 
         public Skill createFromParcel(Parcel in) {
             return new Skill(in);

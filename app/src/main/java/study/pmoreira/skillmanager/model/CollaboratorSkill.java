@@ -47,7 +47,7 @@ public class CollaboratorSkill extends Model implements Parcelable {
         dest.writeString(skillName);
     }
 
-    static final Parcelable.Creator<CollaboratorSkill> CREATOR = new Parcelable.Creator<CollaboratorSkill>() {
+    public static final Parcelable.Creator<CollaboratorSkill> CREATOR = new Parcelable.Creator<CollaboratorSkill>() {
 
         public CollaboratorSkill createFromParcel(Parcel in) {
             return new CollaboratorSkill(in);
