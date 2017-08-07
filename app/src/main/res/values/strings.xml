@@ -30,6 +30,7 @@
     <string name="skill_successfully_saved">Skill successfully saved!</string>
     <string name="succesful_deleted">Successful deleted</string>
     <string name="error_deleting">Erro while deleting <xliff:g id="string">%s</xliff:g></string>
+    <string name="cannot_delete_skill_being_used">Cannot delete skill <xliff:g id="string">%s</xliff:g>! It\'s being used by some collaborator.</string>
 
     <string name="main_pager_invalid_position">Invalid fragment position: <xliff:g id="position">%d</xliff:g></string>
     <string name="no_skills_available">No skills available</string>

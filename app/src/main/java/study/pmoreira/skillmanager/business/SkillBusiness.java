@@ -6,9 +6,11 @@ import org.apache.commons.lang3.mutable.MutableInt;
 import java.util.ArrayList;
 import java.util.List;
 
+import study.pmoreira.skillmanager.data.CollaboratorSkillDao;
 import study.pmoreira.skillmanager.data.SkillDao;
 import study.pmoreira.skillmanager.infrastructure.OperationListener;
 import study.pmoreira.skillmanager.infrastructure.exception.ValidateException;
+import study.pmoreira.skillmanager.model.CollaboratorSkill;
 import study.pmoreira.skillmanager.model.Skill;
 
 //TODO: make it static ?
@@ -19,7 +21,10 @@ public class SkillBusiness {
     public static final int INVALID_SKILL_LEARN_MORE_URL = 3;
     public static final int INVALID_SKILL_PICTURE_URL = 4;
 
+    public static final int SKILL_BEING_USED = 5;
+
     private SkillDao mSkillDao = new SkillDao();
+    private CollaboratorSkillDao mCollaboratorSkillDao = new CollaboratorSkillDao();
 
     public void findAll(OperationListener<List<Skill>> listener) {
         mSkillDao.findAll(listener);
@@ -57,9 +62,17 @@ public class SkillBusiness {
         }
     }
 
-    public void delete(String id, OperationListener<String> listener) {
-        //TODO: check if is there any collab using it
-        mSkillDao.delete(id, listener);
+    public void delete(final String id, final OperationListener<String> listener) {
+        mCollaboratorSkillDao.findCollaboratorSkillsBySkill(id, new OperationListener<List<CollaboratorSkill>>() {
+            @Override
+            public void onSuccess(List<CollaboratorSkill> result) {
+                if (result.isEmpty()) {
+                    mSkillDao.delete(id, listener);
+                } else {
+                    listener.onError(new ValidateException(SKILL_BEING_USED));
+                }
+            }
+        });
     }
 
     public String uploadImage(byte[] data, final OperationListener<String> listener) {

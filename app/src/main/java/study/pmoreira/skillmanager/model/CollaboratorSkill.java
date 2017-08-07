@@ -31,10 +31,6 @@ public class CollaboratorSkill extends Model implements Parcelable {
         return collaboratorId;
     }
 
-    public String getSkillId() {
-        return skillId;
-    }
-
     public String getSkillName() {
         return skillName;
     }

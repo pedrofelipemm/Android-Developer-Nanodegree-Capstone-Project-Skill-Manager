@@ -330,8 +330,14 @@ public class EditSkillActivity extends BaseActivity {
 
         @Override
         public void onError(BusinessException e) {
-            Toast.makeText(EditSkillActivity.this,
-                    getString(R.string.error_deleting, mNameEdiText.getText()), Toast.LENGTH_SHORT).show();
+            if (SkillBusiness.SKILL_BEING_USED == e.getCode()) {
+                Toast.makeText(EditSkillActivity.this,
+                        getString(R.string.cannot_delete_skill_being_used, mNameEdiText.getText()),
+                        Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(EditSkillActivity.this,
+                        getString(R.string.error_deleting, mNameEdiText.getText()), Toast.LENGTH_SHORT).show();
+            }
         }
     }
 }

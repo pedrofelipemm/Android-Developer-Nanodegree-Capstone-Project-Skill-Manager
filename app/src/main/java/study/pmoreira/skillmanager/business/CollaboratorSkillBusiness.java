@@ -16,7 +16,7 @@ public class CollaboratorSkillBusiness {
     }
 
     public void findCollaboratorSkillsName(String collaboratorId, final OperationListener<List<String>> listener) {
-        mCollaboratorSkillDao.findCollaboratorSkills(collaboratorId, new OperationListener<List<CollaboratorSkill>>() {
+        mCollaboratorSkillDao.findCollaboratorSkillsByCollaborator(collaboratorId, new OperationListener<List<CollaboratorSkill>>() {
             @Override
             public void onSuccess(List<CollaboratorSkill> collabSkills) {
                 List<String> results = new ArrayList<>();

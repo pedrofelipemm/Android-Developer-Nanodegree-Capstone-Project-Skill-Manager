@@ -27,7 +27,7 @@ public class CollaboratorSkillDao extends BaseDao {
         FirebaseDao.delete(id, COLLABORATOR_SKILLS_PATH, listener);
     }
 
-    public void findCollaboratorSkills(String collabId, final OperationListener<List<CollaboratorSkill>> listener) {
+    public void findCollaboratorSkillsByCollaborator(String collabId, final OperationListener<List<CollaboratorSkill>> listener) {
         FirebaseDao.getDatabase().getReference(COLLABORATOR_SKILLS_PATH)
                 .orderByChild(CollaboratorSkill.JSON_COLLABORATOR_ID)
                 .equalTo(collabId)
@@ -43,8 +43,24 @@ public class CollaboratorSkillDao extends BaseDao {
                 });
     }
 
+    public void findCollaboratorSkillsBySkill(String skillId, final OperationListener<List<CollaboratorSkill>> listener) {
+        FirebaseDao.getDatabase().getReference(COLLABORATOR_SKILLS_PATH)
+                .orderByChild(CollaboratorSkill.JSON_SKILL_ID)
+                .equalTo(skillId)
+                .addListenerForSingleValueEvent(new OnDataChange() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        List<CollaboratorSkill> results = new ArrayList<>();
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            results.add(snapshot.getValue(CollaboratorSkill.class));
+                        }
+                        listener.onSuccess(results);
+                    }
+                });
+    }
+
     public void deleteCollaboratorSkills(String collaboratorId, final OperationListener<Void> listener) {
-        findCollaboratorSkills(collaboratorId, new OperationListener<List<CollaboratorSkill>>() {
+        findCollaboratorSkillsByCollaborator(collaboratorId, new OperationListener<List<CollaboratorSkill>>() {
             @Override
             public void onSuccess(final List<CollaboratorSkill> collabSkills) {
                 final MutableInt skillsCount = new MutableInt();

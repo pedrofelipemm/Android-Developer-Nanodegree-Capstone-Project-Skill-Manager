@@ -52,7 +52,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import study.pmoreira.skillmanager.R;
 import study.pmoreira.skillmanager.business.CollaboratorBusiness;
-import study.pmoreira.skillmanager.business.CollaboratorSkillBusiness;
 import study.pmoreira.skillmanager.business.SkillBusiness;
 import study.pmoreira.skillmanager.infrastructure.OperationListener;
 import study.pmoreira.skillmanager.infrastructure.exception.BusinessException;
@@ -87,7 +86,6 @@ public class EditCollaboratorActivity extends BaseActivity implements OnRequestP
 
     private CollaboratorBusiness mCollaboratorBusiness = new CollaboratorBusiness();
     private SkillBusiness mSkillBusiness = new SkillBusiness();
-    private CollaboratorSkillBusiness mCollaboratorSkillBusiness = new CollaboratorSkillBusiness();
 
     @BindView(R.id.collab_name_edittext)
     AutoCompleteTextView mNameAutoCompleteTextView;
@@ -411,7 +409,7 @@ public class EditCollaboratorActivity extends BaseActivity implements OnRequestP
     }
 
     private Long getBirthdate() {
-        Long birthdate = null;
+        Long birthdate;
         try {
             birthdate = DateUtils.parse(mBirthDateEditText.getText().toString()).getTime();
             mIsInvalidDate = false;
