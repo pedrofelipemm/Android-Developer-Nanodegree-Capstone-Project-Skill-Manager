@@ -40,4 +40,15 @@ public class CollaboratorSkillDao extends BaseDao {
                     }
                 });
     }
+
+    public void deleteCollaboratorSkills(String collaboratorId) {
+        findCollaboratorSkills(collaboratorId, new OperationListener<List<CollaboratorSkill>>() {
+            @Override
+            public void onSuccess(List<CollaboratorSkill> collabSkills) {
+                for (CollaboratorSkill collabSkill : collabSkills) {
+                    delete(collabSkill.getId(), new OperationListener<String>());
+                }
+            }
+        });
+    }
 }

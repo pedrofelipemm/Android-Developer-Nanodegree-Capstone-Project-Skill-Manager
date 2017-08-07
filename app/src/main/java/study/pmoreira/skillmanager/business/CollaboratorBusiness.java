@@ -44,8 +44,8 @@ public class CollaboratorBusiness {
     }
 
     public void delete(String id, OperationListener<String> listener) {
-        //TODO: delete CollaborratorSkill
         mCollaboratorDao.delete(id, listener);
+        mCollaboratorSkillDao.deleteCollaboratorSkills(id);
     }
 
     public String uploadImage(byte[] data, final OperationListener<String> listener) {
@@ -100,7 +100,10 @@ public class CollaboratorBusiness {
         @Override
         public void onSuccess(final Collaborator collab) {
             final List<Skill> skills = mCollaborator.getSkills();
-            if (skills.isEmpty()) return;
+            if (skills.isEmpty()) {
+                mListener.onSuccess(collab);
+                return;
+            }
 
             final MutableInt savedSkills = new MutableInt();
 

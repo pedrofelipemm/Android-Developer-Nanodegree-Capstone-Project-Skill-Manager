@@ -169,17 +169,6 @@ class FirebaseDao {
         });
     }
 
-//    static void addUploadListeners(String uploadRef, final OperationListener<String> listener) {
-//        List<UploadTask> tasks = FirebaseStorage.getInstance()
-//                .getReferenceFromUrl(uploadRef)
-//                .getActiveUploadTasks();
-//
-//        if (tasks.size() > 0) {
-//            addUploadListeners(tasks.get(0), listener);
-//        }
-//
-//    }
-
     static void deleteImage(final String url, final OperationListener<Task<Void>> listener) {
         FirebaseStorage.getInstance().getReferenceFromUrl(url).delete()
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
