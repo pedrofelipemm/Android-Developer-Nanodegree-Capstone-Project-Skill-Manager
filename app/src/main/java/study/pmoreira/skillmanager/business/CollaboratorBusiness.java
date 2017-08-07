@@ -14,8 +14,7 @@ import study.pmoreira.skillmanager.model.Collaborator;
 import study.pmoreira.skillmanager.model.CollaboratorSkill;
 import study.pmoreira.skillmanager.model.Skill;
 
-//TODO: make it static ?
-public class CollaboratorBusiness {
+public class CollaboratorBusiness extends BaseBusiness {
 
     public static final int INVALID_COLLABORATOR_NAME = 1;
     public static final int INVALID_COLLABORATOR_BIRTHDATE = 2;
@@ -24,37 +23,34 @@ public class CollaboratorBusiness {
     public static final int INVALID_COLLABORATOR_PHONE = 5;
     public static final int INVALID_COLLABORATOR_PICTURE = 6;
 
-    private SkillBusiness mSkillBusiness = new SkillBusiness();
-
-    private CollaboratorDao mCollaboratorDao = new CollaboratorDao();
-    private CollaboratorSkillDao mCollaboratorSkillDao = new CollaboratorSkillDao();
-
-    public void findAll(OperationListener<List<Collaborator>> listener) {
-        mCollaboratorDao.findAll(listener);
+    private CollaboratorBusiness() {}
+    
+    public static void findAll(OperationListener<List<Collaborator>> listener) {
+        CollaboratorDao.findAll(listener);
     }
 
-    public void findAllSingleEvent(OperationListener<List<Collaborator>> listener) {
-        mCollaboratorDao.findAllSingleEvent(listener);
+    public static void findAllSingleEvent(OperationListener<List<Collaborator>> listener) {
+        CollaboratorDao.findAllSingleEvent(listener);
     }
 
-    public void saveOrUpdate(final Collaborator collaborator, final OperationListener<Collaborator> listener) {
+    public static void saveOrUpdate(final Collaborator collaborator, final OperationListener<Collaborator> listener) {
         if (isValid(collaborator, listener)) {
-            mCollaboratorDao.saveOrUpdate(collaborator, new OnSaveOrUpdate(collaborator, listener));
+            CollaboratorDao.saveOrUpdate(collaborator, new OnSaveOrUpdate(collaborator, listener));
         }
     }
 
-    public void saveOrUpdate(final Collaborator collaborator, List<String> collabSkillNames,
+    public static void saveOrUpdate(final Collaborator collaborator, List<String> collabSkillNames,
                              final OperationListener<Collaborator> listener) {
 
         if (isValid(collaborator, listener)) {
-            mSkillBusiness.findSkillsByName(collabSkillNames, new OperationListener<List<Skill>>() {
+            SkillBusiness.findSkillsByName(collabSkillNames, new OperationListener<List<Skill>>() {
                 @Override
                 public void onSuccess(final List<Skill> skills) {
-                    mCollaboratorSkillDao.deleteCollaboratorSkills(collaborator.getId(), new OperationListener<Void>() {
+                    CollaboratorSkillDao.deleteCollaboratorSkills(collaborator.getId(), new OperationListener<Void>() {
                         @Override
                         public void onSuccess(Void result) {
                             collaborator.setSkills(skills);
-                            mCollaboratorDao.saveOrUpdate(collaborator, new OnSaveOrUpdate(collaborator, listener));
+                            CollaboratorDao.saveOrUpdate(collaborator, new OnSaveOrUpdate(collaborator, listener));
                         }
                     });
                 }
@@ -62,20 +58,20 @@ public class CollaboratorBusiness {
         }
     }
 
-    public void delete(String id, OperationListener<String> listener) {
-        mCollaboratorDao.delete(id, listener);
-        mCollaboratorSkillDao.deleteCollaboratorSkills(id, new OperationListener<Void>());
+    public static void delete(String id, OperationListener<String> listener) {
+        CollaboratorDao.delete(id, listener);
+        CollaboratorSkillDao.deleteCollaboratorSkills(id, new OperationListener<Void>());
     }
 
-    public String uploadImage(byte[] data, final OperationListener<String> listener) {
-        return mCollaboratorDao.uploadImage(data, listener);
+    public static String uploadImage(byte[] data, final OperationListener<String> listener) {
+        return CollaboratorDao.uploadImage(data, listener);
     }
 
-    public void deleteImage(String url) {
-        mCollaboratorDao.deleteImage(url);
+    public static void deleteImage(String url) {
+        CollaboratorDao.deleteImage(url);
     }
 
-    private boolean isValid(Collaborator collaborator, OperationListener<Collaborator> listener) {
+    private static boolean isValid(Collaborator collaborator, OperationListener<Collaborator> listener) {
         boolean isValid = true;
 
         if (StringUtils.isBlank(collaborator.getPhone())) {
@@ -106,7 +102,7 @@ public class CollaboratorBusiness {
         return isValid;
     }
 
-    private class OnSaveOrUpdate extends OperationListener<Collaborator> {
+    private static class OnSaveOrUpdate extends OperationListener<Collaborator> {
 
         private final Collaborator mCollaborator;
         private final OperationListener<Collaborator> mListener;
@@ -128,7 +124,7 @@ public class CollaboratorBusiness {
 
             for (Skill skill : skills) {
                 CollaboratorSkill collabSkill = new CollaboratorSkill(collab.getId(), skill.getId(), skill.getName());
-                mCollaboratorSkillDao.saveOrUpdate(collabSkill, new OperationListener<CollaboratorSkill>() {
+                CollaboratorSkillDao.saveOrUpdate(collabSkill, new OperationListener<CollaboratorSkill>() {
                     @Override
                     public void onSuccess(CollaboratorSkill result) {
                         savedSkills.increment();

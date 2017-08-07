@@ -1,6 +1,5 @@
 package study.pmoreira.skillmanager.ui.collaborator;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -61,8 +60,6 @@ public class CollaboratorActivity extends BaseActivity {
     @BindView(R.id.progressbar)
     ProgressBar mProgressBar;
 
-    private CollaboratorSkillBusiness mCollaboratorSkillBusiness = new CollaboratorSkillBusiness();
-
     List<String> mCollabSkills = new ArrayList<>();
 
     @Override
@@ -101,7 +98,7 @@ public class CollaboratorActivity extends BaseActivity {
         mFab.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity)
+                ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
                         CollaboratorActivity.this, mPicImageView, getString(R.string.transition_collab));
 
                 EditCollaboratorActivity.startActivity(CollaboratorActivity.this, collab, mCollabSkills, options);
@@ -111,7 +108,7 @@ public class CollaboratorActivity extends BaseActivity {
 
     private void findCollabSkills(Collaborator collab) {
         displayProgressbar(mProgressBar);
-        mCollaboratorSkillBusiness.findCollaboratorSkillsName(collab.getId(), new OperationListener<List<String>>() {
+        CollaboratorSkillBusiness.findCollaboratorSkillsName(collab.getId(), new OperationListener<List<String>>() {
             @Override
             public void onSuccess(List<String> results) {
                 mCollabSkills = results;

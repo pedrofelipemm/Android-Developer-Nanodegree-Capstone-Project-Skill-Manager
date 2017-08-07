@@ -4,7 +4,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
-public abstract class OnDataChange implements ValueEventListener {
+abstract class OnDataChange implements ValueEventListener {
 
     @Override
     public abstract void onDataChange(DataSnapshot dataSnapshot);

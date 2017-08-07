@@ -86,9 +86,6 @@ public class EditCollaboratorActivity extends BaseActivity implements OnRequestP
     private static final int PERMISSION_REQUEST_CONTACT = 777;
     private static final Long INVALID_DATE = 0L;
 
-    private CollaboratorBusiness mCollaboratorBusiness = new CollaboratorBusiness();
-    private SkillBusiness mSkillBusiness = new SkillBusiness();
-
     @BindView(R.id.collab_name_edittext)
     AutoCompleteTextView mNameAutoCompleteTextView;
 
@@ -205,7 +202,7 @@ public class EditCollaboratorActivity extends BaseActivity implements OnRequestP
 
         mSkillDialog = createSkillDialog(addSkillView, addSkillListView);
 
-        mSkillBusiness.findAllSingleEvent(new OperationListener<List<Skill>>() {
+        SkillBusiness.findAllSingleEvent(new OperationListener<List<Skill>>() {
             @Override
             public void onSuccess(List<Skill> skills) {
                 List<String> results = new ArrayList<>();
@@ -289,7 +286,7 @@ public class EditCollaboratorActivity extends BaseActivity implements OnRequestP
             displayProgressbar(mProgressBar);
             try {
                 byte[] imgBytes = FileUtils.getBytes(getContentResolver().openInputStream(intent.getData()));
-                mImgRef = mCollaboratorBusiness.uploadImage(imgBytes, new OnPictureUpload());
+                mImgRef = CollaboratorBusiness.uploadImage(imgBytes, new OnPictureUpload());
             } catch (Exception e) {
                 Log.d(TAG, "onActivityResult: ", e);
                 displayMessage(getString(R.string.error_image_upload));
@@ -376,7 +373,7 @@ public class EditCollaboratorActivity extends BaseActivity implements OnRequestP
             collab.setBirthdate(null);
         }
 
-        mCollaboratorBusiness.saveOrUpdate(collab, getCollaboratorSkills(), new OnCollaboratorSave());
+        CollaboratorBusiness.saveOrUpdate(collab, getCollaboratorSkills(), new OnCollaboratorSave());
     }
 
     private void delete() {
@@ -387,7 +384,7 @@ public class EditCollaboratorActivity extends BaseActivity implements OnRequestP
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                mCollaboratorBusiness.delete(getCollaboratorId(), new OnCollaboratorDelete());
+                                CollaboratorBusiness.delete(getCollaboratorId(), new OnCollaboratorDelete());
                             }
                         })
                 .setNegativeButton(R.string.no_caps, null)
@@ -464,7 +461,7 @@ public class EditCollaboratorActivity extends BaseActivity implements OnRequestP
         @Override
         public void onSuccess(String result) {
             if (!TextUtils.isEmpty(mPhotoUrl)) {
-                mCollaboratorBusiness.deleteImage(mPhotoUrl);
+                CollaboratorBusiness.deleteImage(mPhotoUrl);
             }
 
             mPhotoUrl = result;

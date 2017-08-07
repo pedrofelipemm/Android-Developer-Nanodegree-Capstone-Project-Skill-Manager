@@ -10,24 +10,25 @@ import java.util.List;
 import study.pmoreira.skillmanager.infrastructure.OperationListener;
 import study.pmoreira.skillmanager.model.CollaboratorSkill;
 
-//TODO: make it static ?
 public class CollaboratorSkillDao extends BaseDao {
 
     static final String COLLABORATOR_SKILLS_PATH = "collaboratorSkills";
 
-    public void findAll(OperationListener<List<CollaboratorSkill>> listener) {
+    private CollaboratorSkillDao() {}
+
+    public static void findAll(OperationListener<List<CollaboratorSkill>> listener) {
         FirebaseDao.findAll(CollaboratorSkill.class, COLLABORATOR_SKILLS_PATH, listener);
     }
 
-    public void saveOrUpdate(CollaboratorSkill collabSkill, OperationListener<CollaboratorSkill> listener) {
+    public static void saveOrUpdate(CollaboratorSkill collabSkill, OperationListener<CollaboratorSkill> listener) {
         FirebaseDao.saveOrUpdate(collabSkill, COLLABORATOR_SKILLS_PATH, listener);
     }
 
-    public void delete(String id, OperationListener<String> listener) {
+    public static void delete(String id, OperationListener<String> listener) {
         FirebaseDao.delete(id, COLLABORATOR_SKILLS_PATH, listener);
     }
 
-    public void findCollaboratorSkillsByCollaborator(String collabId, final OperationListener<List<CollaboratorSkill>> listener) {
+    public static void findCollaboratorSkillsByCollaborator(String collabId, final OperationListener<List<CollaboratorSkill>> listener) {
         FirebaseDao.getDatabase().getReference(COLLABORATOR_SKILLS_PATH)
                 .orderByChild(CollaboratorSkill.JSON_COLLABORATOR_ID)
                 .equalTo(collabId)
@@ -43,7 +44,7 @@ public class CollaboratorSkillDao extends BaseDao {
                 });
     }
 
-    public void findCollaboratorSkillsBySkill(String skillId, final OperationListener<List<CollaboratorSkill>> listener) {
+    public static void findCollaboratorSkillsBySkill(String skillId, final OperationListener<List<CollaboratorSkill>> listener) {
         FirebaseDao.getDatabase().getReference(COLLABORATOR_SKILLS_PATH)
                 .orderByChild(CollaboratorSkill.JSON_SKILL_ID)
                 .equalTo(skillId)
@@ -59,7 +60,7 @@ public class CollaboratorSkillDao extends BaseDao {
                 });
     }
 
-    public void deleteCollaboratorSkills(String collaboratorId, final OperationListener<Void> listener) {
+    public static void deleteCollaboratorSkills(String collaboratorId, final OperationListener<Void> listener) {
         findCollaboratorSkillsByCollaborator(collaboratorId, new OperationListener<List<CollaboratorSkill>>() {
             @Override
             public void onSuccess(final List<CollaboratorSkill> collabSkills) {

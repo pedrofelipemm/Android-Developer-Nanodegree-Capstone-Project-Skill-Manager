@@ -9,7 +9,6 @@
     <string name="skill_learn_more_hint">Learn more (web url)</string>
     <string name="menu_delete">Delete</string>
     <string name="menu_save">Save</string>
-    <string name="image_picker_text">Select Image</string>
     <string name="error_image_upload">Error while uploading image.</string>
     <string name="new_skill">New Skill</string>
     <string name="new_skills">New Skills</string>
@@ -53,8 +52,6 @@
 
     <string name="unable_to_handle_actionview">Unable to handle ACTION_VIEW, URL: <xliff:g id="url">%s</xliff:g></string>
 
-    <string name="error_while_updating_widget">Error while updating widget</string>
-
     <string name="content_authority">study.pmoreira.skillmanager</string>
     <string name="error_unknown_uri">Cannot query unknown URI: <xliff:g id="unknown_uri">%s</xliff:g></string>
     <string name="error_provider_operation_not_supported"><xliff:g id="operation">%s</xliff:g> not supported for <xliff:g id="uri">%s</xliff:g></string>
@@ -71,11 +68,8 @@
     <string name="collaborator_successfully_saved">Collaborator successfully saved!</string>
     <string name="ask_permision_read_contacts_title">Permission to read contacts</string>
     <string name="ask_permision_read_contacts_message">Your contacts names we\'ll be used to provide you a btter experience with the app.</string>
-    <string name="confirm_birthdate">Confirm your birthdate, please</string>
     <string name="skills">Skills</string>
     <string name="dismiss">dismiss</string>
-    <string name="add_skill">add skill</string>
-    <string name="nothing_selected">Nothing selected</string>
 
     <string name="transition_skill">transition_skill</string>
     <string name="transition_collab">transition_collab</string>

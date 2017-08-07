@@ -22,8 +22,6 @@ import study.pmoreira.skillmanager.widget.WidgetScheduler;
 
 public class MainActivity extends BaseActivity {
 
-    private static final String TAG = MainActivity.class.getName();
-
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
 
@@ -39,7 +37,6 @@ public class MainActivity extends BaseActivity {
 
     private PagerAdapter mPagerAdapter;
 
-    //TODO add transitions
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

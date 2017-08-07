@@ -106,7 +106,7 @@ class FirebaseDao {
         return dbRef;
     }
 
-    private static <T> DatabaseReference update(Model model, String refPath) {
+    private static DatabaseReference update(Model model, String refPath) {
         DatabaseReference dbRef = getDatabase().getReference(refPath).child(model.getId());
         dbRef.setValue(model);
 

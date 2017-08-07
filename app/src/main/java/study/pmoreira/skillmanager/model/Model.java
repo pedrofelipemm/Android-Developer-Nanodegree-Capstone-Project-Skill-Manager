@@ -5,8 +5,6 @@ import com.google.firebase.database.PropertyName;
 
 public class Model {
 
-    public static final String JSON_ID = "_ID";
-
     private String id;
 
     @PropertyName("_id")

@@ -238,7 +238,6 @@ public class DataFaker {
 
     private static void insertFakeCollaboratorSkills(List<Collaborator> collabs, List<Skill> skills) {
         Random random = new Random();
-        CollaboratorBusiness collaboratorBusiness = new CollaboratorBusiness();
         Set<Skill> uniqueSkills = new HashSet<>();
 
         for (Collaborator collab : collabs) {
@@ -248,7 +247,7 @@ public class DataFaker {
             }
 
             collab.setSkills(new ArrayList<>(uniqueSkills));
-            collaboratorBusiness.saveOrUpdate(collab, new OperationListener<Collaborator>());
+            CollaboratorBusiness.saveOrUpdate(collab, new OperationListener<Collaborator>());
         }
     }
 

@@ -73,7 +73,7 @@ public class SkillFragment extends SearchableFragment implements ClickableView {
 
             mSkillRecyclerView.getLayoutManager().scrollToPosition(savedInstanceState.getInt(STATE_RV_POSITION));
         } else {
-            new SkillBusiness().findAll(new OnSkillLoad());
+            SkillBusiness.findAll(new OnSkillLoad());
         }
 
         return view;

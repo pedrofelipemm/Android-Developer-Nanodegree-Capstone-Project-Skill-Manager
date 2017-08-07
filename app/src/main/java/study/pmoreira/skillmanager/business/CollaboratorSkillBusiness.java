@@ -7,16 +7,16 @@ import study.pmoreira.skillmanager.data.CollaboratorSkillDao;
 import study.pmoreira.skillmanager.infrastructure.OperationListener;
 import study.pmoreira.skillmanager.model.CollaboratorSkill;
 
-public class CollaboratorSkillBusiness {
+public class CollaboratorSkillBusiness extends BaseBusiness {
 
-    private CollaboratorSkillDao mCollaboratorSkillDao = new CollaboratorSkillDao();
+    private CollaboratorSkillBusiness() {}
 
-    public void findAll(OperationListener<List<CollaboratorSkill>> listener) {
-        mCollaboratorSkillDao.findAll(listener);
+    public static void findAll(OperationListener<List<CollaboratorSkill>> listener) {
+        CollaboratorSkillDao.findAll(listener);
     }
 
-    public void findCollaboratorSkillsName(String collaboratorId, final OperationListener<List<String>> listener) {
-        mCollaboratorSkillDao.findCollaboratorSkillsByCollaborator(collaboratorId, new OperationListener<List<CollaboratorSkill>>() {
+    public static void findCollaboratorSkillsName(String collaboratorId, final OperationListener<List<String>> listener) {
+        CollaboratorSkillDao.findCollaboratorSkillsByCollaborator(collaboratorId, new OperationListener<List<CollaboratorSkill>>() {
             @Override
             public void onSuccess(List<CollaboratorSkill> collabSkills) {
                 List<String> results = new ArrayList<>();

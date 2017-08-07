@@ -79,8 +79,8 @@ public class CollaboratorFragment extends SearchableFragment implements Clickabl
 
             mRecyclerView.getLayoutManager().scrollToPosition(savedInstanceState.getInt(STATE_RV_POSITION));
         } else {
-            new CollaboratorBusiness().findAll(new OnCollaboratorLoad());
-            new CollaboratorSkillBusiness().findAll(new OnCollaboratorSkillsLoad());
+            CollaboratorBusiness.findAll(new OnCollaboratorLoad());
+            CollaboratorSkillBusiness.findAll(new OnCollaboratorSkillsLoad());
         }
 
         return view;

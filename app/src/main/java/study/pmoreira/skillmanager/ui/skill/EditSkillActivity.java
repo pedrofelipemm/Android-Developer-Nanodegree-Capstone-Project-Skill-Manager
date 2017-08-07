@@ -48,8 +48,6 @@ public class EditSkillActivity extends BaseActivity {
     private static final String STATE_IS_EDITING = "STATE_IS_EDITING";
     private static final String STATE_IMG_REF = "STATE_IMG_REF";
 
-    private SkillBusiness mSkillBusiness;
-
     @BindView(R.id.skill_name_edittext)
     EditText mNameEdiText;
 
@@ -77,7 +75,6 @@ public class EditSkillActivity extends BaseActivity {
         setContentView(R.layout.activity_edit_skill);
 
         ButterKnife.bind(this);
-        mSkillBusiness = new SkillBusiness();
 
         setTitle(getString(R.string.new_skill));
 
@@ -150,7 +147,7 @@ public class EditSkillActivity extends BaseActivity {
             displayProgressbar(mProgressBar);
             try {
                 byte[] imgBytes = FileUtils.getBytes(getContentResolver().openInputStream(intent.getData()));
-                mImgRef = mSkillBusiness.uploadImage(imgBytes, new OnPictureUpload());
+                mImgRef = SkillBusiness.uploadImage(imgBytes, new OnPictureUpload());
             } catch (Exception e) {
                 Log.d(TAG, "onActivityResult: ", e);
                 displayMessage(getString(R.string.error_image_upload));
@@ -232,7 +229,7 @@ public class EditSkillActivity extends BaseActivity {
             return;
         }
 
-        mSkillBusiness.saveOrUpdate(newSkill(), new OnSkillSave());
+        SkillBusiness.saveOrUpdate(newSkill(), new OnSkillSave());
     }
 
     private void delete() {
@@ -243,7 +240,7 @@ public class EditSkillActivity extends BaseActivity {
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                mSkillBusiness.delete(getSkillId(), new OnSkillDelete());
+                                SkillBusiness.delete(getSkillId(), new OnSkillDelete());
                             }
                         })
                 .setNegativeButton(R.string.no_caps, null)
@@ -283,7 +280,7 @@ public class EditSkillActivity extends BaseActivity {
         @Override
         public void onSuccess(String result) {
             if (!TextUtils.isEmpty(mPhotoUrl)) {
-                mSkillBusiness.deleteImage(mPhotoUrl);
+                SkillBusiness.deleteImage(mPhotoUrl);
             }
 
             mPhotoUrl = result;

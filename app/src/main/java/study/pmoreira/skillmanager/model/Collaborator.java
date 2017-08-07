@@ -100,10 +100,6 @@ public class Collaborator extends Model implements Parcelable {
         this.skills = skills;
     }
 
-    public boolean addSkill(Skill skill) {
-        return skills.add(skill);
-    }
-
     @Override
     public int describeContents() {
         return 0;

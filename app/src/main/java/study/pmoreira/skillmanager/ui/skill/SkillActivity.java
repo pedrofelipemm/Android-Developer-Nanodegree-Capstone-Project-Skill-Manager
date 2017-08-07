@@ -23,8 +23,6 @@ import study.pmoreira.skillmanager.ui.BaseActivity;
 
 public class SkillActivity extends BaseActivity {
 
-    private static final String TAG = SkillActivity.class.getName();
-
     public static final String STATE_SKILL = "STATE_SKILL";
     public static final String EXTRA_SKILL = "EXTRA_SKILL";
 

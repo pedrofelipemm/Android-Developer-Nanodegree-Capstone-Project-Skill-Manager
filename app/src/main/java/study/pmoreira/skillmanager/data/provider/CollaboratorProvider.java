@@ -145,7 +145,7 @@ public class CollaboratorProvider extends ContentProvider {
 
     @Override
     public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
-        int numRowsDeleted = 0;
+        int numRowsDeleted;
 
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
